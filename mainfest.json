@@ -1,0 +1,11 @@
+{
+  "name": "repost",
+  "version": "0.1",
+  "description": "experience together",
+  "browser_action": {
+    "default_icon": "icon.jpeg"
+  },
+  "permissions": [
+    "http://api.flickr.com/"
+  ]
+}
