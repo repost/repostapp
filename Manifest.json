@@ -11,7 +11,7 @@
     "16": "icon.jpeg"
   },
   "permissions": [
-    "contextMenus"
+    "contextMenus",
     "unlimitedStorage",
     "notifications",
     "http://*/",
