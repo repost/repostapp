@@ -1,5 +1,6 @@
-// Feed URL.
-var feedUrl = 'http://news.google.com/?output=rss';
+//////////////////////////////////////
+//      On-A-Page Interface         //
+//////////////////////////////////////
 
 // A generic onclick callback function.
 function repostOnClick(info, tab) {
@@ -19,6 +20,21 @@ for (var i = 0; i < contexts.length; i++) {
   console.log("'" + context + "' item:" + id);
 }
 
+//////////////////////////////////
+//      App Interface           //
+//////////////////////////////////
+
+function createTable(){
+    var page = document.getElementById("repost");
+    var posttable = document.createElement("table");
+    for(x=0;x<10;x++){
+        row = posttable.insertRow(x);
+        cell = row.insertCell(0);
+        cell.innerHTML = "fuckoff";
+    }
+    page.appendChild(posttable);
+}
+
 var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu64c/s1600/fuck-you-i-am-cat.jpg"
 
 // The XMLHttpRequest object that tries to load and parse the feed.
@@ -29,7 +45,8 @@ function main() {
     //reposter = new Repost();
     //reposter.sethandleResponse = handleResponse;
     //repost.go();
-    handleResponse();
+    //handleResponse();
+    createTable();
 }
 
 // Handles feed parsing errors.
@@ -59,6 +76,10 @@ var maxFeedItems = 5;
 
 // Where the more stories link should navigate to.
 var moreStoriesUrl;
+
+// Expecting something like this
+// <image> someurl </image>
+// <caption> caption </caption>
 
 function buildPreview(doc) {
   // Construct the iframe's HTML.
