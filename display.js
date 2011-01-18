@@ -24,16 +24,70 @@ for (var i = 0; i < contexts.length; i++) {
 //      App Interface           //
 //////////////////////////////////
 
-function createTable(){
-    var page = document.getElementById("repost");
-    var posttable = document.createElement("table");
-    for(x=0;x<10;x++){
-        row = posttable.insertRow(x);
-        cell = row.insertCell(0);
-        cell.innerHTML = "fuckoff";
-    }
-    page.appendChild(posttable);
-}
+this.posttable = function(){
+ 
+    var rows = 0;     // dependent upon how much stuff you add
+    var cols = 5; // Standard 5 cols wide   
+    var posttable ;// table instance 
+
+    this.createTable = function(){
+        var page = document.getElementById("repost");
+        posttable = document.createElement("table");
+        page.appendChild(posttable);
+    };
+ 
+
+    // add the post(expecting innerHTML) to rank whatever
+    this.addPost = function( post, rank){
+ 
+        // calc where we need to put this shit.
+        var ypos = Math.floor(rank / cols);
+        var xpos = rank - cols*ypos;
+
+        // check we got enough rows
+        while((rows) <= ypos){
+            row = posttable.insertRow(rows++);
+            for(x=0;x<cols;x++){
+                cell = row.insertCell(0);
+                cell.innerHTML = "&nbsp;";
+            }
+        }
+        
+        posttable.rows[ypos].cells[xpos].appendChild(post);
+        tablecloth(posttable);
+    };
+    
+    this.createTable();
+
+};
+
+this.postimage = function(cap, image){
+
+    var url = image;
+    var caption = cap;
+
+    this.getImageElement = function() {
+
+        var imagepost = document.createElement("div");
+
+        imagepost.className = "post";
+        imagepost.setAttribute("data-src",url);
+        imagepost.setAttribute("data-title",caption);
+
+        var image = document.createElement("image");
+        image.className = "smallpost";
+        image.name = caption
+        image.src = url;
+        imagepost.appendChild(image);
+
+        var title = document.createElement("div");
+        title.className = "title";
+        title.innerHTML = caption;
+        imagepost.appendChild(title);
+        return imagepost;
+    };
+
+};
 
 var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu64c/s1600/fuck-you-i-am-cat.jpg"
 
@@ -46,7 +100,12 @@ function main() {
     //reposter.sethandleResponse = handleResponse;
     //repost.go();
     //handleResponse();
-    createTable();
+    var table = new posttable();
+    for(y=0;y<13;y++){
+        img = new postimage("awesome cat", fu);
+        table.addPost(img.getImageElement(),y);
+    }
+
 }
 
 // Handles feed parsing errors.

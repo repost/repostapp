@@ -6,7 +6,7 @@
 	
 */
 
-this.tablecloth = function(){
+this.tablecloth = function(table){
 	
 	// CONFIG 
 	
@@ -14,10 +14,10 @@ this.tablecloth = function(){
 	var highlightCols = true;
 	
 	// if set to true then mouseover a table cell will highlight entire row	(except sibling headings)
-	var highlightRows = false;	
+	var highlightRows = true;	
 	
 	// if set to true then click on a table sell will select row or column based on config
-	var selectable = true;
+	var selectable = false;
 	
 	// this function is called when 
 	// add your own code if you want to add action 
@@ -26,21 +26,15 @@ this.tablecloth = function(){
 		//alert(obj.innerHTML);
 		
 	};
-
-
 	
 	// END CONFIG (do not edit below this line)
 	
-	
 	var tableover = false;
-	this.start = function(){
-		var tables = document.getElementsByTagName("table");
-		for (var i=0;i<tables.length;i++){
-			tables[i].onmouseover = function(){tableover = true};
-			tables[i].onmouseout = function(){tableover = false};			
-			rows(tables[i]);
+	this.start = function(table){
+		table.onmouseover = function(){tableover = true};
+		table.onmouseout = function(){tableover = false};			
+		rows(table);
 		};
-	};
 	
 	this.rows = function(table){
 		var css = "";
@@ -55,7 +49,8 @@ this.tablecloth = function(){
 			for (var j=0;j<arr.length;j++){				
 				arr[j].row = i;
 				arr[j].col = j;
-				if(arr[j].innerHTML == "&nbsp;" || arr[j].innerHTML == "") arr[j].className += " empty";					
+                //messes up shit
+				//if((arr[j].innerHTML == "&nbsp;" || arr[j].innerHTML == "") && arr[j].className != " empty") arr[j].className += " empty";					
 				arr[j].css = arr[j].className;
 				arr[j].onmouseover = function(){
 					over(table,this,this.row,this.col);
@@ -75,7 +70,33 @@ this.tablecloth = function(){
 			};
 		};
 	};
-	
+
+    this.enlargeitem = function(obj){
+         
+         var post = obj.lastChild;
+         var frm = document.createElement("div");
+         frm.className = "zoomer";
+
+         var image = document.createElement("image");
+         image.className = "bigpost";
+         image.src = post.getAttribute("data-src");
+         image.name = post.getAttribute("data-title");
+         frm.appendChild(image);
+
+         var title = document.createElement("div");
+         title.className = "title";
+         title.innerHTML = post.getAttribute("data-title"); 
+         frm.appendChild(title);
+
+         obj.appendChild(frm,post);
+        
+
+           };
+
+   this.shrinkitem = function(obj){
+    
+       obj.parentNode.removeChild(obj);
+   };
 	// appyling mouseover state for objects (th or td)
 	this.over = function(table,obj,row,col){
 		if (!highlightCols && !highlightRows) obj.className = obj.css + " over";  
@@ -83,12 +104,14 @@ this.tablecloth = function(){
 			if(highlightCols) highlightCol(table,obj,col);
 			if(highlightRows) highlightRow(table,obj,row);		
 		};
+        enlargeitem(obj);
 	};
 	// appyling mouseout state for objects (th or td)	
 	this.out = function(table,obj,row,col){
 		if (!highlightCols && !highlightRows) obj.className = obj.css; 
 		unhighlightCol(table,col);
 		unhighlightRow(table,row);
+        shrinkitem(obj.lastChild);
 	};
 	// appyling mousedown state for objects (th or td)	
 	this.down = function(table,obj,row,col){
@@ -176,9 +199,7 @@ this.tablecloth = function(){
 		return (obj.className) ? (obj.className.indexOf("selected") == -1) : true; 
 	};	
 	
-	start();
+	start(table);
 	
 };
 
-/* script initiates on page load. */
-window.onload = tablecloth;

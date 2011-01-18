@@ -30,3 +30,18 @@ td.selected, tr.even td.selected, tr.odd td.selected{background:#bce774;color:#5
 
 /* use this if you want to apply different styleing to empty table cells*/
 td.empty, tr.odd td.empty, tr.even td.empty{background:#fff;}
+
+/* post styles */
+img.smallpost{width:150px;}
+img.bigpost{width:300px;}
+
+div.zoomer{
+    position: absolute;
+    border-radius:5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background: white;
+    -moz-box-shadow:1px 1px 5px #000;
+    -webkit-box-shadow:1px 1px 5px #000;
+    box-shadow:1px 1px 5px #000;
+}
