@@ -7,18 +7,10 @@ function repostOnClick(info, tab) {
   console.log("item " + info.menuItemId + " was clicked");
   console.log("info: " + JSON.stringify(info));
   console.log("tab: " + JSON.stringify(tab));
+  var img = new postimage("awesome cat", info["srcUrl"]);
+  ptable.addPost(img.getImageElement(),img.getImageElement(),pos++);
 }
 
-// Create one test item for each context type.
-var contexts = ["selection","link","image","video","audio"];
-
-for (var i = 0; i < contexts.length; i++) {
-  var context = contexts[i];
-  var title = "repost that '" + context ;
-  var id = chrome.contextMenus.create({"title": title, "contexts":[context],
-                                       "onclick": repostOnClick});
-  console.log("'" + context + "' item:" + id);
-}
 
 //////////////////////////////////
 //      App Interface           //
@@ -29,16 +21,27 @@ this.posttable = function(){
     var rows = 0;     // dependent upon how much stuff you add
     var cols = 5; // Standard 5 cols wide   
     var posttable ;// table instance 
+    var tableover = false;
+    
+    // if set to true then mouseover a table cell will highlight entire column (except sibling headings)
+	var highlightCols = true;
+	
+	// if set to true then mouseover a table cell will highlight entire row	(except sibling headings)
+	var highlightRows = true;	
+	
+	// if set to true then click on a table sell will select row or column based on config
+	var selectable = false;
 
-    this.createTable = function(){
-        var page = document.getElementById("repost");
-        posttable = document.createElement("table");
-        page.appendChild(posttable);
-    };
- 
+    this.createTable = function(){ 
+        var page = document.getElementById("repost"); 
+        posttable = document.createElement("table"); 
+        page.appendChild(posttable); 
+    }; 
+
+    
 
     // add the post(expecting innerHTML) to rank whatever
-    this.addPost = function( post, rank){
+    this.addPost = function( prev_post, pop_post, rank){
  
         // calc where we need to put this shit.
         var ypos = Math.floor(rank / cols);
@@ -50,13 +53,107 @@ this.posttable = function(){
             for(x=0;x<cols;x++){
                 cell = row.insertCell(0);
                 cell.innerHTML = "&nbsp;";
+                cell.className = "postcell";
+
+                //create the general stuff
+                var postspace = document.createElement("div");
+                postspace.className = "postspace";
+                cell.appendChild(postspace);
+
+                var uparrow = document.createElement("image");
+                uparrow.className = "votehand";
+                uparrow.src = "./hpu.png";
+                cell.appendChild(uparrow);
+
+                var downarrow = document.createElement("image");
+                downarrow.className = "votehand";
+                downarrow.src = "./hpd.png";
+                cell.appendChild(downarrow);
+
+                // add some action code to the cells
+                uparrow.onmouseclick = function(){
+                };
+
+                uparrow.onmouseover = function(){
+                    this.parentNode.className = "rockon"
+                };
+
+                uparrow.onmouseout = function(){
+                    this.parentNode.className = "postcell"
+                };
+
+                downarrow.onmouseover = function(){
+                    this.parentNode.className = "fuckoff"
+                };
+
+                downarrow.onmouseout = function(){
+                    this.parentNode.className = "postcell"
+                };
+
+
+                downarrow.onmouseclick = function(){
+                };
+
+                cell.onmouseover = function(){
+                 //   over(this);
+                };
+				
+                cell.onmouseout =  function() {
+
+                };
+
+                cell.onmousedown = function(){
+				};
+				cell.onmouseup = function(){
+				};				
+				cell.onclick = function(){
+				};								
+
             }
         }
-        
-        posttable.rows[ypos].cells[xpos].appendChild(post);
-        tablecloth(posttable);
+        //0nly 1 post per cell.
+
+        var contents = posttable.rows[ypos].cells[xpos].children;
+        for(x=0; x<contents.length;x++){
+            if(contents[x].className == "post"){
+                posttable.rows[ypos].cells[xpos].removeChild(contents[x]);
+            }
+        }
+        posttable.rows[ypos].cells[xpos].appendChild(prev_post);
     };
     
+    this.enlargeitem = function(obj){
+         
+         var post = obj.lastChild;
+         var frm = document.createElement("div");
+         frm.className = "zoomer";
+
+         var image = document.createElement("image");
+         image.className = "bigpost";
+         image.src = post.getAttribute("data-src");
+         image.name = post.getAttribute("data-title");
+         frm.appendChild(image);
+
+         var title = document.createElement("div");
+         title.className = "title";
+         title.innerHTML = post.getAttribute("data-title"); 
+         frm.appendChild(title);
+
+         obj.appendChild(frm,post);
+        
+
+           };
+
+   this.shrinkitem = function(obj){
+    
+       obj.parentNode.removeChild(obj);
+   };
+		// appyling mouseout state for objects (th or td)	
+	this.out = function(obj){
+	
+    
+	};
+
     this.createTable();
 
 };
@@ -73,7 +170,7 @@ this.postimage = function(cap, image){
         imagepost.className = "post";
         imagepost.setAttribute("data-src",url);
         imagepost.setAttribute("data-title",caption);
-
+	
         var image = document.createElement("image");
         image.className = "smallpost";
         image.name = caption
@@ -84,6 +181,8 @@ this.postimage = function(cap, image){
         title.className = "title";
         title.innerHTML = caption;
         imagepost.appendChild(title);
+
+
         return imagepost;
     };
 
@@ -94,17 +193,23 @@ var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu
 // The XMLHttpRequest object that tries to load and parse the feed.
 var reposter= document.getElementById("pluginId");
 
+var ptable;
+var pos=0;
 function main() {
-    //create new reposter
-    //reposter = new Repost();
-    //reposter.sethandleResponse = handleResponse;
-    //repost.go();
-    //handleResponse();
-    var table = new posttable();
-    for(y=0;y<13;y++){
-        img = new postimage("awesome cat", fu);
-        table.addPost(img.getImageElement(),y);
+    // Create one test item for each context type.
+    var contexts = ["image"];
+    //var contexts = ["selection","link","image","video","audio"];
+
+    for (var i = 0; i < contexts.length; i++) {
+      var context = contexts[i];
+      var title = "repost that '" + context ;
+      var id = chrome.contextMenus.create({"title": title, "contexts":[context],
+                                           "onclick": repostOnClick});
     }
+
+    ptable = new posttable();
+    img = new postimage("awesome cat", fu);
+    ptable.addPost(img.getImageElement(),img.getImageElement(),pos++);
 
 }
 
@@ -168,10 +273,10 @@ function moreStories(event) {
 }
 
 function keyHandlerShowDesc(event) {
-// Display content under heading when spacebar or right-arrow pressed
-// Hide content when spacebar pressed again or left-arrow pressed
-// Move to next heading when down-arrow pressed
-// Move to previous heading when up-arrow pressed
+// Display content under heading when spacebar or right-cellow pressed
+// Hide content when spacebar pressed again or left-cellow pressed
+// Move to next heading when down-cellow pressed
+// Move to previous heading when up-cellow pressed
   if (event.keyCode == 32) {
     showDesc(event);
   } else if ((this.parentNode.className == "item opened") &&
