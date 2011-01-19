@@ -10,6 +10,9 @@
   "icons": {
     "16": "icon.jpeg"
   },
+  "plugins": [
+    { "path": "librpl.dylib", "public": true  }
+  ],
   "permissions": [
     "contextMenus",
     "unlimitedStorage",

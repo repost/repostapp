@@ -199,6 +199,10 @@ function main() {
     // Create one test item for each context type.
     var contexts = ["image"];
     //var contexts = ["selection","link","image","video","audio"];
+    
+    var plugin = document.getElementById("plugin");
+    var hw = plugin.reposter();
+    var hello = hw.GetPost();
 
     for (var i = 0; i < contexts.length; i++) {
       var context = contexts[i];
