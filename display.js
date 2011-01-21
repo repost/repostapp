@@ -8,7 +8,7 @@ function repostOnClick(info, tab) {
   console.log("info: " + JSON.stringify(info));
   console.log("tab: " + JSON.stringify(tab));
   var img = new postimage("awesome cat", info["srcUrl"]);
-  ptable.addPost(img.getImageElement(),img.getImageElement(),pos++);
+  ptable.addPost(img.getImageElement(),pos++);
 }
 
 
@@ -22,6 +22,7 @@ this.posttable = function(){
     var cols = 5; // Standard 5 cols wide   
     var posttable ;// table instance 
     var tableover = false;
+    var numentries = 0;
     
     // if set to true then mouseover a table cell will highlight entire column (except sibling headings)
 	var highlightCols = true;
@@ -38,88 +39,118 @@ this.posttable = function(){
         page.appendChild(posttable); 
     }; 
 
+    this.deletePost = function(rank){
+
+        // calc where we need to put this shit.
+        var ypos = Math.floor(rank / cols);
+        var xpos = rank - cols*ypos;
+ 
+        var contents = posttable.rows[ypos].deleteCell(xpos);
+        numentries--;
+    }
     
+    this.delShufflePost = function(rank){
+
+        //first del crap then shuffle.
+        this.deletePost(rank);
+
+        //now shuffle 1 at a time
+        for(x=rank;x<numentries;x++){
+            addPost(getPost(x+1,x));
+        }
+
+    }
+
+    this.getPost = function(rank){
+    
+        // calc where we need to put this shit.
+        var ypos = Math.floor(rank / cols);
+        var xpos = rank - cols*ypos;
+        
+        var contents = posttable.rows[ypos].cells[xpos].children;
+        for(x=0; x<contents.length;x++){
+            if(contents[x].className == "post"){
+                return contents[x];
+            }
+        }
+        return null;
+    }
 
     // add the post(expecting innerHTML) to rank whatever
-    this.addPost = function( prev_post, pop_post, rank){
+    this.addPost = function( post, rank){
  
         // calc where we need to put this shit.
         var ypos = Math.floor(rank / cols);
         var xpos = rank - cols*ypos;
 
         // check we got enough rows
-        while((rows) <= ypos){
+        if((rows) <= ypos){
             row = posttable.insertRow(rows++);
-            for(x=0;x<cols;x++){
-                cell = row.insertCell(0);
-                cell.innerHTML = "&nbsp;";
-                cell.className = "postcell";
-
-                //create the general stuff
-                var postspace = document.createElement("div");
-                postspace.className = "postspace";
-                cell.appendChild(postspace);
-
-                var uparrow = document.createElement("image");
-                uparrow.className = "votehand";
-                uparrow.src = "./hpu.png";
-                cell.appendChild(uparrow);
-
-                var downarrow = document.createElement("image");
-                downarrow.className = "votehand";
-                downarrow.src = "./hpd.png";
-                cell.appendChild(downarrow);
-
-                // add some action code to the cells
-                uparrow.onmouseclick = function(){
-                };
-
-                uparrow.onmouseover = function(){
-                    this.parentNode.className = "rockon"
-                };
-
-                uparrow.onmouseout = function(){
-                    this.parentNode.className = "postcell"
-                };
-
-                downarrow.onmouseover = function(){
-                    this.parentNode.className = "fuckoff"
-                };
-
-                downarrow.onmouseout = function(){
-                    this.parentNode.className = "postcell"
-                };
-
-
-                downarrow.onmouseclick = function(){
-                };
-
-                cell.onmouseover = function(){
-                 //   over(this);
-                };
-				
-                cell.onmouseout =  function() {
-
-                };
-
-                cell.onmousedown = function(){
-				};
-				cell.onmouseup = function(){
-				};				
-				cell.onclick = function(){
-				};								
-
-            }
         }
-        //0nly 1 post per cell.
 
-        var contents = posttable.rows[ypos].cells[xpos].children;
-        for(x=0; x<contents.length;x++){
-            if(contents[x].className == "post"){
-                posttable.rows[ypos].cells[xpos].removeChild(contents[x]);
-            }
+        if( rank < numentries ){
+            this.deletePost(rank);
         }
-        posttable.rows[ypos].cells[xpos].appendChild(prev_post);
+        // check we go the cell
+        cell = row.insertCell(xpos);
+        cell.className = "postcell";
+
+        //create the general stuff
+        var postspace = document.createElement("div");
+        postspace.className = "postspace";
+        cell.appendChild(postspace);
+
+        var uparrow = document.createElement("image");
+        uparrow.className = "votehand";
+        uparrow.src = "./hpu.png";
+        cell.appendChild(uparrow);
+
+        var downarrow = document.createElement("image");
+        downarrow.className = "votehand";
+        downarrow.src = "./hpd.png";
+        cell.appendChild(downarrow);
+
+        // add some action code to the cells
+        uparrow.onmouseclick = function(){
+        };
+
+        uparrow.onmouseover = function(){
+            this.parentNode.className = "rockon"
+        };
+
+        uparrow.onmouseout = function(){
+            this.parentNode.className = "postcell"
+        };
+
+        downarrow.onmouseover = function(){
+            this.parentNode.className = "fuckoff";
+        };
+
+        downarrow.onmouseout = function(){
+            this.parentNode.className = "postcell"
+        };
+
+        downarrow.onclick = function(){
+            ptable.delShufflePost(rank);
+        };
+
+        cell.onmouseover = function(){
+         //   over(this);
+        };
+        
+        cell.onmouseout =  function() {
+
+        };
+
+        cell.onmousedown = function(){
+        };
+        cell.onmouseup = function(){
+        };				
+        cell.onclick = function(){
+        };								
+
+        posttable.rows[ypos].cells[xpos].appendChild(post);
+        numentries++;
     };
     
     this.enlargeitem = function(obj){
@@ -213,7 +244,7 @@ function main() {
 
     ptable = new posttable();
     img = new postimage("awesome cat", fu);
-    ptable.addPost(img.getImageElement(),img.getImageElement(),pos++);
+    ptable.addPost(img.getImageElement(),pos++);
 
 }
 
