@@ -47,19 +47,20 @@ this.posttable = function(){
  
         var contents = posttable.rows[ypos].deleteCell(xpos);
         numentries--;
-    }
+    };
     
     this.delShufflePost = function(rank){
 
-        //first del crap then shuffle.
-        this.deletePost(rank);
+ 	var ypos = Math.floor(rank / cols);
+        var xpos = rank - cols*ypos;
+ 
+	this.deletePost(rank);
+		//now shuffle 1 at a time
+	for(x=ypos;x<rows;x++){
+	    this.addPost(this.getPost((1+ypos)*5),(ypos*5+4));
+	}
 
-        //now shuffle 1 at a time
-        for(x=rank;x<numentries;x++){
-            addPost(getPost(x+1,x));
-        }
-
-    }
+    };
 
     this.getPost = function(rank){
     
@@ -74,7 +75,7 @@ this.posttable = function(){
             }
         }
         return null;
-    }
+    };
 
     // add the post(expecting innerHTML) to rank whatever
     this.addPost = function( post, rank){
@@ -86,13 +87,12 @@ this.posttable = function(){
         // check we got enough rows
         if((rows) <= ypos){
             row = posttable.insertRow(rows++);
-        }
+        }else{
+		row = posttable.rows[ypos];
+	}
 
-        if( rank < numentries ){
-            this.deletePost(rank);
-        }
-        // check we go the cell
         cell = row.insertCell(xpos);
+        // check we go the cel
         cell.className = "postcell";
 
         //create the general stuff
@@ -131,7 +131,7 @@ this.posttable = function(){
         };
 
         downarrow.onclick = function(){
-            ptable.delShufflePost(rank);
+            posttable.delShufflePost(rank);
         };
 
         cell.onmouseover = function(){
@@ -171,19 +171,16 @@ this.posttable = function(){
          frm.appendChild(title);
 
          obj.appendChild(frm,post);
-        
 
-           };
+    };
 
-   this.shrinkitem = function(obj){
+    this.shrinkitem = function(obj){
     
        obj.parentNode.removeChild(obj);
-   };
+    };
 		// appyling mouseout state for objects (th or td)	
-	this.out = function(obj){
-	
-    
-	};
+    this.out = function(obj){
+    };
 
     this.createTable();
 
@@ -231,9 +228,9 @@ function main() {
     var contexts = ["image"];
     //var contexts = ["selection","link","image","video","audio"];
     
-    var plugin = document.getElementById("plugin");
-    var hw = plugin.reposter();
-    var hello = hw.GetPost();
+    //var plugin = document.getElementById("plugin");
+    //var hw = plugin.reposter();
+    //var hello = hw.GetPost();
 
     for (var i = 0; i < contexts.length; i++) {
       var context = contexts[i];
@@ -244,8 +241,15 @@ function main() {
 
     ptable = new posttable();
     img = new postimage("awesome cat", fu);
-    ptable.addPost(img.getImageElement(),pos++);
-
+    for(x=0;x<15;x++){
+    	ptable.addPost(img.getImageElement(),x);
+	}
+for(x=0;x<15;x++){
+    	ptable.delShufflePost(0);
+	}
+for(x=0;x<15;x++){
+    	//ptable.addPost(img.getImageElement(),x);
+	}
 }
 
 // Handles feed parsing errors.
