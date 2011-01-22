@@ -19,56 +19,52 @@ function repostOnClick(info, tab) {
 this.posttable = function(){
  
     var rows = 0;     // dependent upon how much stuff you add
-    var cols = 5; // Standard 5 cols wide   
-    var posttable ;// table instance 
+    var cols = 5;     // Standard 5 cols wide   
+    var table;    // table instance 
     var tableover = false;
     var numentries = 0;
     
-    // if set to true then mouseover a table cell will highlight entire column (except sibling headings)
-	var highlightCols = true;
-	
-	// if set to true then mouseover a table cell will highlight entire row	(except sibling headings)
-	var highlightRows = true;	
-	
-	// if set to true then click on a table sell will select row or column based on config
-	var selectable = false;
-
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
-        posttable = document.createElement("table"); 
-        page.appendChild(posttable); 
+        table = document.createElement("table"); 
+        page.appendChild(table); 
     }; 
 
     this.deletePost = function(rank){
-
         // calc where we need to put this shit.
-        var ypos = Math.floor(rank / cols);
-        var xpos = rank - cols*ypos;
- 
-        var contents = posttable.rows[ypos].deleteCell(xpos);
+        var pos = this.rankToxy(rank);
+        var contents = table.rows[pos.y].deleteCell(pos.x);
+        if( table.rows[pos.y].cells.length == 0 ){
+             table.deleteRow(pos.y);
+             rows--;
+        }
         numentries--;
     };
     
     this.delShufflePost = function(rank){
+        var pos = this.rankToxy(rank);
+        var r = rank;
 
- 	var ypos = Math.floor(rank / cols);
-        var xpos = rank - cols*ypos;
- 
-	this.deletePost(rank);
-		//now shuffle 1 at a time
-	for(x=ypos;x<rows;x++){
-	    this.addPost(this.getPost((1+ypos)*5),(ypos*5+4));
-	}
+        for( i = pos.y; i < rows; i++ ){
+            this.deletePost(r);
+            if( (i+1) >= rows ){
+                break;
+            }
+            var post = this.getPost((1+i)*5);
+            this.addPost(post,((1+i)*5-1));
+            r = (1+i)*5;
+         }
+    };
 
+    this.rankToxy = function(rank){
+	var y = Math.floor(rank / cols);
+        var x = (rank - cols*y);
+        return{ y:y, x:x};
     };
 
     this.getPost = function(rank){
-    
-        // calc where we need to put this shit.
-        var ypos = Math.floor(rank / cols);
-        var xpos = rank - cols*ypos;
-        
-        var contents = posttable.rows[ypos].cells[xpos].children;
+	var pos = this.rankToxy(rank);
+        var contents = table.rows[pos.y].cells[pos.x].children;
         for(x=0; x<contents.length;x++){
             if(contents[x].className == "post"){
                 return contents[x];
@@ -79,19 +75,16 @@ this.posttable = function(){
 
     // add the post(expecting innerHTML) to rank whatever
     this.addPost = function( post, rank){
- 
-        // calc where we need to put this shit.
-        var ypos = Math.floor(rank / cols);
-        var xpos = rank - cols*ypos;
-
+	var pos = this.rankToxy(rank);
+        var row;
         // check we got enough rows
-        if((rows) <= ypos){
-            row = posttable.insertRow(rows++);
+        if((rows) <= pos.y){
+            row = table.insertRow(rows++);
         }else{
-		row = posttable.rows[ypos];
+	    row = table.rows[pos.y];
 	}
 
-        cell = row.insertCell(xpos);
+        var cell = row.insertCell(pos.x);
         // check we go the cel
         cell.className = "postcell";
 
@@ -131,7 +124,7 @@ this.posttable = function(){
         };
 
         downarrow.onclick = function(){
-            posttable.delShufflePost(rank);
+            this.delShufflePost(rank);
         };
 
         cell.onmouseover = function(){
@@ -149,12 +142,11 @@ this.posttable = function(){
         cell.onclick = function(){
         };								
 
-        posttable.rows[ypos].cells[xpos].appendChild(post);
+        table.rows[pos.y].cells[pos.x].appendChild(post);
         numentries++;
     };
     
     this.enlargeitem = function(obj){
-         
          var post = obj.lastChild;
          var frm = document.createElement("div");
          frm.className = "zoomer";
@@ -171,14 +163,12 @@ this.posttable = function(){
          frm.appendChild(title);
 
          obj.appendChild(frm,post);
-
     };
 
     this.shrinkitem = function(obj){
-    
        obj.parentNode.removeChild(obj);
     };
-		// appyling mouseout state for objects (th or td)	
+
     this.out = function(obj){
     };
 
