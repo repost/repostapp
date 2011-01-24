@@ -8,7 +8,7 @@ function repostOnClick(info, tab) {
   console.log("info: " + JSON.stringify(info));
   console.log("tab: " + JSON.stringify(tab));
   var img = new postimage("awesome cat", info["srcUrl"]);
-  ptable.addPost(img.getImageElement(),pos++);
+  ptable.addPost(img.getImageElement(),0);
 }
 
 
@@ -30,6 +30,7 @@ this.posttable = function(){
         page.appendChild(table); 
     }; 
 
+    // Deletes a post from the table.
     this.deletePost = function(rank){
         // calc where we need to put this shit.
         var pos = this.rankToxy(rank);
@@ -39,8 +40,10 @@ this.posttable = function(){
              rows--;
         }
         numentries--;
+        this.adjustRanks();
     };
     
+    // Deletes a post and shuffles all items in the table down.
     this.delShufflePost = function(rank){
         var pos = this.rankToxy(rank);
         var r = rank;
@@ -50,18 +53,36 @@ this.posttable = function(){
             if( (i+1) >= rows ){
                 break;
             }
-            var post = this.getPost((1+i)*5);
-            this.addPost(post,((1+i)*5-1));
-            r = (1+i)*5;
-         }
+            var post = this.getPost((1+i)*cols);
+            this.addPost(post,((1+i)*cols-1));
+            r = (1+i)*cols;
+        }
+        this.adjustRanks();
+        
     };
 
+    // Cycles through the table adjusting the rank attribute for
+    // each cell to ensure it is correct.
+    this.adjustRanks = function(){
+        // this is good to visually shuffle but now we need
+        // to update the rank id for each item.
+        for( ii = 0; ii < numentries; ii++ ){
+            var pos = this.rankToxy(ii);
+            var cell = table.rows[pos.y].cells[pos.x];
+            if( cell != null ){
+                cell.setAttribute("rank",ii);
+            }
+        }
+    };
+
+    // Converts a rank into a position in the table.
     this.rankToxy = function(rank){
 	var y = Math.floor(rank / cols);
         var x = (rank - cols*y);
         return{ y:y, x:x};
     };
 
+    // Gets the post associated with the rank.
     this.getPost = function(rank){
 	var pos = this.rankToxy(rank);
         var contents = table.rows[pos.y].cells[pos.x].children;
@@ -74,76 +95,83 @@ this.posttable = function(){
     };
 
     // add the post(expecting innerHTML) to rank whatever
+    // If there is a post already there is will remove it
     this.addPost = function( post, rank){
-	var pos = this.rankToxy(rank);
+        var pos = this.rankToxy(rank);
         var row;
         // check we got enough rows
         if((rows) <= pos.y){
             row = table.insertRow(rows++);
         }else{
-	    row = table.rows[pos.y];
-	}
+	        row = table.rows[pos.y];
+        }
 
-        var cell = row.insertCell(pos.x);
-        // check we go the cel
-        cell.className = "postcell";
+        // check if cell exists
+        var cell = table.rows[pos.y].cells[pos.x];
+        if( cell == null ){
+            cell = row.insertCell(pos.x);
+            // check we go the cel
+            cell.className = "postcell";
+            cell.setAttribute("rank",rank);
 
-        //create the general stuff
-        var postspace = document.createElement("div");
-        postspace.className = "postspace";
-        cell.appendChild(postspace);
+            //create the general stuff
+            var postspace = document.createElement("div");
+            postspace.className = "postspace";
+            cell.appendChild(postspace);
 
-        var uparrow = document.createElement("image");
-        uparrow.className = "votehand";
-        uparrow.src = "./hpu.png";
-        cell.appendChild(uparrow);
+            var uparrow = document.createElement("image");
+            uparrow.className = "votehand";
+            uparrow.src = "./hpu.png";
+            cell.appendChild(uparrow);
 
-        var downarrow = document.createElement("image");
-        downarrow.className = "votehand";
-        downarrow.src = "./hpd.png";
-        cell.appendChild(downarrow);
+            var downarrow = document.createElement("image");
+            downarrow.className = "votehand";
+            downarrow.src = "./hpd.png";
+            cell.appendChild(downarrow);
 
-        // add some action code to the cells
-        uparrow.onmouseclick = function(){
-        };
+            // add some action code to the cells
+            uparrow.onmouseclick = function(){
+            };
 
-        uparrow.onmouseover = function(){
-            this.parentNode.className = "rockon"
-        };
+            uparrow.onmouseover = function(){
+                this.parentNode.className = "rockon"
+            };
 
-        uparrow.onmouseout = function(){
-            this.parentNode.className = "postcell"
-        };
+            uparrow.onmouseout = function(){
+                this.parentNode.className = "postcell"
+            };
 
-        downarrow.onmouseover = function(){
-            this.parentNode.className = "fuckoff";
-        };
+            downarrow.onmouseover = function(){
+                this.parentNode.className = "fuckoff";
+            };
 
-        downarrow.onmouseout = function(){
-            this.parentNode.className = "postcell"
-        };
+            downarrow.onmouseout = function(){
+                this.parentNode.className = "postcell"
+            };
 
-        downarrow.onclick = function(){
-            this.delShufflePost(rank);
-        };
+            downarrow.onclick = function(){
+                ptable.delShufflePost(this.parentNode.getAttribute("rank"));
+            };
 
-        cell.onmouseover = function(){
-         //   over(this);
-        };
-        
-        cell.onmouseout =  function() {
+            cell.onmouseover = function(){
+             //   over(this);
+            };
+            
+            cell.onmouseout =  function() {
 
-        };
+            };
 
-        cell.onmousedown = function(){
-        };
-        cell.onmouseup = function(){
-        };				
-        cell.onclick = function(){
-        };								
-
+            cell.onmousedown = function(){
+            };
+            cell.onmouseup = function(){
+            };				
+            cell.onclick = function(){
+            };			
+            numentries++;
+        }else{
+            table.rows[pos.y].cells[pos.x].removeChild(this.getPost(rank));
+        }
         table.rows[pos.y].cells[pos.x].appendChild(post);
-        numentries++;
     };
     
     this.enlargeitem = function(obj){
