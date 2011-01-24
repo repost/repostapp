@@ -11,7 +11,7 @@
     "16": "icon.jpeg"
   },
   "plugins": [
-    { "path": "librpl.dylib", "public": true  }
+    { "path": "librpl.so", "public": true  }
   ],
   "permissions": [
     "contextMenus",
