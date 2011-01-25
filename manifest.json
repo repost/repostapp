@@ -7,14 +7,19 @@
       "local_path": "main.html"
     }
   },
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": ["http://*/*","https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
   "icons": {
     "16": "icon.jpeg"
   },
-  "plugins": [
-    { "path": "librpl.so", "public": true  }
-  ],
   "permissions": [
-    "contextMenus",
+    "tabs",
     "unlimitedStorage",
     "notifications",
     "http://*/",
