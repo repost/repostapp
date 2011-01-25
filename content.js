@@ -1,21 +1,19 @@
-// Found something send it home
-chrome.extension.sendRequest({greeting: "hello"}, function(response) {
-  console.log(response.farewell);
-});
 
 
 contentClicker = function() {
 
-    var ImgDialog
+    var ImgDialog;
+    var caption;
+
     this.init = function(){
         // Create image diaglog
         ImgDialog = document.createElement('div');
         ImgDialog.className = "imgdialog";
         var label = document.createElement("label");
-        label.innerHTML = "Post Caption:";
+        label.innerHTML = "What say you:";
         label.className = "label";
         ImgDialog.appendChild(label);
-        var caption = document.createElement("input");
+        caption = document.createElement("input");
         caption.className = "caption";
         label.appendChild(caption);
         caption.addEventListener('keypress', this.sendImage, false);
@@ -29,9 +27,25 @@ contentClicker = function() {
         }
     };
 
+    this.imgFocus = function(){
+        caption.focus();
+    };
+    
+    this.imgClear = function(){
+        caption.value = "";
+    };
+
     this.sendImage = function(event){
         if(event.keyCode == 13){
+            var target = { caption: caption.value, 
+                           src: "fasasdas.jpg",
+                           context: "asdsdad.asdas"
+                         };
+            chrome.extension.sendRequest(target, function(response) {
+                console.log(response.farewell);
+            });
             ImgDialog.style.visibility = "hidden";
+            cc.imgClear();
         }
     };
 
@@ -39,6 +53,7 @@ contentClicker = function() {
         console.log(event.target);
         if(event.altKey){
             cc.createImgDialog("hello", event.clientX, event.clientY);
+            cc.imgFocus();
         }
     };
 
