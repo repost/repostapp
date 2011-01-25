@@ -272,7 +272,7 @@ this.postimage = function(cap, image){
 var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu64c/s1600/fuck-you-i-am-cat.jpg"
 
 // The XMLHttpRequest object that tries to load and parse the feed.
-var reposter= document.getElementById("pluginId");
+//var reposter= document.getElementById("pluginId");
 var ptable;
 var pos = 0;
 function main() {
