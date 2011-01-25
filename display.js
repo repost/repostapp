@@ -14,8 +14,8 @@ chrome.extension.onRequest.addListener(
     console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
                 "from the extension");
-    if (request.greeting == "image"){
-      var img = new postimage("awesome cat", request.url);
+    if (request.type == "image"){
+      var img = new postimage(request.caption, request.src);
       ptable.insertPost(img.getImageElement(),0);
       sendResponse({}); // snub them.
     }
@@ -130,6 +130,7 @@ this.posttable = function(){
             this.deletePostXY(pos);
             i++;
         }
+        this.adjustRanks();
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -263,10 +264,8 @@ this.postimage = function(cap, image){
         title.innerHTML = caption;
         imagepost.appendChild(title);
 
-
         return imagepost;
     };
-
 };
 
 var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu64c/s1600/fuck-you-i-am-cat.jpg"

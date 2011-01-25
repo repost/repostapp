@@ -4,7 +4,7 @@ contentClicker = function() {
 
     var ImgDialog;
     var caption;
-
+    var current_target;
     this.init = function(){
         // Create image diaglog
         ImgDialog = document.createElement('div');
@@ -23,7 +23,7 @@ contentClicker = function() {
         // add event listener to each image on the page
         var images = document.getElementsByTagName("img");
         for( var i = 0; i < images.length; i++ ){
-            images[i].addEventListener('click',this.clickListener,false);
+            images[i].addEventListener('click',this.imgClickListener,false);
         }
     };
 
@@ -37,11 +37,8 @@ contentClicker = function() {
 
     this.sendImage = function(event){
         if(event.keyCode == 13){
-            var target = { caption: caption.value, 
-                           src: "fasasdas.jpg",
-                           context: "asdsdad.asdas"
-                         };
-            chrome.extension.sendRequest(target, function(response) {
+            current_target.caption = caption.value;
+            chrome.extension.sendRequest(current_target, function(response) {
                 console.log(response.farewell);
             });
             ImgDialog.style.visibility = "hidden";
@@ -49,11 +46,17 @@ contentClicker = function() {
         }
     };
 
-    this.clickListener = function(event){
-        console.log(event.target);
+    this.imgClickListener = function(event){
         if(event.altKey){
-            cc.createImgDialog("hello", event.clientX, event.clientY);
+            current_target = { type: "image",
+                               caption: "",
+                               src: event.currentTarget.src,
+                               context: event.currentTarget.baseURI
+                             };
+            cc.createImgDialog(event.currentTarget.src, event.clientX, event.clientY);
             cc.imgFocus();
+            event.returnValue = false;
+            return false;
         }
     };
 
