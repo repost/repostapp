@@ -2,13 +2,6 @@
 //      On-A-Page Interface         //
 //////////////////////////////////////
 
-// A generic onclick callback function.
-function repostOnClick(info, tab) {
-  console.log("item " + info.menuItemId + " was clicked");
-  console.log("info: " + JSON.stringify(info));
-  console.log("tab: " + JSON.stringify(tab));
-  }
-
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
     console.log(sender.tab ?
@@ -20,7 +13,6 @@ chrome.extension.onRequest.addListener(
       sendResponse({}); // snub them.
     }
   });
-
 
 //////////////////////////////////
 //      App Interface           //
@@ -268,39 +260,17 @@ this.postimage = function(cap, image){
     };
 };
 
-var fu = "http://1.bp.blogspot.com/_3aZSroALBqY/THViBPqdmII/AAAAAAAAAMM/AuWtXUQu64c/s1600/fuck-you-i-am-cat.jpg"
-
 // The XMLHttpRequest object that tries to load and parse the feed.
 //var reposter= document.getElementById("pluginId");
 var ptable;
-var pos = 0;
-function main() {
-    // Create one test item for each context type.
-    var contexts = ["image"];
-    //var contexts = ["selection","link","image","video","audio"];
-    
-    //var plugin = document.getElementById("plugin");
-    //var hw = plugin.reposter();
-    //var hello = hw.GetPost();
 
- //   for (var i = 0; i < contexts.length; i++) {
-   //   var context = contexts[i];
-     // var title = "repost that '" + context ;
-      //var id = chrome.contextMenus.create({"title": title, "contexts":[context],
-       //                                    "onclick": repostOnClick});
- //   }
+function main() {
+    
+    var plugin = document.getElementById("plugin");
+    var hw = plugin.Reposter();
+    var hello = hw.GetPost();
 
     ptable = new posttable();
-    img = new postimage("awesome cat", fu);
-    for(x=0;x<15;x++){
-    	ptable.addPost(img.getImageElement(),x);
-	}
-for(x=0;x<15;x++){
-    	ptable.delShufflePost(0);
-	}
-for(x=0;x<15;x++){
-    	//ptable.addPost(img.getImageElement(),x);
-	}
 };
 
 
