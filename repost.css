@@ -1,25 +1,28 @@
-/* 
+/**
+ * repost css.
+ * color palette 
+ *  9D98E8
+ *  C4A7FF
+ *  B4C3FF
+ *  98BEE8
+ *  A7E7FF
+ */
 
-	TableCloth	
-	by Alen Grakalic, brought to you by cssglobe.com
-	
-*/
-
-/* general styles */
-
+/**
+ * Post Table
+ */
 table{border-collapse:collapse;margin:1em 0;}
 
-/* tablecloth styles */
 td.postcell {
     padding:5px;
-    background:#e5f1f4;
+    background:#B4C3FF;
     border:1px solid #fff;
     width:250px;
     height:150px;
 }
 td.fuckoff {
     padding:5px;
-    background:#6A94D4;
+    background:#9D98E8;
     border:1px solid #fff;
     width:250px;
     height:150px;
@@ -27,28 +30,63 @@ td.fuckoff {
 }
 td.rockon {
     padding:5px;
-    background:#FFb273;
+    background:#A7E7FF;
     border:1px solid #fff;
     width:250px;
     height:150px;
 }
 
-/* post styles */
-img.smallpost{
-    width:150px;
+img.votehand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    clear:right;
+}
+
+img.downhand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    clear:right;
+    background:#9D98E8;
+}
+
+
+img.uphand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    background:#A7E7FF;
+    clear:right;
+}
+
+
+div.metric{
+    float:right; 
+    clear:right;
+    margin: 0 15px 0 0px;
+    font-family:"Lucida Console", Courier New, monospace;
+}
+
+/**
+ * Post styles 
+ */
+img.postpreview{
+    max-width:250px;
+    max-height:120px;    
     position:relative;
-    bottom:10px;
+    top:10px;
     left:10px;
 }
-img.bigpost{width:300px;}
 
-img.votehand{width:30px;
-    width:30px;
-    float:right; 
-    margin: 0 0 15px 15px; 
-    clear:right
+div.postcaption{
+    margin: 13px 0 0 10px;
+    font-family:"Lucida Console", Courier New, monospace;
 }
 
+img.bigpost{
+    width:300px;
+}
 div.zoomer{
     position: absolute;
     border-radius:5px;

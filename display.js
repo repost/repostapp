@@ -1,22 +1,17 @@
-//////////////////////////////////////
-//      On-A-Page Interface         //
-//////////////////////////////////////
 
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
     if (request.type == "image"){
-      var img = new postimage(request.caption, request.src);
-      ptable.insertPost(img.getImageElement(),0);
+      var img = new postImage(request.caption, request.src, sender.tab.url);
+      var post = new Post("uuid",img.getContent(),"-");
+      ptable.insertPost(post,0);
       sendResponse({}); // snub them.
     }
   });
 
-//////////////////////////////////
-//      App Interface           //
-//////////////////////////////////
+/////////////////////
+//   Post Table   //
+////////////////////
 
 this.posttable = function(){
  
@@ -100,7 +95,9 @@ this.posttable = function(){
         var contents = table.rows[pos.y].cells[pos.x].children;
         for(x=0; x<contents.length;x++){
             if(contents[x].className == "post"){
-                return contents[x];
+                var post = new Post();
+                post.setXML(contents[x]);
+                return post;
             }
         }
         return null;
@@ -128,6 +125,7 @@ this.posttable = function(){
     // add the post(expecting innerHTML) to rank whatever
     // If there is a post already there is will remove it
     this.addPost = function( post, rank){
+ 
         var pos = this.rankToxy(rank);
         var row;
         // check we got enough rows
@@ -153,21 +151,27 @@ this.posttable = function(){
         uparrow.src = "./hpu.png";
         cell.appendChild(uparrow);
 
+        var met = document.createElement("div");
+        met.className = "metric";
+        met.innerHTML = post.getMetric();
+        cell.appendChild(met);
+
         var downarrow = document.createElement("image");
         downarrow.className = "votehand";
         downarrow.src = "./hpd.png";
         cell.appendChild(downarrow);
 
         // add some action code to the cells
-        uparrow.onmouseclick = function(){
+        uparrow.onclick = function(){
+            this.className = "uphand";
         };
 
         uparrow.onmouseover = function(){
-            this.parentNode.className = "rockon"
+            this.parentNode.className = "rockon";
         };
 
         uparrow.onmouseout = function(){
-            this.parentNode.className = "postcell"
+            this.parentNode.className = "postcell";
         };
 
         downarrow.onmouseover = function(){
@@ -179,6 +183,7 @@ this.posttable = function(){
         };
 
         downarrow.onclick = function(){
+            this.className = "downhand";
             ptable.delShufflePost(this.parentNode.getAttribute("rank"));
         };
 
@@ -199,7 +204,7 @@ this.posttable = function(){
         
         numentries++;
 
-        table.rows[pos.y].cells[pos.x].appendChild(post);
+        table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
     };
     
     this.enlargeitem = function(obj){
@@ -232,31 +237,66 @@ this.posttable = function(){
 
 };
 
-this.postimage = function(cap, image){
+/**
+ * Post class. Generic post container
+ */
+this.Post = function( u, cont, met){
+    
+    var uuid = u;
+    var content = cont;
+    var metric = met;
 
-    var url = image;
+    this.getXML = function(){
+        var xmlpost = document.createElement("div");
+        xmlpost.className = "post";
+        xmlpost.setAttribute("data-uuid",uuid);
+        xmlpost.setAttribute("data-metric",metric);
+        xmlpost.appendChild(content);
+        return xmlpost;
+    };
+
+    this.setXML  = function(xmlpost){
+        uuid = xmlpost.getAttribute("data-uuid");
+        metric = xmlpost.getAttribute("data-metric");
+        content = xmlpost.firstChild;
+    };
+
+    this.getUuid = function(){
+        return uuid;
+    };
+
+    this.getMetric = function(){
+        return metric;
+    };
+};
+
+/**
+ * Post Image class. Image content class.
+ */
+this.postImage = function(cap, img, con){
+
+    var image = img;
     var caption = cap;
+    var context = con;
 
-    this.getImageElement = function() {
-
+    this.getContent = function() {
         var imagepost = document.createElement("div");
+        imagepost.setAttribute("data-context", context);
+        var previewimage = document.createElement("image");
+        previewimage.className = "postpreview";
+        previewimage.src = image;
+        imagepost.appendChild(previewimage);
 
-        imagepost.className = "post";
-        imagepost.setAttribute("data-src",url);
-        imagepost.setAttribute("data-title",caption);
-	
-        var image = document.createElement("image");
-        image.className = "smallpost";
-        image.name = caption
-        image.src = url;
-        imagepost.appendChild(image);
-
-        var title = document.createElement("div");
-        title.className = "title";
-        title.innerHTML = caption;
-        imagepost.appendChild(title);
+        var previewcaption = document.createElement("div");
+        previewcaption.className = "postcaption";
+        previewcaption.innerHTML = caption;
+        imagepost.appendChild(previewcaption);
 
         return imagepost;
+    };
+
+    this.setContent = function(xml) {
+        //todo
     };
 };
 
@@ -266,9 +306,9 @@ var ptable;
 
 function main() {
     
-    var plugin = document.getElementById("plugin");
-    var hw = plugin.Reposter();
-    var hello = hw.GetPost();
+ //   var plugin = document.getElementById("plugin");
+  //  var hw = plugin.Reposter();
+   // var hello = hw.GetPost();
 
     ptable = new posttable();
 };
