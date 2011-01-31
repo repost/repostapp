@@ -301,14 +301,13 @@ this.postImage = function(cap, img, con){
 };
 
 // The XMLHttpRequest object that tries to load and parse the feed.
-//var reposter= document.getElementById("pluginId");
 var ptable;
 
 function main() {
     
- //   var plugin = document.getElementById("plugin");
-  //  var hw = plugin.Reposter();
-   // var hello = hw.GetPost();
+   var plugin = document.getElementById("plugin");
+   var hw = plugin.rePoster();
+    var hello = hw.getPost();
 
     ptable = new posttable();
 };
