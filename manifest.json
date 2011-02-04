@@ -20,7 +20,7 @@
     "16": "icon.jpeg"
   },
   "plugins": [
-    { "path": "librpl.so"  }
+    { "path": "librpl"  }
   ],
   "permissions": [
     "tabs",
