@@ -311,6 +311,7 @@ function main() {
 
     plugin = document.getElementById("plugin");
     hw = plugin.rePoster();
+    hw.startRepost();
     while(1){
         var hello = hw.getPost();
     }
