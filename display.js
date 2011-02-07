@@ -306,11 +306,15 @@ this.postImage = function(cap, img, con){
     var hw;
 
 function main() {
-    plugin = document.getElementById("plugin");
-    hw = plugin.rePoster();
-    var hello = hw.getPost();
 
     ptable = new posttable();
+
+    plugin = document.getElementById("plugin");
+    hw = plugin.rePoster();
+    while(1){
+        var hello = hw.getPost();
+    }
+
 };
 
 
