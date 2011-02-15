@@ -1,18 +1,10 @@
 <html>
 <head><title>Repost Options</title>
 <script src="options.js"></script>
+<link href="options.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
-
-<body onload="restore_options()">
-
-Set Repost Account:
-<form name="accountform" id="form">
-User: <input type="text" name="username" /><br/>
-Password: <input type="password" name="password" />
-<input type="button" name="save" value="Save" onclick="save_options(this.form)"></button>
-</form>
-<br>
-<div id="status"></div>
+<body onload="load_options();">
+<div id="repostoptions" align="center"></div>
 </body>
 </html>
 
