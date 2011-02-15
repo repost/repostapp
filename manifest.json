@@ -7,6 +7,7 @@
       "local_path": "main.html"
     }
   },
+  "options_page": "options.html",
   "content_scripts": [
     {
       "all_frames": true,
@@ -19,7 +20,7 @@
   "icons": {
     "16": "icon.jpeg"
   },
-  "plugins": [
+  plugins": [
     { "path": "librpl.so"  }
   ],
   "permissions": [

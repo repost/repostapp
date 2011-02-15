@@ -1,0 +1,18 @@
+<html>
+<head><title>Repost Options</title>
+<script src="options.js"></script>
+</head>
+
+<body onload="restore_options()">
+
+Set Repost Account:
+<form name="accountform" id="form">
+User: <input type="text" name="username" /><br/>
+Password: <input type="password" name="password" />
+<input type="button" name="save" value="Save" onclick="save_options(this.form)"></button>
+</form>
+<br>
+<div id="status"></div>
+</body>
+</html>
+
