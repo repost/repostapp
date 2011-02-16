@@ -87,6 +87,67 @@ this.acctList = function(){
 
 };
 
+this.addAcctPopup = function(){
+    
+    var popup;
+    var form;
+    var username;
+    var password;
+
+    this.username = function(){
+        return username.value;
+    };
+
+    this.password = function(){
+        return password.value;
+    };
+
+    this.createPopup = function(){
+        popup = document.createElement("div");
+        popup.className = "addAcctPopup";
+        form = document.createElement("form");
+        popup.appendChild(form);
+        
+        username = document.createElement("input");
+        username.type = "textbox";
+
+        password = document.createElement("input");
+        password.type = "password";
+
+        var add = document.createElement("button");
+        add.innerText = "Add";
+        add.onclick = addFromPopup(this);
+
+        var cancel = document.createElement("button");
+        cancel.innerText = "Cancel";       
+        cancel.onclick = function(e){
+            clearPopup(e);
+        };
+
+        form.appendChild(username);
+        form.appendChild(password);
+        form.appendChild(add);
+        form.appendChild(cancel);
+        return popup;
+    };
+
+};
+
+// This function is a scope preserver
+function addFromPopup(popup){
+    return function(){
+        var acc = new account();
+        acc.username = popup.username();
+        acc.password = popup.password();
+        acc.enabled="1";
+        al.addAcct(acc);
+    };
+};
+
+function clearPopup(e){
+    delete e.currentTarget.parentNode;
+};
+
 function saveAccounts(){
     localStorage["repostaccounts"] = JSON.stringify(al.getAll());
 
@@ -99,12 +160,8 @@ function saveAccounts(){
 };
 
 function addAccount(){
-    var acc = new account();
-    acc.username = "hello";
-    acc.password="pass";
-    acc.enabled="1";
-    acc.id="1";
-    al.addAcct(acc);
+    var addacct = new addAcctPopup();
+    opt.appendChild(addacct.createPopup());
 };
 
 function modifyAccount(pos){
@@ -118,8 +175,9 @@ function delAccount(pos){
 
 var al; // account list
 var stat; // account list status
+var opt;
 function load_options(){
-    var opt = document.getElementById("repostoptions");
+     opt = document.getElementById("repostoptions");
  
     // Create account list
     al = new acctList();
