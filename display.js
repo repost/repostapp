@@ -42,8 +42,6 @@ this.posttable = function(){
              rows--;
         }
         numentries--;
-        this.adjustRanks();
-    
     };
 
     // Deletes a post and shuffles all items in the table down.
@@ -60,22 +58,12 @@ this.posttable = function(){
             this.addPost(post,((1+i)*cols-1));
             r = (1+i)*cols;
         }
-        this.adjustRanks();
         
     };
 
-    // Cycles through the table adjusting the rank attribute for
-    // each cell to ensure it is correct.
-    this.adjustRanks = function(){
-        // this is good to visually shuffle but now we need
-        // to update the rank id for each item.
-        for( ii = 0; ii < numentries; ii++ ){
-            var pos = this.rankToxy(ii);
-            var cell = table.rows[pos.y].cells[pos.x];
-            if( cell != null ){
-                cell.setAttribute("rank",ii);
-            }
-        }
+    // Convert xy to rank
+    this.xytorank = function(x,y){
+       return (y*cols + x);
     };
 
     // Converts a rank into a position in the table.
@@ -119,7 +107,6 @@ this.posttable = function(){
             this.deletePostXY(pos);
             i++;
         }
-        this.adjustRanks();
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -139,7 +126,6 @@ this.posttable = function(){
         var cell = row.insertCell(pos.x);
         // check we go the cel
         cell.className = "postcell";
-        cell.setAttribute("rank",rank);
 
         //create the general stuff
         var postspace = document.createElement("div");
@@ -153,7 +139,7 @@ this.posttable = function(){
 
         var met = document.createElement("div");
         met.className = "metric";
-        met.innerHTML = post.getMetric();
+        //met.innerHTML = post.getMetric();
         cell.appendChild(met);
 
         var downarrow = document.createElement("image");
@@ -184,7 +170,8 @@ this.posttable = function(){
 
         downarrow.onclick = function(){
             this.className = "downhand";
-            ptable.delShufflePost(this.parentNode.getAttribute("rank"));
+            ptable.delShufflePost(ptable.xytorank(this.parentNode.cellIndex,
+                        this.parentNode.parentNode.rowIndex));
         };
 
         cell.onmouseover = function(){
@@ -204,7 +191,8 @@ this.posttable = function(){
         
         numentries++;
 
-        table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
+        //table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
+        table.rows[pos.y].cells[pos.x].appendChild("");
     };
     
     this.enlargeitem = function(obj){
@@ -309,6 +297,8 @@ function main() {
 
     ptable = new posttable();
 
+    ptable.insertPost(postImage("","",""),0);
+    ptable.insertPost(postImage("","",""),0);
     plugin = document.getElementById("plugin");
     hw = plugin.rePoster();
     hw.startRepost();

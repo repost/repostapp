@@ -10,11 +10,12 @@ this.acctList = function(){
 
     var table;
     var count = 0;
-    var accts;
+    var selected;
+    var accts = new Array();
     
     this.createList = function(){
-        var table = document.createElement("table");
-        var row = table.insertRow(0); // Heading
+        table = document.createElement("table");
+        var row = table.createTHead().insertRow(0); // Heading
         row.className = "acctListHeading";
         var cell = row.insertCell(0);
         cell.innerHTML = "Username";
@@ -29,46 +30,94 @@ this.acctList = function(){
 
         // Add display
         var row = table.insertRow(count+1);
+        row.className = "acctListItem";
+        row.onclick = function(e){
+            al.select(e.currentTarget.rowIndex);
+        };
         var cell = row.insertCell(0);
         var acctname = document.createElement("div");
         cell.appendChild(acctname);
-        acctname.className = "username";
+        acctname.className = "acctListusername";
         acctname.innerHTML = account.username;
         
         cell = row.insertCell(0);
-        var enabled = document.createElement("checkbox");
+        var enabled = document.createElement("input");
         cell.appendChild(enabled);
+        enabled.type = "checkbox";
         enabled.value = account.enabled;
+        enabled.className = "acctListenabled";
 
         count++;
     };
 
     this.removeAcct = function(pos){
+        this.clearSelected();
+        accts.splice(pos-1,1); //splice entry out
+        table.deleteRow(pos);
+        count--;
     };
     
     this.selected = function(){
+        return selected;
     };
 
     this.get = function(pos){
+        return accts[pos];
     };
 
     this.getAll = function(){
+        return accts;
+    };
 
+    this.clearSelected = function(){
+        if( selected != null ){
+          table.rows[selected].className = "acctListItem";
+        }
+        selected = null;
+    };
+
+    this.select = function(pos){
+        var wasselected = selected;
+        this.clearSelected();
+        if( wasselected != pos ){
+            selected = pos;
+            table.rows[pos].className = "acctListSelectedItem";
+        }
     };
 
 };
 
 function saveAccounts(){
     localStorage["repostaccounts"] = JSON.stringify(al.getAll());
-}
+
+    // Update status to let user know options were saved.
+    var stat = document.getElementById("acc");
+    stat.innerHTML = "Shit Saved.";
+    setTimeout(function() {
+      stat.innerHTML = "";
+    }, 750);
+};
 
 function addAccount(){
+    var acc = new account();
+    acc.username = "hello";
+    acc.password="pass";
+    acc.enabled="1";
+    acc.id="1";
+    al.addAcct(acc);
 };
 
 function modifyAccount(pos){
 };
 
-var al;
+function delAccount(pos){
+    if( pos != null){
+        al.removeAcct(pos);
+    }
+};
+
+var al; // account list
+var stat; // account list status
 function load_options(){
     var opt = document.getElementById("repostoptions");
  
@@ -79,7 +128,7 @@ function load_options(){
     // Add button
     var addAcct = document.createElement("button");
     addAcct.className = "acctListButtons";
-    addAcct.onclick = addAccount();
+    addAcct.onclick = addAccount;
     addAcct.innerText = "Add";
     opt.appendChild(addAcct);
 
@@ -87,42 +136,32 @@ function load_options(){
     var modifyAcct = document.createElement("button");
     modifyAcct.className = "acctListButtons";
     modifyAcct.innerText = "Modify";
-    modifyAcct.onclick = modifyAccount(al.selected());
+    modifyAcct.onclick = function () {
+        modifyAccount(al.selected());
+    };
     opt.appendChild(modifyAcct);
 
     // Delete Account
     var delAcct = document.createElement("button");
     delAcct.className = "acctListButtons";
     delAcct.innerText = "Delete";
-    delAcct.onclick = modifyAccount(al.selected());
+    delAcct.onclick = function(){
+        delAccount(al.selected());
+    };
     opt.appendChild(delAcct);
 
+    // Status placeholder
+    stat = document.createElement("div");
+    stat.className = "acctListstatus";
+    opt.appendChild(stat);
+
     // Get saved accounts from local storage
-    var accts = JSON.parse(localStorage["repostaccounts"]);
-    for(var a in accts){
-        al.addAcct(a);
+    var as = localStorage["repostaccounts"];
+    if( as != null ){
+        var accts = JSON.parse(as);
+        for(var a in accts){
+            al.addAcct(a);
+        }
     }
-}
-
-function save_options(form) {
-  localStorage["username"] = form.username.value;
-  localStorage["password"] = form.password.value;
-
-  // Update status to let user know options were saved.
-  var status = document.getElementById("status");
-  status.innerHTML = "Shit Saved.";
-  setTimeout(function() {
-    status.innerHTML = "";
-  }, 750);
-}
-
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-  var username = localStorage["username"];
-  var password = localStorage["password"];
-  var form = document.getElementById("form");
-  form.username.value = username;
-  form.password.value = password;
-}
-
+};
 
