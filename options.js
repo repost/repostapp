@@ -44,7 +44,7 @@ this.acctList = function(){
         var enabled = document.createElement("input");
         cell.appendChild(enabled);
         enabled.type = "checkbox";
-        enabled.value = account.enabled;
+        enabled.checked = (account.enabled == "1");
         enabled.className = "acctListenabled";
 
         count++;
@@ -90,23 +90,13 @@ this.acctList = function(){
 this.addAcctPopup = function(){
     
     var popup;
-    var form;
     var username;
     var password;
 
-    this.username = function(){
-        return username.value;
-    };
-
-    this.password = function(){
-        return password.value;
-    };
-
     this.createPopup = function(){
+
         popup = document.createElement("div");
         popup.className = "addAcctPopup";
-        form = document.createElement("form");
-        popup.appendChild(form);
         
         username = document.createElement("input");
         username.type = "textbox";
@@ -116,7 +106,7 @@ this.addAcctPopup = function(){
 
         var add = document.createElement("button");
         add.innerText = "Add";
-        add.onclick = addFromPopup(this);
+        add.onclick = this.addFromPopup(this);
 
         var cancel = document.createElement("button");
         cancel.innerText = "Cancel";       
@@ -124,44 +114,51 @@ this.addAcctPopup = function(){
             clearPopup(e);
         };
 
-        form.appendChild(username);
-        form.appendChild(password);
-        form.appendChild(add);
-        form.appendChild(cancel);
+        popup.appendChild(username);
+        popup.appendChild(password);
+        popup.appendChild(add);
+        popup.appendChild(cancel);
+    };
+
+    this.username = function(){
+        return username.value;
+    };
+
+    this.password = function(){
+        return password.value;
+    };
+
+    this.getPopup = function(){
         return popup;
     };
 
-};
-
-// This function is a scope preserver
-function addFromPopup(popup){
-    return function(){
-        var acc = new account();
-        acc.username = popup.username();
-        acc.password = popup.password();
-        acc.enabled="1";
-        al.addAcct(acc);
+    this.addFromPopup = function(popup){
+       return function(e){
+           var acc = new account();
+           acc.username = popup.username();
+           acc.password = popup.password();
+           acc.enabled="1";
+           al.addAcct(acc);
+           saveAccounts();
+           //delete e.currentTarget.parentNode;
+       };
     };
+   
+    this.createPopup();
 };
-
+       
 function clearPopup(e){
-    delete e.currentTarget.parentNode;
+    //delete e.currentTarget.parentNode;
 };
 
 function saveAccounts(){
     localStorage["repostaccounts"] = JSON.stringify(al.getAll());
 
     // Update status to let user know options were saved.
-    var stat = document.getElementById("acc");
     stat.innerHTML = "Shit Saved.";
     setTimeout(function() {
       stat.innerHTML = "";
     }, 750);
-};
-
-function addAccount(){
-    var addacct = new addAcctPopup();
-    opt.appendChild(addacct.createPopup());
 };
 
 function modifyAccount(pos){
@@ -170,6 +167,7 @@ function modifyAccount(pos){
 function delAccount(pos){
     if( pos != null){
         al.removeAcct(pos);
+        saveAccounts();
     }
 };
 
@@ -177,8 +175,9 @@ var al; // account list
 var stat; // account list status
 var opt;
 function load_options(){
-     opt = document.getElementById("repostoptions");
- 
+
+    opt = document.getElementById("repostoptions");
+
     // Create account list
     al = new acctList();
     opt.appendChild(al.createList());
@@ -186,7 +185,11 @@ function load_options(){
     // Add button
     var addAcct = document.createElement("button");
     addAcct.className = "acctListButtons";
-    addAcct.onclick = addAccount;
+    addAcct.onclick = function(){
+        var aap = new addAcctPopup();
+        var r = aap.getPopup();
+        opt.appendChild(r);
+    };
     addAcct.innerText = "Add";
     opt.appendChild(addAcct);
 
