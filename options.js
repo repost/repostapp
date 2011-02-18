@@ -44,8 +44,12 @@ this.acctList = function(){
         var enabled = document.createElement("input");
         cell.appendChild(enabled);
         enabled.type = "checkbox";
-        enabled.checked = (account.enabled == "1");
+        enabled.checked = account.enabled;
         enabled.className = "acctListenabled";
+        enabled.onclick = function(e){
+            accts[e.currentTarget.parentNode.parentNode.rowIndex - 1].enabled = this.checked;
+            saveAccountList();
+        }
 
         count++;
     };
@@ -75,6 +79,10 @@ this.acctList = function(){
         }
         selected = null;
     };
+
+    this.save = function(){
+        saveAccounts(al.getAll());
+    }
 
     this.select = function(pos){
         var wasselected = selected;
@@ -110,9 +118,7 @@ this.addAcctPopup = function(){
 
         var cancel = document.createElement("button");
         cancel.innerText = "Cancel";       
-        cancel.onclick = function(e){
-            clearPopup(e);
-        };
+        cancel.onclick = this.clearPopup(this);
 
         popup.appendChild(username);
         popup.appendChild(password);
@@ -131,50 +137,55 @@ this.addAcctPopup = function(){
     this.getPopup = function(){
         return popup;
     };
+ 
+    this.deleteMe = function(){
+        popup.parentNode.removeChild(popup);
+    };
 
     this.addFromPopup = function(popup){
        return function(e){
            var acc = new account();
            acc.username = popup.username();
            acc.password = popup.password();
-           acc.enabled="1";
+           acc.enabled="true";
            al.addAcct(acc);
-           saveAccounts();
-           //delete e.currentTarget.parentNode;
+           saveAccountList();
+           popup.deleteMe();
        };
     };
-   
+
+    this.clearPopup = function(popup){
+        return function(){
+            popup.deleteMe();
+        };
+    };
+
     this.createPopup();
-};
-       
-function clearPopup(e){
-    //delete e.currentTarget.parentNode;
-};
-
-function saveAccounts(){
-    localStorage["repostaccounts"] = JSON.stringify(al.getAll());
-
-    // Update status to let user know options were saved.
-    stat.innerHTML = "Shit Saved.";
-    setTimeout(function() {
-      stat.innerHTML = "";
-    }, 750);
 };
 
 function modifyAccount(pos){
 };
 
 function delAccount(pos){
-    if( pos != null){
-        al.removeAcct(pos);
-        saveAccounts();
-    }
+    
 };
+
+function saveAccountList(){
+
+    al.save();
+    // Update status to let user know options were saved.
+    stat.innerHTML = "Shit Saved.";
+    setTimeout(function() {
+      stat.innerHTML = "";
+    }, 750);
+
+};
+
 
 var al; // account list
 var stat; // account list status
 var opt;
-function load_options(){
+function main(){
 
     opt = document.getElementById("repostoptions");
 
@@ -207,7 +218,11 @@ function load_options(){
     delAcct.className = "acctListButtons";
     delAcct.innerText = "Delete";
     delAcct.onclick = function(){
-        delAccount(al.selected());
+        var pos = al.selected();
+        if( pos != null){
+            al.removeAcct(pos);
+            saveAccountList();
+        }   
     };
     opt.appendChild(delAcct);
 
@@ -216,13 +231,10 @@ function load_options(){
     stat.className = "acctListstatus";
     opt.appendChild(stat);
 
-    // Get saved accounts from local storage
-    var as = localStorage["repostaccounts"];
-    if( as != null ){
-        var accts = JSON.parse(as);
-        for(var a in accts){
-            al.addAcct(a);
-        }
+    // Get the current accounts
+    var accts = loadAccounts();
+    for(var i=0, len = accts.length; i<len; i++){
+        al.addAcct(accts[i]);
     }
 };
 

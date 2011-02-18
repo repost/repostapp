@@ -295,6 +295,8 @@ this.postImage = function(cap, img, con){
 
 function main() {
 
+    // Check we have an account to log into
+
     ptable = new posttable();
 
     ptable.insertPost(postImage("","",""),0);
