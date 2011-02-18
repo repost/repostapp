@@ -191,8 +191,7 @@ this.posttable = function(){
         
         numentries++;
 
-        //table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
-        table.rows[pos.y].cells[pos.x].appendChild("");
+        table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
     };
     
     this.enlargeitem = function(obj){
@@ -293,24 +292,35 @@ this.postImage = function(cap, img, con){
     var plugin;
     var hw;
 
+function createOptionsLink(){
+    var optlink = document.createElement("div");
+    optlink.innerHTML = "You don't seem to have any accounts. Please goto "+
+                "options page and add one. <a href=\"options.html\">Options "+
+                "Page</a>";
+    return optlink;
+};
+
 function main() {
 
     // Check we have an account to log into
-
-    ptable = new posttable();
-
-    ptable.insertPost(postImage("","",""),0);
-    ptable.insertPost(postImage("","",""),0);
-    plugin = document.getElementById("plugin");
-    hw = plugin.rePoster();
-    hw.startRepost();
-    checkForPost();
+    var accounts = loadAccounts();
+    if( accounts.length == 0 ){
+        // no accounts direct to options page
+        var page = document.getElementById("repost"); 
+        page.appendChild(createOptionsLink());
+    }else{
+        ptable = new posttable();
+        plugin = document.getElementById("plugin");
+        hw = plugin.rePoster();
+        hw.startRepost();
+        checkForPost();
+    }
 };
 
 function checkForPost(){
 
     var post = hw.getPost();
-    ptable.insertPost(postImage("",post.content,""),0);
+    ptable.insertPost(post,0);
     setTimeout("checkForPost()",1000);
 };
 
