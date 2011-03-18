@@ -304,7 +304,7 @@ function main() {
 
     // Check we have an account to log into
     var accounts = loadAccounts();
-    if( accounts.length == 0 ){
+    if( accounts == null || accounts.length == 0 ){
         // no accounts direct to options page
         var page = document.getElementById("repost"); 
         page.appendChild(createOptionsLink());
@@ -312,15 +312,16 @@ function main() {
         ptable = new posttable();
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
+        hw.setNewPostCB(checkForPost);
+        for(var i=0; i<accounts.length; i++){
+            hw.addAccount(accounts[i].username, accounts[i].password, "jabber");
+        }
         hw.startRepost();
-        checkForPost();
     }
 };
 
 function checkForPost(){
-
     var post = hw.getPost();
     ptable.insertPost(post,0);
-    setTimeout("checkForPost()",1000);
 };
 

@@ -1,5 +1,6 @@
 
 this.account = function(){
+    var proto;
     var username;
     var password;
     var id;
