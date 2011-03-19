@@ -3,9 +3,11 @@ chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
     if (request.type == "image"){
       var img = new postImage(request.caption, request.src, sender.tab.url);
-      var post = new Post("uuid",img.getContent(),"-");
+      var p = hw.newPost();
+      var post = new Post(p.uuid ,img.getContent(),"-");
       ptable.insertPost(post,0);
       sendResponse({}); // snub them.
+      hw.sendPost(p);
     }
   });
 
@@ -317,11 +319,14 @@ function main() {
             hw.addAccount(accounts[i].username, accounts[i].password, "jabber");
         }
         hw.startRepost();
+      var post = hw.newPost();
+      hw.sendPost(post);
+
     }
 };
 
 function checkForPost(){
-    var post = hw.getPost();
+    var post = new Post("","","");
     ptable.insertPost(post,0);
 };
 
