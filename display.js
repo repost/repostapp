@@ -314,6 +314,7 @@ function main() {
         ptable = new posttable();
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
+        hw.init();
         hw.setNewPostCB(checkForPost);
         for(var i=0; i<accounts.length; i++){
             hw.addAccount(accounts[i].username, accounts[i].password, "jabber");
