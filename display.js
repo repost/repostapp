@@ -1,27 +1,24 @@
-
+// Listener function waiting for user to interact with page and
+// repost something.
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
     if (request.type == "image"){
       var img = new postImage(request.caption, request.src, sender.tab.url);
-      var p = hw.newPost();
-      var post = new Post(p.uuid ,img.getContent(),"-");
+      var post = new Post("" ,img,"-"); 
       ptable.insertPost(post,0);
       sendResponse({}); // snub them.
-      hw.sendPost(p);
+      hw.sendPost(jPostToCPost(post));
     }
   });
 
-/////////////////////
-//   Post Table   //
-////////////////////
-
+// The repost post table which displays posts
 this.posttable = function(){
  
-    var rows = 0;     // dependent upon how much stuff you add
-    var cols = 5;     // Standard 5 cols wide   
-    var table;    // table instance 
-    var tableover = false;
-    var numentries = 0;
+    var rows = 0;       // dependent upon how much stuff you add
+    var cols = 5;       // Standard 5 cols wide   
+    var numentries = 0; // number of items in table
+    var table;          // table instance 
+    var tableover = false; // Mouse currently over table
     
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
@@ -29,15 +26,14 @@ this.posttable = function(){
         page.appendChild(table); 
     }; 
 
-    // Deletes a post from the table.
+    // Deletes a post from the table given rank
     this.deletePost = function(rank){
-        // calc where we need to put this shit.
         var pos = this.rankToxy(rank);
         this.deletePostXY(pos);
        };
 
+    // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
-    
         var contents = table.rows[pos.y].deleteCell(pos.x);
         if( table.rows[pos.y].cells.length == 0 ){
              table.deleteRow(pos.y);
@@ -80,7 +76,8 @@ this.posttable = function(){
         var pos = this.rankToxy(rank);
         return this.getPostXY(pos);
     };
-
+    
+    // Return post from coord (x,y)
     this.getPostXY = function(pos){
         var contents = table.rows[pos.y].cells[pos.x].children;
         for(x=0; x<contents.length;x++){
@@ -196,39 +193,11 @@ this.posttable = function(){
         table.rows[pos.y].cells[pos.x].appendChild(post.getXML());
     };
     
-    this.enlargeitem = function(obj){
-         var post = obj.lastChild;
-         var frm = document.createElement("div");
-         frm.className = "zoomer";
-
-         var image = document.createElement("image");
-         image.className = "bigpost";
-         image.src = post.getAttribute("data-src");
-         image.name = post.getAttribute("data-title");
-         frm.appendChild(image);
-
-         var title = document.createElement("div");
-         title.className = "title";
-         title.innerHTML = post.getAttribute("data-title"); 
-         frm.appendChild(title);
-
-         obj.appendChild(frm,post);
-    };
-
-    this.shrinkitem = function(obj){
-       obj.parentNode.removeChild(obj);
-    };
-
-    this.out = function(obj){
-    };
-
     this.createTable();
 
 };
 
-/**
- * Post class. Generic post container
- */
+// Post class. Generic post container
 this.Post = function( u, cont, met){
     
     var uuid = u;
@@ -240,7 +209,9 @@ this.Post = function( u, cont, met){
         xmlpost.className = "post";
         xmlpost.setAttribute("data-uuid",uuid);
         xmlpost.setAttribute("data-metric",metric);
-        xmlpost.appendChild(content);
+        // Trying to let content object decide how displays in 
+        // post box
+        xmlpost.appendChild(content.getContent());
         return xmlpost;
     };
 
@@ -259,21 +230,21 @@ this.Post = function( u, cont, met){
     };
 };
 
-/**
- * Post Image class. Image content class.
- */
+// Post Image class. Image content class.
 this.postImage = function(cap, img, con){
 
     var image = img;
     var caption = cap;
     var context = con;
 
+    // Construct image content from its parts
     this.getContent = function() {
         var imagepost = document.createElement("div");
         imagepost.setAttribute("data-context", context);
         var previewimage = document.createElement("image");
         previewimage.className = "postpreview";
         previewimage.src = image;
+        previewimage.onclick = "location.href=" + context;
         imagepost.appendChild(previewimage);
 
         var previewcaption = document.createElement("div");
@@ -289,45 +260,59 @@ this.postImage = function(cap, img, con){
     };
 };
 
-// The XMLHttpRequest object that tries to load and parse the feed.
-    var ptable;
-    var plugin;
-    var hw;
-
-function createOptionsLink(){
-    var optlink = document.createElement("div");
-    optlink.innerHTML = "You don't seem to have any accounts. Please goto "+
-                "options page and add one. <a href=\"options.html\">Options "+
-                "Page</a>";
-    return optlink;
-};
+var ptable; // Mainpage table display
+var plugin; // the repost plugin instance
+var hw; // a repost object
 
 function main() {
-
     // Check we have an account to log into
     var accounts = loadAccounts();
     if( accounts == null || accounts.length == 0 ){
-        // no accounts direct to options page
+        // direct to options page
         var page = document.getElementById("repost"); 
         page.appendChild(createOptionsLink());
     }else{
+        // start repost
         ptable = new posttable();
+        // plugin init
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         hw.init();
         hw.setNewPostCB(checkForPost);
+        // add saved accounts
         for(var i=0; i<accounts.length; i++){
             hw.addAccount(accounts[i].username, accounts[i].password, "jabber");
         }
         hw.startRepost();
-      var post = hw.newPost();
-      hw.sendPost(post);
-
     }
 };
 
-function checkForPost(){
-    var post = new Post("","","");
-    ptable.insertPost(post,0);
+// Creates the link to the options page. Should probably redirect in future.
+function createOptionsLink(){
+    var optlink = document.createElement("div");
+    optlink.innerHTML = "You don't seem to have any accounts. Please goto "+
+                        "options page and add one. <a href=\"options.html\">Options "+
+                        "Page</a>";
+    return optlink;
+};
+
+// Converts a js instance of a post into the c++ representation
+function jPostToCPost(post){
+    var p = hw.newPost();
+    p.uuid = post.uuid;
+    p.content = JSON.stringify(post.content);
+    p.metric = post.metric;
+    return p;
+};
+
+// Converts a c++ post to a js representation
+function cPostToJPost(post){
+    var p = new Post(post.uuid,JSON.parse(post.content),post.metric);
+    return p;
+};
+
+// Callback called when the rpeost plugin has a new post
+function checkForPost(post){
+    ptable.insertPost(cPostToJPost(post),0);
 };
 
