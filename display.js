@@ -20,8 +20,10 @@ chrome.extension.onRequest.addListener(
 // When we receive content via repostlib we need to be able to build
 // a nice object from the JSON
 function buildFromJSON(content){
-    var obj = new content["_class"]();
-    obj.loadFromJSON(content);
+    var objstr = JSON.parse(content);
+    var j = objstr["cname"];
+    var obj = new window[objstr["cname"]]();
+    obj.loadFromJSON(objstr);
     return obj;
 };
 
@@ -63,6 +65,10 @@ this.postImage = function(){
         context = con;
     };
 
+    this.setImage = function(i){
+        image = i;
+    };
+
     // Construct image content from its parts
     this.getXml = function(uuid, metric) {
         var imagepost = document.createElement("div");
@@ -91,13 +97,13 @@ this.postImage = function(){
     };
 
     this.toJSON = function() {
-        var json = {
-            "_classname" : "postImage",
+        var j = {
+            "cname" : "postImage",
             "image" : image,
             "context" : context,
             "caption" : caption
         };
-        return json;
+        return j;
     };
 };
 
