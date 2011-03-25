@@ -1,3 +1,17 @@
+// Holds the post while we move posts around
+this.postHolder = function(){
+
+    var xml;
+
+    this.setXml = function(x){
+        xml = x;
+    };
+
+    this.getXml = function(){
+        return xml;
+    };
+}
+
 // The repost post table which displays posts
 this.posttable = function(){
  
@@ -69,8 +83,8 @@ this.posttable = function(){
         var contents = table.rows[pos.y].cells[pos.x].children;
         for(x=0; x<contents.length;x++){
             if(contents[x].className == "post"){
-                var post = new Pst();
-                post.setXML(contents[x]);
+                var post = new postHolder();
+                post.setXml(contents[x]);
                 return post;
             }
         }
