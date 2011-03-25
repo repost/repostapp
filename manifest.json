@@ -1,0 +1,34 @@
+{
+  "name": "repost",
+  "version": "0.1",
+  "description": "experience together",
+  "app": {
+    "launch": {
+      "local_path": "main.html"
+    }
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": ["http://*/*","https://*/*"],
+      "css" : ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icon.jpeg"
+  },
+  "omnibox": {"keyword" : "repost"},
+  "plugins": [
+    { "path": "librpl.so"  }
+  ],
+  "permissions": [
+    "tabs",
+    "unlimitedStorage",
+    "notifications",
+    "http://*/",
+    "https://*/"
+  ]
+}

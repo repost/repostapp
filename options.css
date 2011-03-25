@@ -1,0 +1,126 @@
+/**
+ * color palette 
+ *  9D98E8
+ *  C4A7FF
+ *  B4C3FF
+ *  98BEE8
+ *  A7E7FF
+ */
+
+/**
+ * Account List Table
+ */
+table{
+    border-collapse:collapse;
+    margin:15px;
+    width:200px;
+    height:300px;
+}
+
+tr.acctListItem
+{
+	padding: 8px;
+	background: #e8edff; 
+	border-bottom: 1px solid #fff;
+	color: #669;
+	border-top: 1px solid transparent;
+}
+
+tr.acctListSelectedItem
+{
+	padding: 8px;
+	background: #e8e4ff; 
+	border-bottom: 1px solid #fff;
+	color: #869;
+	border-top: 1px solid transparent;
+}
+
+
+tr.acctListHeading {
+	font-size: 13px;
+	font-weight: normal;
+	padding: 8px;
+	background: #b9c9fe;
+	border-top: 4px solid #aabcfe;
+	border-bottom: 1px solid #fff;
+	color: #039;
+}
+
+
+td.fuckoff {
+    padding:5px;
+    background:#9D98E8;
+    border:1px solid #fff;
+    width:250px;
+    height:150px;
+    border:1px solid #fff;
+}
+td.rockon {
+    padding:5px;
+    background:#A7E7FF;
+    border:1px solid #fff;
+    width:250px;
+    height:150px;
+}
+
+img.votehand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    clear:right;
+}
+
+img.downhand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    clear:right;
+    background:#9D98E8;
+}
+
+
+img.uphand{
+    width:27px;
+    float:right; 
+    margin: 15px 5px 15px 0px;
+    background:#A7E7FF;
+    clear:right;
+}
+
+
+div.metric{
+    float:right; 
+    clear:right;
+    margin: 0 15px 0 0px;
+    font-family:"Lucida Console", Courier New, monospace;
+}
+
+/**
+ * Post styles 
+ */
+img.postpreview{
+    max-width:250px;
+    max-height:120px;    
+    position:relative;
+    top:10px;
+    left:10px;
+}
+
+div.postcaption{
+    margin: 13px 0 0 10px;
+    font-family:"Lucida Console", Courier New, monospace;
+}
+
+img.bigpost{
+    width:300px;
+}
+div.zoomer{
+    position: absolute;
+    border-radius:5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background: white;
+    -moz-box-shadow:1px 1px 5px #000;
+    -webkit-box-shadow:1px 1px 5px #000;
+    box-shadow:1px 1px 5px #000;
+}
