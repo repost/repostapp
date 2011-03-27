@@ -187,7 +187,7 @@ var al; // account list
 var stat; // account list status
 var opt;
 function main(){
-
+    
     opt = document.getElementById("repostoptions");
 
     // Create account list
@@ -197,10 +197,12 @@ function main(){
     // Add button
     var addAcct = document.createElement("button");
     addAcct.className = "acctListButtons";
-    addAcct.onclick = function(){
+    addAcct.onclick = function(event){
         var aap = new addAcctPopup();
         var r = aap.getPopup();
-        opt.appendChild(r);
+        r.style.top = "0px";
+        r.style.left = "0px";
+        document.body.appendChild(r);
     };
     addAcct.innerText = "Add";
     opt.appendChild(addAcct);

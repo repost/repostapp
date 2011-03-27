@@ -108,11 +108,11 @@ this.postImage = function(){
 };
 
 // Callback called when the rpeost plugin has a new post
-function checkForPost(post){
+function checkForPost(post,rank){
     var con = buildFromJSON(post.content);
     con.setUuid(post.uuid);
     con.setMetric(post.metric);
-    ptable.insertPost(con,0);
+    ptable.insertPost(con,rank);
 };
 
 // Creates the link to the options page. Should probably redirect in future.
