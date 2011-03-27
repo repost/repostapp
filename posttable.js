@@ -57,7 +57,6 @@ this.posttable = function(){
             this.addPost(post,((1+i)*cols-1));
             r = (1+i)*cols;
         }
-        
     };
 
     // Convert xy to rank
@@ -149,7 +148,7 @@ this.posttable = function(){
 
         // add some action code to the cells
         uparrow.onclick = function(){
-            this.className = "uphand";
+            uparrow.src = "./hpuselect.png";
         };
 
         uparrow.onmouseover = function(){

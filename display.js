@@ -3,7 +3,7 @@
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
     if (request.type == "image"){
-      var p = hw.newPost();
+      var p = plugin.Post();
       var img = new postImage();
       img.setCaption(request.caption);
       img.setImage(request.src);
@@ -144,9 +144,13 @@ function main() {
         hw = plugin.rePoster();
         hw.init();
         hw.setNewPostCB(checkForPost);
+        var acc = plugin.Account();
         // add saved accounts
         for(var i=0; i<accounts.length; i++){
-            hw.addAccount(accounts[i].username, accounts[i].password, "jabber");
+            acc.user = accounts[i].username;
+            acc.pass = accounts[i].password;
+            acc.type = "XMPP";
+            hw.addAccount(acc);
         }
         hw.startRepost();
     }
