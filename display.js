@@ -139,7 +139,7 @@ function main() {
     }else{
         // start repost
         ptable = new posttable();
-        // plugin init
+        // init the posttable
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         hw.init();
