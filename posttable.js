@@ -21,6 +21,9 @@ this.posttable = function(){
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
     
+    var plugin; // the repost plugin instance
+    var hw; // a post object
+
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
         table = document.createElement("table"); 
@@ -31,7 +34,13 @@ this.posttable = function(){
     this.deletePost = function(rank){
         var pos = this.rankToxy(rank);
         this.deletePostXY(pos);
-       };
+        if ( plugin === undefined )
+        {
+            plugin = document.getElementById("plugin");
+            hw = plugin.Post();
+        }
+        hw.downboat("aksjdhfaksdhfasd");
+    };
 
     // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
@@ -149,6 +158,12 @@ this.posttable = function(){
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
+            if ( plugin === undefined )
+            {
+                plugin = document.getElementById("plugin");
+                hw = plugin.Post();
+            }
+            hw.upboat("asdfasdfasdf");
         };
 
         uparrow.onmouseover = function(){
