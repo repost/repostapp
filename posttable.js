@@ -34,12 +34,6 @@ this.posttable = function(){
     this.deletePost = function(rank){
         var pos = this.rankToxy(rank);
         this.deletePostXY(pos);
-        if ( plugin === undefined )
-        {
-            plugin = document.getElementById("plugin");
-            hw = plugin.Post();
-        }
-        hw.downboat("aksjdhfaksdhfasd");
     };
 
     // Delete a post from table given xy coords
@@ -97,6 +91,12 @@ this.posttable = function(){
             }
         }
         return null;
+    };
+
+    // Return the uuid from the (x,y)
+    this.getUuid = function(pos){
+        var postcon = this.getPostXY(pos).getXml();
+        return postcon.attributes["data-uuid"].value;
     };
 
     // inserts a post at the given location and 
@@ -158,12 +158,14 @@ this.posttable = function(){
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
+            var pos = {x:this.parentNode.cellIndex,
+                        y:this.parentNode.parentNode.rowIndex};
             if ( plugin === undefined )
             {
                 plugin = document.getElementById("plugin");
                 hw = plugin.Post();
             }
-            hw.upboat("asdfasdfasdf");
+            hw.upboat(ptable.getUuid(pos));
         };
 
         uparrow.onmouseover = function(){
@@ -184,8 +186,15 @@ this.posttable = function(){
 
         downarrow.onclick = function(){
             this.className = "downhand";
-            ptable.delShufflePost(ptable.xytorank(this.parentNode.cellIndex,
-                        this.parentNode.parentNode.rowIndex));
+            var pos = {x:this.parentNode.cellIndex,
+                        y:this.parentNode.parentNode.rowIndex};
+            if ( plugin === undefined )
+            {
+                plugin = document.getElementById("plugin");
+                hw = plugin.Post();
+            }
+            hw.downboat(ptable.getUuid(pos));
+            ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
         };
 
         cell.onmouseover = function(){
