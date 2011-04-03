@@ -1,4 +1,4 @@
-div.imgdialog {
+div.repostdialog {
   visibility: hidden;
   position: absolute;
   background:-webkit-gradient(linear, left top, left bottom, from(#B4C3FF), to(#075698));

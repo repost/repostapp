@@ -1,5 +1,3 @@
-
-
 contentClicker = function() {
 
     var ImgDialog;
@@ -7,23 +5,28 @@ contentClicker = function() {
     var current_target;
     this.init = function(){
         // Create image diaglog
-        ImgDialog = document.createElement('div');
-        ImgDialog.className = "imgdialog";
+        RepostDialog = document.createElement('div');
+        RepostDialog.className = "repostdialog";
         var label = document.createElement("label");
         label.innerHTML = "What say you:";
         label.className = "label";
-        ImgDialog.appendChild(label);
+        RepostDialog.appendChild(label);
         caption = document.createElement("input");
         caption.className = "caption";
         label.appendChild(caption);
         caption.addEventListener('keypress', this.sendImage, false);
-        ImgDialog.style.visibility = "hidden";
-        document.body.appendChild(ImgDialog);
+        RepostDialog.style.visibility = "hidden";
+        document.body.appendChild(RepostDialog);
         
         // add event listener to each image on the page
         var images = document.getElementsByTagName("img");
         for( var i = 0; i < images.length; i++ ){
             images[i].addEventListener('click',this.imgClickListener,false);
+        }
+        
+        var vids = document.getElementsByTagName("video");
+        for( var i = 0; i < vids.length; i++ ){
+            vids[i].addEventListener('click',this.imgClickListener,false);
         }
     };
 
@@ -41,7 +44,7 @@ contentClicker = function() {
             chrome.extension.sendRequest(current_target, function(response) {
                 console.log(response.farewell);
             });
-            ImgDialog.style.visibility = "hidden";
+            RepostDialog.style.visibility = "hidden";
             cc.imgClear();
         }
     };
@@ -53,17 +56,31 @@ contentClicker = function() {
                                src: event.currentTarget.src,
                                context: event.currentTarget.baseURI
                              };
-            cc.createImgDialog(event.currentTarget.src, event.clientX, event.clientY);
+            cc.createRepostDialog(event.currentTarget.src, event.clientX, event.clientY);
             cc.imgFocus();
             event.returnValue = false;
             return false;
         }
     };
 
-    this.createImgDialog = function(image, x, y){
-        ImgDialog.style.visibility = "visible";
-        ImgDialog.style.top = y + "px";
-        ImgDialog.style.left = x + "px";
+    this.vidClickListener = function(event){
+        if(event.altKey){
+            current_target = { type: "video",
+                               caption: "",
+                               src: event.currentTarget.src,
+                               context: event.currentTarget.baseURI
+                            };
+            cc.createRepostDialog(event.currentTarget.src, event.clientX, event.clientY);
+            cc.imgFocus();
+            event.returnValue = false;
+            return false;
+        }
+    };
+
+    this.createRepostDialog = function(image, x, y){
+        RepostDialog.style.visibility = "visible";
+        RepostDialog.style.top = y + "px";
+        RepostDialog.style.left = x + "px";
     };
 };
 

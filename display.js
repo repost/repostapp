@@ -14,6 +14,18 @@ chrome.extension.onRequest.addListener(
       sendResponse({}); // snub them.
       p.content = JSON.stringify(img);
       hw.sendPost(p);
+    }else if(request.type == "video"){
+      var p = plugin.Post();
+      var vid = new postVideo();
+      vid.setCaption(request.caption);
+      vid.setVideo(request.src);
+      vid.setContext(sender.tab.url);
+      vid.setUuid(p.uuid);
+      vid.setMetric("-");
+      ptable.insertPost(img,0);
+      sendResponse({}); // snub them.
+      p.content = JSON.stringify(img);
+      hw.sendPost(p);
     }
   });
 
@@ -35,6 +47,76 @@ function xmlPost(uuid, metric){
     xmlpost.setAttribute("data-uuid",uuid);
     xmlpost.setAttribute("data-metric",metric);
     return xmlpost;    
+};
+
+// Video content class.
+this.postVideo = function(){
+
+    // image post specific
+    var video;
+    var caption;
+    var context;
+    
+    // holders for uuid and metric
+    var uuid;
+    var metric;
+
+    this.setUuid = function(u){
+        uuid = u;
+    };
+
+    this.setMetric = function(m){
+        metric = m;
+    };
+
+    this.setCaption = function(cap){
+        caption = cap;
+    };
+
+    this.setContext = function(con){
+        context = con;
+    };
+
+    this.setVideo = function(i){
+        image = i;
+    };
+
+    // Construct image content from its parts
+    this.getXml = function(uuid, metric) {
+        var imagepost = document.createElement("div");
+        imagepost.setAttribute("data-context", context);
+
+        var previewimage = document.createElement("image");
+        previewimage.className = "postpreview";
+        previewimage.src = image;
+        imagepost.appendChild(previewimage);
+
+        var previewcaption = document.createElement("div");
+        previewcaption.className = "postcaption";
+        previewcaption.innerHTML = caption;
+        imagepost.appendChild(previewcaption);
+
+        var xmlpost = xmlPost(uuid, metric);
+        xmlpost.appendChild(imagepost);
+        return xmlpost;
+    };
+    
+    // Load from json packed up in content
+    this.loadFromJSON = function(content){
+        video = content["video"];
+        context = content["context"];
+        caption = content["caption"];
+    };
+
+    this.toJSON = function() {
+        var j = {
+            "cname" : "postVideo",
+            "video" : video,
+            "context" : context,
+            "caption" : caption
+        };
+        return j;
+    };
 };
 
 // Post Image class. Image content class.
