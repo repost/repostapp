@@ -319,7 +319,7 @@ this.postImage = function(){
     };
 
     // Construct image content from its parts
-    this.getXml = function(uuid, metric) {
+    this.getXml = function() {
         var imagepost = document.createElement("div");
 
         var previewimage = document.createElement("image");
