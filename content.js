@@ -4,7 +4,7 @@ contentClicker = function() {
     var caption;
     var current_target;
     this.init = function(){
-        // Create image diaglog
+        // Create image dialog
         RepostDialog = document.createElement('div');
         RepostDialog.className = "repostdialog";
         var label = document.createElement("label");
@@ -14,7 +14,7 @@ contentClicker = function() {
         caption = document.createElement("input");
         caption.className = "caption";
         label.appendChild(caption);
-        caption.addEventListener('keypress', this.sendImage, false);
+        caption.addEventListener('keypress', this.sendContent, false);
         RepostDialog.style.visibility = "hidden";
         document.body.appendChild(RepostDialog);
         
@@ -24,10 +24,10 @@ contentClicker = function() {
             images[i].addEventListener('click',this.imgClickListener,false);
         }
         
-        var vids = document.getElementsByTagName("video");
-        for( var i = 0; i < vids.length; i++ ){
-            vids[i].addEventListener('click',this.imgClickListener,false);
-        }
+//       var vids = document.getElementsByTagName("video");
+//       for( var i = 0; i < vids.length; i++ ){
+//           vids[i].addEventListener('click',this.imgClickListener,false);
+//       }
     };
 
     this.imgFocus = function(){
@@ -38,7 +38,7 @@ contentClicker = function() {
         caption.value = "";
     };
 
-    this.sendImage = function(event){
+    this.sendContent = function(event){
         if(event.keyCode == 13){
             current_target.caption = caption.value;
             chrome.extension.sendRequest(current_target, function(response) {
