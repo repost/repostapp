@@ -2,7 +2,7 @@
 this.postText = function(){
 
     // image post specific
-    var content;
+    var cont;
     var caption;
     var link;
 
@@ -19,7 +19,7 @@ this.postText = function(){
     };
 
     this.setContent = function(con){
-        content = con;
+        cont = con;
     };
 
     this.setLink = function(lin){
@@ -32,21 +32,28 @@ this.postText = function(){
 
     // Construct image content from its parts
     this.getXml = function() {
-        var imagepost = document.createElement("div");
-        var previewcaption = document.createElement("div");
-        previewcaption.className = "postcaption";
-        previewcaption.innerHTML = caption;
-        imagepost.appendChild(previewcaption);
+        var xmlpost; /* generic xml post holder */
+        var textpost = document.createElement("div");
+        var cap = document.createElement("div");
+        var text = document.createElement("div");
+        
+        cap.innerHTML = caption;
+        cap.className = "postcaption";
+        text.innerHTML = cont;
+        text.className = "postpreview";
+        textpost.className = "textpost";
+        textpost.appendChild(cap);
+        textpost.appendChild(text);
 
-        var xmlpost = xmlPost(uuid, metric);
-        xmlpost.appendChild(imagepost);
+        xmlpost = xmlPost(uuid, metric);
+        xmlpost.appendChild(textpost);
         return xmlpost;
     };
-    
+   
     // Load from json packed up in content
     this.loadFromJSON = function(content){
         caption = content["caption"];
-        content = content["content"];
+        cont = content["content"];
         link = content["link"];
     };
 
@@ -54,7 +61,7 @@ this.postText = function(){
         var j = {
             "cname" : "postText",
             "caption" : caption,
-            "content" : content,
+            "content" : cont,
             "link" : link
         };
         return j;

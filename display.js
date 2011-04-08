@@ -54,7 +54,7 @@ this.textPostBox = function(x,y){
         label.innerHTML = "Caption:";
         label.className = "caption";
         caption = document.createElement("input");
-        caption.className = "caption";
+        caption.className = "captioninput";
         textPostBox.appendChild(label);
         textPostBox.appendChild(caption);
         // Content
@@ -62,12 +62,14 @@ this.textPostBox = function(x,y){
         label.innerHTML = "Content:";
         label.className = "content";
         content = document.createElement("textarea");
+        content.className = "contentinput";
         textPostBox.appendChild(label);
         textPostBox.appendChild(content);
         // Post button
         postbutton = document.createElement("button");
         postbutton.innerText = "Ahoy Buttercup";
         postbutton.onclick = this.sendPost(this,textPostBox);
+        postbutton.className = "sendtext";
         textPostBox.appendChild(postbutton);
 
         textPostBox.style.visibility = "hidden";
@@ -110,6 +112,7 @@ this.textPostBox = function(x,y){
         textPostBox.style.visibility = "visible";
         textPostBox.style.top = y + "px";
         textPostBox.style.left = x + "px";
+        this.textFocus();
     };
 };
 
