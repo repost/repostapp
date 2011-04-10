@@ -161,6 +161,7 @@ var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
+var links;
 
 function main() {
     // Check we have an account to log into
@@ -175,6 +176,10 @@ function main() {
         // Create input windows
         textbox = new textPostBox();
         textbox.init();
+        // Create link management window
+        links = new linkVisual();
+        links.init();
+        links.show();
         // attach repost shortcuts
         addShortCuts();
         // init the posttable
