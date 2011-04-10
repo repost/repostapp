@@ -176,16 +176,17 @@ function main() {
         // Create input windows
         textbox = new textPostBox();
         textbox.init();
-        // Create link management window
-        links = new linkVisual();
-        links.init();
-        links.show();
+
         // attach repost shortcuts
         addShortCuts();
         // init the posttable
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         hw.init();
+        // Create link management window
+        links = new linkVisual();
+        links.init();
+        links.show();       
         hw.setNewPostCB(checkForPost);
         var acc = plugin.Account();
         // add saved accounts
