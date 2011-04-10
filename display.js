@@ -151,6 +151,10 @@ function addShortCuts(){
             if(c == "t"){ // Text Post Box Popup
                 textbox.createTextPostBox();
             }
+            if(c == "l"){ // Text Post Box Popup
+                var linkarr = hw.getLinks();
+                links.show(linkarr);       
+            }
         }
     };
     document.addEventListener("keydown",shortFunc);
@@ -183,11 +187,10 @@ function main() {
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         hw.init();
+        hw.setNewPostCB(checkForPost);
         // Create link management window
         links = new linkVisual();
         links.init();
-        links.show();       
-        hw.setNewPostCB(checkForPost);
         var acc = plugin.Account();
         // add saved accounts
         for(var i=0; i<accounts.length; i++){
