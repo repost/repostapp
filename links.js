@@ -141,9 +141,11 @@ this.linkVisual = function() {
     };
     
     this.createJSON = function(links){
+        var foundhost = false;
+        var nothost = true;
         var len = links.length;
-        var tree = new Array();
-        var hosts = 0;
+        var linktree = new Array();
+        var acctree = new Array();
         var buddyobj = {
             $color:  "#83548B",
             $type:  "circle",
@@ -154,46 +156,57 @@ this.linkVisual = function() {
             $type:  "square",
             $dim:  40
         };
+        // create account tree
         for(var i=0; i<len; i++) {
-            // create object
-            var treeobj = {
-                    name: links[i].name,
-                    id: links[i].name,
-                    data: buddyobj,
-                    adjacencies: new Array()
-            };
-            tree[hosts] = treeobj;
-            hosts = hosts + 1;
-            // check if its a new host
-            for(var x=0; x<i; x++) {
-                // found the host add adjacencies
-                if(tree[x].name == links[i].host) {
-                    var adjobj = {
-                           data: { color: "#909291"},
-                           nodeTo: links[i].name
-                    };
-                    tree[x].adjacencies[tree[x].adjacencies.length] = adjobj;
+            foundhost = false;
+            for(var x=0; x<acctree.length; x++) {
+                if(acctree[x].name == links[i].host) {
+                    foundhost = true;
                     break;
                 }
             }
-            // Got to end add host
-            if( x == i ) {
-                var adjobj = {
-                       data: { color: "#909291"},
-                       nodeTo: links[i].name
-                 };
+            if( foundhost == false ) {
                 var treeobj = {
                         name: links[i].host,
                         id: links[i].host,
                         data: hostobj,
                         adjacencies: new Array()
                 };
-                treeobj.adjacencies[0] = adjobj;
-                tree[hosts] = treeobj;
-                hosts = hosts + 1;
+                acctree.push(treeobj);
             }
         }
-        return tree;
+        // create link tree
+        for(var i=0; i<len; i++) {
+            for(var x=0; x<acctree.length; x++) {
+                if(acctree[x].name == links[i].name) {
+                    
+                
+                }else if(acctree[x].name == links[i].host) {
+                    var treeobj = {
+                            name: links[i].name,
+                            id: links[i].name,
+                            data: buddyobj,
+                            adjacencies: new Array()
+                    };
+                    var adjobj = {
+                           data: { color: "#909291"},
+                           nodeTo: links[i].name
+                    };
+                    acctree[x].adjacencies.push(adjobj);
+                    linktree.push(treeobj);
+                }
+            }
+        }
+        // make a tree
+        // check if accounts are links and delete
+        for(var i=0; i<linktree.length; i++){
+            for(var x=0; x<acctree.length; x++){
+                if(linktree[i].name == acctree[x].name){
+                    linktree.splice(i,1);
+                }
+            }
+        }
+        return acctree.concat( linktree);
     };
 
     this.show = function(linkarr){
