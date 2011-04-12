@@ -1,14 +1,13 @@
 div.repostdialog {
+  opacity:0.95;
   visibility: hidden;
   position: absolute;
-  background:-webkit-gradient(linear, left top, left bottom, from(#B4C3FF), to(#075698));
-  border-radius:15px;
-  -webkit-border-radius: 5px;
-  -webkit-box-shadow:1px 1px 5px #000;
-  box-shadow:1px 1px 5px #000;
+  background:#388EA6;
+  box-shadow:2px 2px 5px #000;
   padding: 7px 10px 7px 10px;
   z-index:99999999;
 }
-div.label {
+.label {
+    font-family:"Lucida Console", Courier New, monospace;
     margin: 0 5px 0 0 ;
 }
