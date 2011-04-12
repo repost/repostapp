@@ -36,10 +36,12 @@ this.linkVisual = function() {
                     color: '#23A4FF',
                     lineWidth: 0.4
                   },
-                      //Native canvas text styling
+            //Native canvas text styling
             Label: {
+                    color: '#000',
                     type: labelType, //Native or HTML
-                    size: 10,
+                    size: 12,        
+                    font: "Lucida Console", 
                     style: 'bold'
                    },
            //Add Tips
@@ -77,7 +79,7 @@ this.linkVisual = function() {
                         },
                         //Add also a click handler to nodes
                         onClick: function(node) {
-                             if(!node) return;
+                            /* if(!node) return;
                              // Build the right column relations list.
                              // This is done by traversing the clicked node connections.
                              var html = "<h4>" + node.name + "</h4><b> connections:</b><ul><li>",
@@ -87,6 +89,7 @@ this.linkVisual = function() {
                                      });
                              //append connections information
                              $jit.id('inner-details').innerHTML = html + list.join("</li><li>") + "</li></ul>";
+                             */
                          }
                     },
                         //Number of iterations for the FD algorithm
@@ -96,11 +99,29 @@ this.linkVisual = function() {
             // Add text to the labels. This method is only triggered
             // on label creation and only for DOM labels (not native canvas ones).
             onCreateLabel: function(domElement, node){
-                            domElement.innerHTML = node.name;
+                            var nameContainer = document.createElement('span');
+                            nameContainer.className = 'name';  
+                            nameContainer.innerHTML = node.name; 
                             var style = domElement.style;
                             style.fontSize = "0.8em";
                             style.color = "#ddd";
-                        },
+                            var closeButton = document.createElement('span')
+                            closeButton.className = 'close';  
+                            closeButton.innerHTML = 'x';  
+                            domElement.appendChild(nameContainer);  
+                            domElement.appendChild(closeButton);  
+                            //Fade the node and its connections when  
+                            //clicking the close button  
+                            closeButton.onclick = function() {  
+                                    node.setData('alpha', 0, 'end');  
+                                    node.eachAdjacency(function(adj) {  
+                                        adj.setData('alpha', 0, 'end');  
+                                    });  
+                                    fd.fx.animate({  
+                                          modes: ['node-property:alpha','edge-property:alpha'], duration: 500 
+                                    });  
+                            };
+                    },
                     // Change node styles when DOM labels are placed
                     // or moved.
             onPlaceLabel: function(domElement, node){
@@ -119,12 +140,24 @@ this.linkVisual = function() {
         var label; /* temp label */
         // Create dialog
         linkBox = document.createElement('div');
-        linkBox.className = "linkbox";
-        // Caption
-        label = document.createElement("label");
-        label.innerHTML = "Link Management";
-        label.className = "caption";
-        //linkBox.appendChild(label);
+        linkBox.className = "floater linkbox";
+        // 'X'
+        close = document.createElement("span");
+        close.innerHTML = "x";
+        close.className = "floatclose";
+        close.onclick = function() {
+            linkBox.style.visibility = "hidden";
+            var cell = document.getElementById("infovis");
+            if ( cell.hasChildNodes() )
+            {
+                while ( cell.childNodes.length >= 1 )
+                {
+                    cell.removeChild( cell.firstChild );       
+                } 
+            }
+
+        };
+        linkBox.appendChild(close);
         // Visualisation
         vis = document.createElement("div");
         vis.className = "infovis";
@@ -140,21 +173,20 @@ this.linkVisual = function() {
         document.body.appendChild(linkBox);
     };
     
-    this.createJSON = function(links){
+    this.createTree = function(links){
         var foundhost = false;
-        var nothost = true;
         var len = links.length;
         var linktree = new Array();
         var acctree = new Array();
         var buddyobj = {
-            $color:  "#83548B",
+            $color:  "#C74243",
             $type:  "circle",
-            $dim:  10
+            $dim:  15
         };
         var hostobj = {
-            $color:  "#83548B",
-            $type:  "square",
-            $dim:  40
+            $color:  "#EBB056",
+            $type:  "circle",
+            $dim:  30
         };
         // create account tree
         for(var i=0; i<len; i++) {
@@ -210,7 +242,7 @@ this.linkVisual = function() {
     };
 
     this.show = function(linkarr){
-        var tree = this.createJSON(linkarr);
+        var tree = this.createTree(linkarr);
         linkBox.style.visibility = "visible";
         fd = new $jit.ForceDirected(forcegraphset);
         // load JSON data.

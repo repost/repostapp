@@ -48,7 +48,7 @@ this.textPostBox = function(x,y){
 
         // Create dialog
         textPostBox = document.createElement('div');
-        textPostBox.className = "textpostbox";
+        textPostBox.className = "floater textpostbox";
         // Caption
         label = document.createElement("label");
         label.innerHTML = "Caption:";
@@ -71,9 +71,20 @@ this.textPostBox = function(x,y){
         postbutton.onclick = this.sendPost(this,textPostBox);
         postbutton.className = "sendtext";
         textPostBox.appendChild(postbutton);
-
+        // 'X'
+        close = document.createElement("span");
+        close.innerHTML = "x";
+        close.className = "floatclose";
+        close.onclick = this.onclickclose(this);
+        textPostBox.appendChild(close);
         textPostBox.style.visibility = "hidden";
         document.body.appendChild(textPostBox);
+    };
+    
+    this.onclickclose = function(popup){
+        return function(){
+            popup.close();
+        };
     };
 
     this.con = function(){
@@ -94,9 +105,13 @@ this.textPostBox = function(x,y){
             t.setUuid("");
             t.setMetric("");
             sendPost(t);
-            postbox.textClear();
-            textPostBox.style.visibility = "hidden"
+            postbox.close();
         };
+    };
+
+    this.close = function(){
+        this.textClear();
+        textPostBox.style.visibility = "hidden";
     };
 
     this.textFocus = function(){
