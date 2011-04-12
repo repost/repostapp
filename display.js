@@ -48,7 +48,7 @@ this.textPostBox = function(x,y){
 
         // Create dialog
         textPostBox = document.createElement('div');
-        textPostBox.className = "textpostbox";
+        textPostBox.className = "floater textpostbox";
         // Caption
         label = document.createElement("label");
         label.innerHTML = "Caption:";
@@ -71,9 +71,20 @@ this.textPostBox = function(x,y){
         postbutton.onclick = this.sendPost(this,textPostBox);
         postbutton.className = "sendtext";
         textPostBox.appendChild(postbutton);
-
+        // 'X'
+        close = document.createElement("span");
+        close.innerHTML = "x";
+        close.className = "floatclose";
+        close.onclick = this.onclickclose(this);
+        textPostBox.appendChild(close);
         textPostBox.style.visibility = "hidden";
         document.body.appendChild(textPostBox);
+    };
+    
+    this.onclickclose = function(popup){
+        return function(){
+            popup.close();
+        };
     };
 
     this.con = function(){
@@ -94,9 +105,13 @@ this.textPostBox = function(x,y){
             t.setUuid("");
             t.setMetric("");
             sendPost(t);
-            postbox.textClear();
-            textPostBox.style.visibility = "hidden"
+            postbox.close();
         };
+    };
+
+    this.close = function(){
+        this.textClear();
+        textPostBox.style.visibility = "hidden";
     };
 
     this.textFocus = function(){
@@ -126,11 +141,11 @@ function xmlPost(uuid, metric){
     return xmlpost;    
 };
 // Callback called when the rpeost plugin has a new post
-function checkForPost(post){
+function checkForPost(post,rank){
     var con = buildFromJSON(post.content);
     con.setUuid(post.uuid);
     con.setMetric(post.metric);
-    ptable.insertPost(con,0);
+    ptable.insertPost(con,rank);
 };
 
 // Creates the link to the options page. Should probably redirect in future.
@@ -151,6 +166,10 @@ function addShortCuts(){
             if(c == "t"){ // Text Post Box Popup
                 textbox.createTextPostBox();
             }
+            if(c == "l"){ // Text Post Box Popup
+                var linkarr = hw.getLinks();
+                links.show(linkarr);       
+            }
         }
     };
     document.addEventListener("keydown",shortFunc);
@@ -161,6 +180,7 @@ var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
+var links;
 
 function main() {
     // Check we have an account to log into
@@ -175,6 +195,7 @@ function main() {
         // Create input windows
         textbox = new textPostBox();
         textbox.init();
+
         // attach repost shortcuts
         addShortCuts();
         // init the posttable
@@ -182,6 +203,9 @@ function main() {
         hw = plugin.rePoster();
         hw.init();
         hw.setNewPostCB(checkForPost);
+        // Create link management window
+        links = new linkVisual();
+        links.init();
         var acc = plugin.Account();
         // add saved accounts
         for(var i=0; i<accounts.length; i++){
