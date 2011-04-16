@@ -215,6 +215,7 @@ function main() {
             hw.addAccount(acc);
         }
         hw.startRepost();
+        hw.getInitialPosts(checkForPost);
     }
 };
 
