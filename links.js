@@ -79,20 +79,12 @@ this.linkVisual = function() {
                         },
                         //Add also a click handler to nodes
                         onClick: function(node) {
-                            /* if(!node) return;
-                             // Build the right column relations list.
-                             // This is done by traversing the clicked node connections.
-                             var html = "<h4>" + node.name + "</h4><b> connections:</b><ul><li>",
-                                 list = [];
-                             node.eachAdjacency(function(adj){
-                                     list.push(adj.nodeTo.name);
-                                     });
-                             //append connections information
-                             $jit.id('inner-details').innerHTML = html + list.join("</li><li>") + "</li></ul>";
-                             */
-                         }
-                    },
-                        //Number of iterations for the FD algorithm
+                                     if(!node) return;
+                                     // Run Node handler
+                                     linkNodeRemover(fd,node);
+                                 }
+            },
+            //Number of iterations for the FD algorithm
             iterations: 200,
             //Edge length
             levelDistance: 130,
@@ -134,7 +126,7 @@ this.linkVisual = function() {
                                   style.display = '';
                               }
     };
-
+    
     // Here we create the box to hold this shit
     this.init = function(){
         var label; /* temp label */
@@ -167,9 +159,7 @@ this.linkVisual = function() {
         savebutton = document.createElement("button");
         savebutton.innerText = "Save";
         savebutton.className = "linkboxsave";
-        //linkBox.appendChild(savebutton);
 
-        //linkBox.style.visibility = "hidden";
         document.body.appendChild(linkBox);
     };
     
@@ -179,11 +169,13 @@ this.linkVisual = function() {
         var linktree = new Array();
         var acctree = new Array();
         var buddyobj = {
+            $reposttype: "buddyobj",
             $color:  "#C74243",
             $type:  "circle",
             $dim:  15
         };
         var hostobj = {
+            $reposttype: "hostobj",
             $color:  "#EBB056",
             $type:  "circle",
             $dim:  30
@@ -210,10 +202,7 @@ this.linkVisual = function() {
         // create link tree
         for(var i=0; i<len; i++) {
             for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].name == links[i].name) {
-                    
-                
-                }else if(acctree[x].name == links[i].host) {
+                if(acctree[x].name == links[i].host) {
                     var treeobj = {
                             name: links[i].name,
                             id: links[i].name,
@@ -240,6 +229,10 @@ this.linkVisual = function() {
         }
         return acctree.concat( linktree);
     };
+    
+    this.getTree = function(){
+        return fd;
+    };
 
     this.show = function(linkarr){
         var tree = this.createTree(linkarr);
@@ -262,5 +255,184 @@ this.linkVisual = function() {
         });
 
     };
+
     
 };
+
+this.linkNodeRemover = function(t, n){
+    
+    var tree = t;
+    var node = n;
+    var confirmPopup;
+    
+    this.init = function(node){
+        confirmPopup = new confirmationPopup("", "", this.response);
+        var type = node.data.$reposttype;
+        if(type == "buddyobj"){
+            // Trying to delete
+            confirmPopup.updateMessage("Delete Link " + node.name + "?");
+            confirmPopup.display();
+        }
+    };
+
+    this.response = function(rep){
+        if(rep == true){
+            // delete buddy node here
+            node.setData('alpha', 0, 'end');  
+            node.eachAdjacency(function(adj) {  
+                    adj.setData('alpha', 0, 'end');  
+                    });  
+            tree.fx.animate({  
+                            modes: ['node-property:alpha',  
+                            'edge-property:alpha'],  
+                            duration: 500  
+                        });  
+        }
+        confirmPopup.remove();
+    };
+
+    this.init(node);
+    
+};
+
+// Simple confirmation popup. 
+// message = message to display
+// divclass = class to call it
+// callback = cb to call when user clicks. Should take bool option
+this.confirmationPopup = function(message, divclass, callback){
+    
+    var cback = callback;
+    var popup;
+    var msg;
+
+    this.createPopup = function(message, divclass){
+        
+        popup = document.createElement("div");
+        popup.className = "floater confirmationPopup "+divclass;
+        
+        // Confirmation message
+        msg = document.createElement("span");
+        msg.className = "message";
+        msg.innerHTML = message;
+        popup.appendChild(msg);
+
+        // Ok and cancel button
+        var ok = document.createElement("button");
+        ok.className = "ok";
+        ok.innerText = "Ok";
+        ok.onclick = this.ok(this);
+        popup.appendChild(ok);
+
+        var cancel = document.createElement("button");
+        cancel.className = "cancel";
+        cancel.innerText = "Cancel";
+        cancel.onclick = this.cancel(this);
+        popup.appendChild(cancel);
+
+        document.body.appendChild(popup);
+    };
+    
+    this.cb = function(result){
+        cback(result);
+    };
+
+    this.ok = function(popup){
+       return function(e){
+           popup.cb(true);
+       };
+    };
+    
+    this.cancel = function(popup){
+       return function(e){
+           popup.cb(false);
+       };
+    };
+    
+    this.updateMessage = function(message){
+        msg.innerHTML = message;
+    };
+
+    this.display = function(){
+        popup.style.visibility = "visible";
+    };
+
+    this.remove = function(){
+        document.body.removeChild(popup);
+    };
+ 
+    this.createPopup(message, divclass);
+
+};
+
+
+/*
+this.addAcctPopup = function(){
+    
+    var popup;
+    var username;
+    var password;
+
+    this.createPopup = function(){
+
+        popup = document.createElement("div");
+        popup.className = "addAcctPopup";
+        
+        username = document.createElement("input");
+        username.type = "textbox";
+
+        password = document.createElement("input");
+        password.type = "password";
+
+        var add = document.createElement("button");
+        add.innerText = "Add";
+        add.onclick = this.addFromPopup(this);
+
+        var cancel = document.createElement("button");
+        cancel.innerText = "Cancel";       
+        cancel.onclick = this.clearPopup(this);
+
+        popup.appendChild(username);
+        popup.appendChild(password);
+        popup.appendChild(add);
+        popup.appendChild(cancel);
+    };
+
+    this.username = function(){
+        return username.value;
+    };
+
+    this.password = function(){
+        return password.value;
+    };
+
+    this.getPopup = function(){
+        return popup;
+    };
+ 
+    this.deleteMe = function(){
+        popup.parentNode.removeChild(popup);
+    };
+
+    this.addFromPopup = function(popup){
+       return function(e){
+           var acc = new account();
+           acc.username = popup.username();
+           acc.password = popup.password();
+           acc.enabled="true";
+           al.addAcct(acc);
+           saveAccountList();
+           popup.deleteMe();
+       };
+    };
+
+    this.clearPopup = function(popup){
+        return function(){
+            popup.deleteMe();
+        };
+    };
+
+    this.createPopup();
+};
+
+*/
+

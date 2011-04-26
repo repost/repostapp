@@ -155,7 +155,29 @@ div.floater {
 /**
  * Links
  */
+.confirmationPopup{
+  width: 250px;
+  height: 70px;
+}
+.message{
+    font-family:"Lucida Console", Courier New, monospace;
+    position:absolute;
+    left:10px;
+    top:10px;
+}
 
+.ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 70px;
+}
+.cancel{
+    position: absolute;
+    top: 50px;
+    left: 90px;
+    width: 70px;
+}
 span.name {
       cursor: pointer;
 }
