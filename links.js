@@ -82,6 +82,7 @@ this.linkVisual = function() {
                                      if(!node) return;
                                      // Run Node handler
                                      linkNodeRemover(fd,node);
+                                     linkNodeAdder(fd,node);
                                  }
             },
             //Number of iterations for the FD algorithm
@@ -168,18 +169,7 @@ this.linkVisual = function() {
         var len = links.length;
         var linktree = new Array();
         var acctree = new Array();
-        var buddyobj = {
-            $reposttype: "buddyobj",
-            $color:  "#C74243",
-            $type:  "circle",
-            $dim:  15
-        };
-        var hostobj = {
-            $reposttype: "hostobj",
-            $color:  "#EBB056",
-            $type:  "circle",
-            $dim:  30
-        };
+
         // create account tree
         for(var i=0; i<len; i++) {
             foundhost = false;
@@ -190,12 +180,7 @@ this.linkVisual = function() {
                 }
             }
             if( foundhost == false ) {
-                var treeobj = {
-                        name: links[i].host,
-                        id: links[i].host,
-                        data: hostobj,
-                        adjacencies: new Array()
-                };
+                var treeobj = createTreeElement(links[i].host, links[i].host, "hostobj");
                 acctree.push(treeobj);
             }
         }
@@ -203,16 +188,8 @@ this.linkVisual = function() {
         for(var i=0; i<len; i++) {
             for(var x=0; x<acctree.length; x++) {
                 if(acctree[x].name == links[i].host) {
-                    var treeobj = {
-                            name: links[i].name,
-                            id: links[i].name,
-                            data: buddyobj,
-                            adjacencies: new Array()
-                    };
-                    var adjobj = {
-                           data: { color: "#909291"},
-                           nodeTo: links[i].name
-                    };
+                    var treeobj = createTreeElement(links[i].name, links[i].name, "buddyobj");
+                    var adjobj = createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
                 }
@@ -255,8 +232,61 @@ this.linkVisual = function() {
         });
 
     };
+};
 
-    
+this.createAdjacency = function(nodeto){
+    return {
+       data: { color: "#909291"},
+       nodeTo: nodeto
+    };
+};
+
+this.createTreeElement = function(name, id, type){
+    if(type == "buddyobj"){
+        var obj = {
+            $reposttype: "buddyobj",
+            $color:  "#C74243",
+            $type:  "circle",
+            $dim:  15
+        };
+
+    }else if(type == "hostobj"){
+        var obj = {
+            $reposttype: "hostobj",
+            $color:  "#EBB056",
+            $type:  "circle",
+            $dim:  30
+        };
+    }else{
+        return;
+    }
+
+    return {
+            name: name,
+            id: id,
+            data: obj,
+            adjacencies: new Array()
+        };
+};
+
+this.linkNodeAdder = function(t, n){
+
+    var tree = t;
+    var node = n;
+    var buddyPopup;
+        this.init = function(node){
+        var type = node.data.$reposttype;
+        if(type == "hostobj"){
+            var treeobj = createTreeElement("t","t","buddyobj");
+            var adj = createAdjacency("");
+            tree.graph.addNode(treeobj);
+            tree.graph.addAdjacence(node,tree.graph.getNode("t"),adj.data);
+        }
+    };
+
+    this.response = function(rep){
+    };
+    this.init(node);
 };
 
 this.linkNodeRemover = function(t, n){
@@ -287,6 +317,7 @@ this.linkNodeRemover = function(t, n){
                             'edge-property:alpha'],  
                             duration: 500  
                         });  
+            tree.graph.removeNode(node.id);
         }
         confirmPopup.remove();
     };
