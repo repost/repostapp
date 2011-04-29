@@ -34,7 +34,7 @@ this.linkVisual = function() {
             Edge: {
                     overridable: true,
                     color: '#23A4FF',
-                    lineWidth: 0.4
+                    lineWidth: 1.4
                   },
             //Native canvas text styling
             Label: {
@@ -79,20 +79,13 @@ this.linkVisual = function() {
                         },
                         //Add also a click handler to nodes
                         onClick: function(node) {
-                            /* if(!node) return;
-                             // Build the right column relations list.
-                             // This is done by traversing the clicked node connections.
-                             var html = "<h4>" + node.name + "</h4><b> connections:</b><ul><li>",
-                                 list = [];
-                             node.eachAdjacency(function(adj){
-                                     list.push(adj.nodeTo.name);
-                                     });
-                             //append connections information
-                             $jit.id('inner-details').innerHTML = html + list.join("</li><li>") + "</li></ul>";
-                             */
-                         }
-                    },
-                        //Number of iterations for the FD algorithm
+                                     if(!node) return;
+                                     // Run Node handler
+                                     linkNodeRemover(fd,node);
+                                     linkNodeAdder(fd,node);
+                                 }
+            },
+            //Number of iterations for the FD algorithm
             iterations: 200,
             //Edge length
             levelDistance: 130,
@@ -134,7 +127,7 @@ this.linkVisual = function() {
                                   style.display = '';
                               }
     };
-
+    
     // Here we create the box to hold this shit
     this.init = function(){
         var label; /* temp label */
@@ -167,9 +160,7 @@ this.linkVisual = function() {
         savebutton = document.createElement("button");
         savebutton.innerText = "Save";
         savebutton.className = "linkboxsave";
-        //linkBox.appendChild(savebutton);
 
-        //linkBox.style.visibility = "hidden";
         document.body.appendChild(linkBox);
     };
     
@@ -178,16 +169,7 @@ this.linkVisual = function() {
         var len = links.length;
         var linktree = new Array();
         var acctree = new Array();
-        var buddyobj = {
-            $color:  "#C74243",
-            $type:  "circle",
-            $dim:  15
-        };
-        var hostobj = {
-            $color:  "#EBB056",
-            $type:  "circle",
-            $dim:  30
-        };
+
         // create account tree
         for(var i=0; i<len; i++) {
             foundhost = false;
@@ -198,32 +180,16 @@ this.linkVisual = function() {
                 }
             }
             if( foundhost == false ) {
-                var treeobj = {
-                        name: links[i].host,
-                        id: links[i].host,
-                        data: hostobj,
-                        adjacencies: new Array()
-                };
+                var treeobj = createTreeElement(links[i].host, links[i].host, "hostobj");
                 acctree.push(treeobj);
             }
         }
         // create link tree
         for(var i=0; i<len; i++) {
             for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].name == links[i].name) {
-                    
-                
-                }else if(acctree[x].name == links[i].host) {
-                    var treeobj = {
-                            name: links[i].name,
-                            id: links[i].name,
-                            data: buddyobj,
-                            adjacencies: new Array()
-                    };
-                    var adjobj = {
-                           data: { color: "#909291"},
-                           nodeTo: links[i].name
-                    };
+                if(acctree[x].name == links[i].host) {
+                    var treeobj = createTreeElement(links[i].name, links[i].name, "buddyobj");
+                    var adjobj = createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
                 }
@@ -235,10 +201,15 @@ this.linkVisual = function() {
             for(var x=0; x<acctree.length; x++){
                 if(linktree[i].name == acctree[x].name){
                     linktree.splice(i,1);
+                    i = 0; /* size can change so to the begining */
                 }
             }
         }
         return acctree.concat( linktree);
+    };
+    
+    this.getTree = function(){
+        return fd;
     };
 
     this.show = function(linkarr){
@@ -262,5 +233,272 @@ this.linkVisual = function() {
         });
 
     };
+};
+
+this.createAdjacency = function(nodeto){
+    return {
+       data: { color: "#909291"},
+       nodeTo: nodeto
+    };
+};
+
+this.createTreeElement = function(name, id, type){
+    if(type == "buddyobj"){
+        var obj = {
+            $reposttype: "buddyobj",
+            $color:  "#C74243",
+            $type:  "circle",
+            $dim:  15
+        };
+
+    }else if(type == "hostobj"){
+        var obj = {
+            $reposttype: "hostobj",
+            $color:  "#EBB056",
+            $type:  "circle",
+            $dim:  30
+        };
+    }else{
+        return;
+    }
+
+    return {
+            name: name,
+            id: id,
+            data: obj,
+            adjacencies: new Array()
+        };
+};
+
+this.linkNodeAdder = function(t, n){
+
+    var tree = t;
+    var node = n;
+    var inputPopup;
+
+    this.init = function(node){
+        var type = node.data.$reposttype;
+        if(type == "hostobj"){
+            inputPopup = new singleFieldPopup("Enter Link Name:", "", this.response);       
+            inputPopup.display();
+            inputPopup.textFocus();
+        }
+    };
+
+    this.response = function(rep){
+        if(rep != ""){
+            var treeobj = createTreeElement(rep,rep,"buddyobj");
+            var adj = createAdjacency("");
+            tree.graph.addNode(treeobj);
+            tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
+            tree.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    tree.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            /* TODO error checking etc...*/
+            link = plugin.Link();
+            link.name = rep;
+            link.host = node.name;
+            hw.addLink(link);
+        }
+        inputPopup.remove();
+    };
+    this.init(node);
+};
+
+this.linkNodeRemover = function(t, n){
     
+    var tree = t;
+    var node = n;
+    var confirmPopup;
+    
+    this.init = function(node){
+        var type = node.data.$reposttype;
+        if(type == "buddyobj"){
+            // Trying to delete
+            confirmPopup = new confirmationPopup("Delete Link " + node.name + "?" ,"", this.response);
+            confirmPopup.display();
+        }
+    };
+
+    this.response = function(rep){
+        if(rep == true){
+            // delete buddy node here
+            node.setData('alpha', 0, 'end');  
+            node.eachAdjacency(function(adj) {  
+                    adj.setData('alpha', 0, 'end');  
+                    });  
+            tree.fx.animate({  
+                            modes: ['node-property:alpha',  
+                            'edge-property:alpha'],  
+                            duration: 500  
+                        });  
+            tree.graph.removeNode(node.id);
+            link = plugin.Link();
+            link.name = node.name;
+            hw.rmLink(link);
+        }
+        confirmPopup.remove();
+    };
+
+    this.init(node);
+    
+};
+
+// Simple confirmation popup. 
+// message = message to display
+// divclass = class to call it
+// callback = cb to call when user clicks. Should take bool option
+this.confirmationPopup = function(message, divclass, callback){
+    
+    var cback = callback;
+    var popup;
+    var msg;
+
+    this.createPopup = function(message, divclass){
+        
+        popup = document.createElement("div");
+        popup.className = "floater confirmationPopup "+divclass;
+        
+        // Confirmation message
+        msg = document.createElement("span");
+        msg.className = "message";
+        msg.innerHTML = message;
+        popup.appendChild(msg);
+
+        // Ok and cancel button
+        var ok = document.createElement("button");
+        ok.className = "ok";
+        ok.innerText = "Ok";
+        ok.onclick = this.ok(this);
+        popup.appendChild(ok);
+
+        var cancel = document.createElement("button");
+        cancel.className = "cancel";
+        cancel.innerText = "Cancel";
+        cancel.onclick = this.cancel(this);
+        popup.appendChild(cancel);
+
+        document.body.appendChild(popup);
+    };
+    
+    this.cb = function(result){
+        cback(result);
+    };
+
+    this.ok = function(popup){
+       return function(e){
+           popup.cb(true);
+       };
+    };
+    
+    this.cancel = function(popup){
+       return function(e){
+           popup.cb(false);
+       };
+    };
+    
+    this.updateMessage = function(message){
+        msg.innerHTML = message;
+    };
+
+    this.display = function(){
+        popup.style.visibility = "visible";
+    };
+
+    this.remove = function(){
+        document.body.removeChild(popup);
+    };
+ 
+    this.createPopup(message, divclass);
+
+};
+
+
+// Simple single field popup.
+// message = message to display
+// divclass = class to call it
+// callback = cb to call when user clicks. Should take string user input
+this.singleFieldPopup = function(message, divclass, callback){
+    
+    var cback = callback;
+    var popup;
+    var msg;
+    var input;
+
+    this.createPopup = function(message, divclass){
+        
+        popup = document.createElement("div");
+        popup.className = "floater singleFieldPopup "+divclass;
+        
+        // message
+        msg = document.createElement("span");
+        msg.className = "message";
+        msg.innerHTML = message;
+        popup.appendChild(msg);
+        
+        // input field
+        input = document.createElement("input");
+        input.className = "inputbox";
+        input.type = "textbox";
+        popup.appendChild(input);
+
+        // Ok and cancel button
+        var ok = document.createElement("button");
+        ok.className = "ok";
+        ok.innerText = "Ok";
+        ok.onclick = this.ok(this);
+        popup.appendChild(ok);
+
+        var cancel = document.createElement("button");
+        cancel.className = "cancel";
+        cancel.innerText = "Cancel";
+        cancel.onclick = this.cancel(this);
+        popup.appendChild(cancel);
+
+        document.body.appendChild(popup);
+    };
+    
+    this.cb = function(result){
+        cback(result);
+    };
+
+    this.ok = function(popup){
+       return function(e){
+           popup.cb(input.value);
+       };
+    };
+    
+    this.cancel = function(popup){
+       return function(e){
+           popup.cb("");
+       };
+    };
+    
+    this.updateMessage = function(message){
+        msg.innerHTML = message;
+    };
+
+    this.display = function(){
+        popup.style.visibility = "visible";
+    };
+
+    this.textFocus = function(){
+        input.focus();
+    };
+ 
+    this.remove = function(){
+        document.body.removeChild(popup);
+    };
+ 
+    this.createPopup(message, divclass);
+
 };
