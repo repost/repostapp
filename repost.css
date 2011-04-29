@@ -152,9 +152,11 @@ div.floater {
     width:130px;
 }
 
+
 /**
- * Links
+ * Repost commons
  */
+/* Confirmation Popup */
 .confirmationPopup{
   width: 250px;
   height: 70px;
@@ -165,23 +167,49 @@ div.floater {
     left:10px;
     top:10px;
 }
-
 .ok{
     position: absolute;
     top: 50px;
     left: 30px;
-    width: 70px;
+    width: 90px;
 }
 .cancel{
     position: absolute;
     top: 50px;
-    left: 90px;
-    width: 70px;
+    left: 140px;
+    width: 90px;
 }
 span.name {
       cursor: pointer;
 }
+/* Single Field Popup */
+.singleFieldPopup{
+  width: 280px;
+  height: 90px;
+}
+.singleFieldPopup > .ok{
+    position: absolute;
+    top: 70px;
+    left: 120px;
+    width: 70px;
+}
+.singleFieldPopup > .cancel{
+    position: absolute;
+    top: 70px;
+    left: 200px;
+    width: 70px;
+}
+.singleFieldPopup > .inputbox{
+    position:absolute;
+    top: 25px;
+    left: 15px;
+    width: 250px;
+    margin: 15px 5px 15px 0px;
+}
 
+/**
+ * Links
+ */
 /*TOOLTIPS*/
 .tip {
     text-align: left;
@@ -198,8 +226,8 @@ span.name {
 .linkbox{
   top: 50px;
   left: 50px;
-  width: 600;
-  height: 400px;
+  width: 600px;
+  height: 420px;
  }
 
 .infovis{

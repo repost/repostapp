@@ -34,7 +34,7 @@ this.linkVisual = function() {
             Edge: {
                     overridable: true,
                     color: '#23A4FF',
-                    lineWidth: 0.4
+                    lineWidth: 1.4
                   },
             //Native canvas text styling
             Label: {
@@ -273,18 +273,42 @@ this.linkNodeAdder = function(t, n){
 
     var tree = t;
     var node = n;
-    var buddyPopup;
-        this.init = function(node){
+    var inputPopup;
+
+    this.init = function(node){
         var type = node.data.$reposttype;
         if(type == "hostobj"){
-            var treeobj = createTreeElement("t","t","buddyobj");
-            var adj = createAdjacency("");
-            tree.graph.addNode(treeobj);
-            tree.graph.addAdjacence(node,tree.graph.getNode("t"),adj.data);
+            inputPopup = new singleFieldPopup("Enter Link Name:", "", this.response);       
+            inputPopup.display();
+            inputPopup.textFocus();
         }
     };
 
     this.response = function(rep){
+        if(rep != ""){
+            var treeobj = createTreeElement(rep,rep,"buddyobj");
+            var adj = createAdjacency("");
+            tree.graph.addNode(treeobj);
+            tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
+            tree.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    tree.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            /* TODO error checking etc...*/
+            link = plugin.Link();
+            link.name = rep;
+            link.host = node.name;
+            hw.addLink(link);
+        }
+        inputPopup.remove();
     };
     this.init(node);
 };
@@ -296,11 +320,10 @@ this.linkNodeRemover = function(t, n){
     var confirmPopup;
     
     this.init = function(node){
-        confirmPopup = new confirmationPopup("", "", this.response);
         var type = node.data.$reposttype;
         if(type == "buddyobj"){
             // Trying to delete
-            confirmPopup.updateMessage("Delete Link " + node.name + "?");
+            confirmPopup = new confirmationPopup("Delete Link " + node.name + "?" ,"", this.response);
             confirmPopup.display();
         }
     };
@@ -318,6 +341,9 @@ this.linkNodeRemover = function(t, n){
                             duration: 500  
                         });  
             tree.graph.removeNode(node.id);
+            link = plugin.Link();
+            link.name = node.name;
+            hw.rmLink(link);
         }
         confirmPopup.remove();
     };
@@ -396,74 +422,82 @@ this.confirmationPopup = function(message, divclass, callback){
 };
 
 
-/*
-this.addAcctPopup = function(){
+// Simple single field popup.
+// message = message to display
+// divclass = class to call it
+// callback = cb to call when user clicks. Should take string user input
+this.singleFieldPopup = function(message, divclass, callback){
     
+    var cback = callback;
     var popup;
-    var username;
-    var password;
+    var msg;
+    var input;
 
-    this.createPopup = function(){
-
-        popup = document.createElement("div");
-        popup.className = "addAcctPopup";
+    this.createPopup = function(message, divclass){
         
-        username = document.createElement("input");
-        username.type = "textbox";
+        popup = document.createElement("div");
+        popup.className = "floater singleFieldPopup "+divclass;
+        
+        // message
+        msg = document.createElement("span");
+        msg.className = "message";
+        msg.innerHTML = message;
+        popup.appendChild(msg);
+        
+        // input field
+        input = document.createElement("input");
+        input.className = "inputbox";
+        input.type = "textbox";
+        popup.appendChild(input);
 
-        password = document.createElement("input");
-        password.type = "password";
-
-        var add = document.createElement("button");
-        add.innerText = "Add";
-        add.onclick = this.addFromPopup(this);
+        // Ok and cancel button
+        var ok = document.createElement("button");
+        ok.className = "ok";
+        ok.innerText = "Ok";
+        ok.onclick = this.ok(this);
+        popup.appendChild(ok);
 
         var cancel = document.createElement("button");
-        cancel.innerText = "Cancel";       
-        cancel.onclick = this.clearPopup(this);
-
-        popup.appendChild(username);
-        popup.appendChild(password);
-        popup.appendChild(add);
+        cancel.className = "cancel";
+        cancel.innerText = "Cancel";
+        cancel.onclick = this.cancel(this);
         popup.appendChild(cancel);
+
+        document.body.appendChild(popup);
+    };
+    
+    this.cb = function(result){
+        cback(result);
     };
 
-    this.username = function(){
-        return username.value;
-    };
-
-    this.password = function(){
-        return password.value;
-    };
-
-    this.getPopup = function(){
-        return popup;
-    };
- 
-    this.deleteMe = function(){
-        popup.parentNode.removeChild(popup);
-    };
-
-    this.addFromPopup = function(popup){
+    this.ok = function(popup){
        return function(e){
-           var acc = new account();
-           acc.username = popup.username();
-           acc.password = popup.password();
-           acc.enabled="true";
-           al.addAcct(acc);
-           saveAccountList();
-           popup.deleteMe();
+           popup.cb(input.value);
        };
     };
-
-    this.clearPopup = function(popup){
-        return function(){
-            popup.deleteMe();
-        };
+    
+    this.cancel = function(popup){
+       return function(e){
+           popup.cb("");
+       };
+    };
+    
+    this.updateMessage = function(message){
+        msg.innerHTML = message;
     };
 
-    this.createPopup();
+    this.display = function(){
+        popup.style.visibility = "visible";
+    };
+
+    this.textFocus = function(){
+        input.focus();
+    };
+ 
+    this.remove = function(){
+        document.body.removeChild(popup);
+    };
+ 
+    this.createPopup(message, divclass);
+
 };
-
-*/
-
