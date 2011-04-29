@@ -201,6 +201,7 @@ this.linkVisual = function() {
             for(var x=0; x<acctree.length; x++){
                 if(linktree[i].name == acctree[x].name){
                     linktree.splice(i,1);
+                    i = 0; /* size can change so to the begining */
                 }
             }
         }
