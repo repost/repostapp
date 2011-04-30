@@ -168,7 +168,8 @@ function addShortCuts(){
             }
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
-                links.show(linkarr);       
+                var acctarr = hw.getAccounts();
+                links.show(linkarr, acctarr);       
             }
         }
     };
