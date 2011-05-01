@@ -38,9 +38,9 @@ this.postText = function(){
         var text = document.createElement("div");
         
         cap.innerHTML = caption;
-        cap.className = "postcaption";
+        cap.className = "textpostcaption postcaption";
         text.innerHTML = cont;
-        text.className = "postpreview";
+        text.className = "posttextbody";
         textpost.className = "textpost";
         textpost.appendChild(cap);
         textpost.appendChild(text);

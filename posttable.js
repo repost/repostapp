@@ -82,7 +82,7 @@ this.posttable = function(){
     
     // Return post from coord (x,y)
     this.getPostXY = function(pos){
-        var contents = table.rows[pos.y].cells[pos.x].children;
+        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
         for(x=0; x<contents.length;x++){
             if(contents[x].className == "post"){
                 var post = new postHolder();
@@ -141,25 +141,25 @@ this.posttable = function(){
         cell.appendChild(postspace);
 
         var uparrow = document.createElement("image");
-        uparrow.className = "votehand";
+        uparrow.className = "uphand votehand";
         uparrow.src = "./hpu.png";
-        cell.appendChild(uparrow);
+        postspace.appendChild(uparrow);
 
         var met = document.createElement("div");
         met.className = "metric";
         //met.innerHTML = post.getMetric();
-        cell.appendChild(met);
+        postspace.appendChild(met);
 
         var downarrow = document.createElement("image");
-        downarrow.className = "votehand";
+        downarrow.className = "downhand votehand";
         downarrow.src = "./hpd.png";
-        cell.appendChild(downarrow);
+        postspace.appendChild(downarrow);
 
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
-            var pos = {x:this.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.rowIndex};
+            var pos = {x:this.parentNode.parentNode.cellIndex,
+                        y:this.parentNode.parentNode.parentNode.rowIndex};
             if ( plugin === undefined )
             {
                 plugin = document.getElementById("plugin");
@@ -169,25 +169,24 @@ this.posttable = function(){
         };
 
         uparrow.onmouseover = function(){
-            this.parentNode.className = "rockon";
+            this.parentNode.className += " rockon";
         };
 
         uparrow.onmouseout = function(){
-            this.parentNode.className = "postcell";
+            this.parentNode.className = this.parentNode.className.replace(" rockon",'')
         };
 
         downarrow.onmouseover = function(){
-            this.parentNode.className = "fuckoff";
+            this.parentNode.className += " fuckoff";
         };
 
         downarrow.onmouseout = function(){
-            this.parentNode.className = "postcell"
+            this.parentNode.className = this.parentNode.className.replace(" fuckoff",'')
         };
 
         downarrow.onclick = function(){
-            this.className = "downhand";
-            var pos = {x:this.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.rowIndex};
+            var pos = {x:this.parentNode.parentNode.cellIndex,
+                        y:this.parentNode.parentNode.parentNode.rowIndex};
             if ( plugin === undefined )
             {
                 plugin = document.getElementById("plugin");
@@ -197,24 +196,20 @@ this.posttable = function(){
             ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
         };
 
-        cell.onmouseover = function(){
-         //   over(this);
+        postspace.onmouseover = function(){
         };
-        
-        cell.onmouseout =  function() {
-
+        postspace.onmouseout =  function() {
         };
-
-        cell.onmousedown = function(){
+        postspace.onmousedown = function(){
         };
-        cell.onmouseup = function(){
+        postspace.onmouseup = function(){
         };				
-        cell.onclick = function(){
+        postspace.onclick = function(){
         };			
         
         numentries++;
-
-        table.rows[pos.y].cells[pos.x].appendChild(post.getXml());
+        postspace.appendChild(post.getXml());
+        table.rows[pos.y].cells[pos.x].appendChild(postspace);
     };
     
     this.createTable();
