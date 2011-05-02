@@ -146,6 +146,14 @@ function checkForPost(post,rank){
     con.setUuid(post.uuid);
     con.setMetric(post.metric);
     ptable.insertPost(con,rank);
+    // Create a simple text notification:
+    var notification = webkitNotifications.createNotification(
+      '',  // icon url - can be relative
+        'Hello!',  // notification title
+          'Lorem ipsum...'  // notification body text
+          );
+    // Then show the notification.
+    notification.show();
 };
 
 // Creates the link to the options page. Should probably redirect in future.

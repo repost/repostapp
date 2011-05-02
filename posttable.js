@@ -80,7 +80,7 @@ this.posttable = function(){
         return this.getPostXY(pos);
     };
     
-    // Return post from coord (x,y)
+    // Return copy post from coord (x,y)
     this.getPostXY = function(pos){
         var contents = table.rows[pos.y].cells[pos.x].children[0].children;
         for(x=0; x<contents.length;x++){
@@ -88,6 +88,17 @@ this.posttable = function(){
                 var post = new postHolder();
                 post.setXml(contents[x]);
                 return post;
+            }
+        }
+        return null;
+    };
+
+    // Return post from coord (x,y)
+    this.getPostXYPtr = function(pos){
+        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
+        for(x=0; x<contents.length;x++){
+            if(contents[x].className == "post"){
+                return contents[x];
             }
         }
         return null;
@@ -160,6 +171,8 @@ this.posttable = function(){
             uparrow.src = "./hpuselect.png";
             var pos = {x:this.parentNode.parentNode.cellIndex,
                         y:this.parentNode.parentNode.parentNode.rowIndex};
+            var post = ptable.getPostXYPtr(pos);
+            post["upvoted"] = true;
             if ( plugin === undefined )
             {
                 plugin = document.getElementById("plugin");
@@ -208,6 +221,11 @@ this.posttable = function(){
         };			
         
         numentries++;
+        // Ensure that upvote highlighting follows post around table
+        var postxml = post.getXml();
+        if (postxml["upvoted"]){
+            uparrow.src = "./hpuselect.png";
+        }
         postspace.appendChild(post.getXml());
         table.rows[pos.y].cells[pos.x].appendChild(postspace);
     };
