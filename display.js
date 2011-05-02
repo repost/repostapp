@@ -148,10 +148,10 @@ function checkForPost(post,rank){
     ptable.insertPost(con,rank);
     // Create a simple text notification:
     var notification = webkitNotifications.createNotification(
-      '',  // icon url - can be relative
-        'Hello!',  // notification title
-          'Lorem ipsum...'  // notification body text
-          );
+      'icon.jpeg',  // icon url - can be relative
+        'New Repost:',
+        con.getCaption()  // notification title
+    );
     // Then show the notification.
     notification.show();
 };
