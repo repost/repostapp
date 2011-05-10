@@ -31,17 +31,43 @@ this.postImage = function(){
         image = i;
     };
 
+    this.getUuid = function(u){
+        return uuid;
+    };
+
+    this.getMetric = function(m){
+        return metric;
+    };
+
+    this.getCaption = function(cap){
+        return caption;
+    };
+
+    this.getContext = function(con){
+        return context;
+    };
+
+    this.getImage = function(i){
+        return image;
+    };
+
     // Construct image content from its parts
     this.getXml = function() {
         var imagepost = document.createElement("div");
+        imagepost.className = "imagepost"
 
         var previewimage = document.createElement("image");
-        previewimage.className = "postpreview";
+        previewimage.className = "imagepreview";
         previewimage.src = image;
-        imagepost.appendChild(previewimage);
+
+        var contextlink = document.createElement('a');
+        contextlink.href = context;
+        contextlink.target = "_blank";
+        contextlink.appendChild(previewimage);
+        imagepost.appendChild(contextlink);
 
         var previewcaption = document.createElement("div");
-        previewcaption.className = "postcaption";
+        previewcaption.className = "imagepostcaption postcaption";
         previewcaption.innerHTML = caption;
         imagepost.appendChild(previewcaption);
 

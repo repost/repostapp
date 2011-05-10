@@ -163,29 +163,21 @@ this.linkVisual = function() {
 
         document.body.appendChild(linkBox);
     };
-    
-    this.createTree = function(links){
+
+    this.createTree = function(links, accts){
         var foundhost = false;
-        var len = links.length;
+        var linklen = links.length;
+        var acctlen = accts.length;
         var linktree = new Array();
         var acctree = new Array();
 
         // create account tree
-        for(var i=0; i<len; i++) {
-            foundhost = false;
-            for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].name == links[i].host) {
-                    foundhost = true;
-                    break;
-                }
-            }
-            if( foundhost == false ) {
-                var treeobj = createTreeElement(links[i].host, links[i].host, "hostobj");
-                acctree.push(treeobj);
-            }
+        for(var i=0; i<acctlen; i++) {
+            var treeobj = createTreeElement(accts[i].user, accts[i].user, "hostobj");
+            acctree.push(treeobj);
         }
         // create link tree
-        for(var i=0; i<len; i++) {
+        for(var i=0; i<linklen; i++) {
             for(var x=0; x<acctree.length; x++) {
                 if(acctree[x].name == links[i].host) {
                     var treeobj = createTreeElement(links[i].name, links[i].name, "buddyobj");
@@ -212,8 +204,8 @@ this.linkVisual = function() {
         return fd;
     };
 
-    this.show = function(linkarr){
-        var tree = this.createTree(linkarr);
+    this.show = function(linkarr, acctarr){
+        var tree = this.createTree(linkarr, acctarr);
         linkBox.style.visibility = "visible";
         fd = new $jit.ForceDirected(forcegraphset);
         // load JSON data.

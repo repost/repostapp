@@ -146,6 +146,14 @@ function checkForPost(post,rank){
     con.setUuid(post.uuid);
     con.setMetric(post.metric);
     ptable.insertPost(con,rank);
+    // Create a simple text notification:
+    var notification = webkitNotifications.createNotification(
+      'icon.jpeg',  // icon url - can be relative
+        'New Repost:',
+        con.getCaption()  // notification title
+    );
+    // Then show the notification.
+    notification.show();
 };
 
 // Creates the link to the options page. Should probably redirect in future.
@@ -168,7 +176,8 @@ function addShortCuts(){
             }
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
-                links.show(linkarr);       
+                var acctarr = hw.getAccounts();
+                links.show(linkarr, acctarr);       
             }
         }
     };

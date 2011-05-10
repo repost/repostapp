@@ -30,6 +30,26 @@ this.postText = function(){
         caption = cap;
     };
 
+    this.getUuid = function(u){
+        return uuid;
+    };
+
+    this.getMetric = function(m){
+        return metric;
+    };
+
+    this.getCaption = function(cap){
+        return caption;
+    };
+
+    this.getContent = function(con){
+        return cont;
+    };
+
+    this.getLink = function(lin){
+        return link;
+    };
+
     // Construct image content from its parts
     this.getXml = function() {
         var xmlpost; /* generic xml post holder */
@@ -38,9 +58,9 @@ this.postText = function(){
         var text = document.createElement("div");
         
         cap.innerHTML = caption;
-        cap.className = "postcaption";
+        cap.className = "textpostcaption postcaption";
         text.innerHTML = cont;
-        text.className = "postpreview";
+        text.className = "posttextbody";
         textpost.className = "textpost";
         textpost.appendChild(cap);
         textpost.appendChild(text);
