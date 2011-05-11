@@ -102,6 +102,10 @@ div.postcaption{
     height: 35px;
     overflow: hidden;
 }
+.imagepostcaption:hover{
+    overflow: visible;
+    z-index:9999;
+}
 /**
  * Generic floating box
  */
