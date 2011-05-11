@@ -70,6 +70,11 @@ this.postImage = function(){
         previewcaption.className = "imagepostcaption postcaption";
         previewcaption.innerHTML = caption;
         imagepost.appendChild(previewcaption);
+        // To prevent overflow chars respect limit
+        if(caption.length > 40){
+            previewcaption.innerHTML = caption.substring(0,43);
+            previewcaption.innerHTML += "...";
+        }
 
         var xmlpost = xmlPost(uuid, metric);
         xmlpost.appendChild(imagepost);

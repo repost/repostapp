@@ -32,16 +32,16 @@ table{
     position: relative; 
 }
 .downhand{
-    top:30px;
-    left:185px;
+    top:40px;
+    left:240px;
 }
 .uphand{
-    top:10px;
-    left:185px;
+    top:20px;
+    left:240px;
 }
 div.metric{
-    top:20px;
-    left:185px;
+    top:30px;
+    left:240px;
     position: relative; 
     font-family:"Lucida Console", Courier New, monospace;
 }
@@ -51,15 +51,15 @@ div.metric{
  */
  .postspace{
     position:relative;
-    height: 150px;
-    width: 220px;
+    height: 180px;
+    width: 280px;
  }
 .post{
     position:absolute;
     left:0px;
     top:0px;
-    height: 150px;
-    width: 180px;
+    height: 180px;
+    width: 240px;
  }
 .imagepost{
 }
@@ -67,8 +67,8 @@ div.metric{
     position:absolute;
     top:10px;
     left:10px;
-    max-width:160px;
-    max-height:100px;    
+    max-width:180px;
+    max-height:120px;    
 }
 .imagepreview:hover{
     background:#388EA6;
@@ -97,8 +97,10 @@ div.postcaption{
 }
 .imagepostcaption{
     position:absolute;
-    top: 120px;
+    top: 140px;
     left: 12px;
+    height: 35px;
+    overflow: hidden;
 }
 /**
  * Generic floating box

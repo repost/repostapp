@@ -16,7 +16,7 @@ this.postHolder = function(){
 this.posttable = function(){
  
     var rows = 0;       // dependent upon how much stuff you add
-    var cols = 5;       // Standard 5 cols wide   
+    var cols = 4;       // Standard 5 cols wide   
     var numentries = 0; // number of items in table
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
