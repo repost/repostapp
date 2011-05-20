@@ -1,3 +1,0 @@
-#!/bin/bash
-LD_PRELOAD=/usr/lib/libpurple.so 
-/home/andrew/Projects/rp/repostapp/Branches/hank_basic/librpl.so

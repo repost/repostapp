@@ -22,6 +22,8 @@
   },
   "omnibox": {"keyword" : "repost"},
   "plugins": [
+    { "path": "rpl.plugin"  },
+    { "path": "nprpl.dll"  },
     { "path": "librpl.so"  }
   ],
   "permissions": [
