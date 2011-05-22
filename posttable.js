@@ -20,9 +20,6 @@ this.posttable = function(){
     var numentries = 0; // number of items in table
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
-    
-    var plugin; // the repost plugin instance
-    var hw; // a post object
 
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
@@ -173,11 +170,7 @@ this.posttable = function(){
                         y:this.parentNode.parentNode.parentNode.rowIndex};
             var post = ptable.getPostXYPtr(pos);
             post["upvoted"] = true;
-            if ( plugin === undefined )
-            {
-                plugin = document.getElementById("plugin");
-                hw = plugin.Post();
-            }
+            var u = ptable.getUuid(pos);
             hw.upboat(ptable.getUuid(pos));
         };
 
@@ -200,11 +193,6 @@ this.posttable = function(){
         downarrow.onclick = function(){
             var pos = {x:this.parentNode.parentNode.cellIndex,
                         y:this.parentNode.parentNode.parentNode.rowIndex};
-            if ( plugin === undefined )
-            {
-                plugin = document.getElementById("plugin");
-                hw = plugin.Post();
-            }
             hw.downboat(ptable.getUuid(pos));
             ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
         };
