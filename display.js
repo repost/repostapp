@@ -1,11 +1,14 @@
 // When we receive content via repostlib we need to be able to build
 // a nice object from the JSON
 function buildFromJSON(content){
-    var objstr = JSON.parse(content);
-    var j = objstr["cname"];
-    var obj = new window[objstr["cname"]]();
-    obj.loadFromJSON(objstr);
-    return obj;
+    if( content ){
+      var objstr = JSON.parse(content);
+      var j = objstr["cname"];
+      var obj = new window[objstr["cname"]]();
+      obj.loadFromJSON(objstr);
+      return obj;
+    }
+    return;
 };
 
 // Sends and inserts jsPosts
@@ -142,18 +145,20 @@ function xmlPost(uuid, metric){
 };
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank){
-    var con = buildFromJSON(post.content);
-    con.setUuid(post.uuid);
-    con.setMetric(post.metric);
-    ptable.insertPost(con,rank);
-    // Create a simple text notification:
-    var notification = webkitNotifications.createNotification(
-      'icon-16.jpeg',  // icon url - can be relative
-        'New Repost:',
-        con.getCaption()  // notification title
-    );
-    // Then show the notification.
-    //notification.show();
+    if( post.content ){
+      var con = buildFromJSON(post.content);
+      con.setUuid(post.uuid);
+      con.setMetric(post.metric);
+      ptable.insertPost(con,rank);
+      // Create a simple text notification:
+      var notification = webkitNotifications.createNotification(
+        'icon-16.jpeg',  // icon url - can be relative
+          'New Repost:',
+          con.getCaption()  // notification title
+      );
+      // Then show the notification.
+      //notification.show();
+    }
 };
 
 // Creates the link to the options page. Should probably redirect in future.
@@ -191,20 +196,23 @@ var hw; // a repost object
 var textbox; // Text post input box
 var links;
 
+var wel;
+
 function main() {
     // Check we have an account to log into
     var accounts = loadAccounts();
-    if( accounts == null || accounts.length == 0 ){
+    /*if( accounts == null || accounts.length == 0 ){
         // direct to options page
         var page = document.getElementById("repost"); 
         page.appendChild(createOptionsLink());
-    }else{
+    }else{*/
         // start repost
         ptable = new posttable();
         // Create input windows
         textbox = new textPostBox();
         textbox.init();
 
+        wel = document.getElementById("welcome");
         // attach repost shortcuts
         addShortCuts();
         // init the posttable
@@ -215,17 +223,19 @@ function main() {
         // Create link management window
         links = new linkVisual();
         links.init();
-        var acc = plugin.Account();
-        // add saved accounts
-        for(var i=0; i<accounts.length; i++){
-            acc.user = accounts[i].username;
-            acc.pass = accounts[i].password;
-            acc.type = "XMPP";
-            hw.addAccount(acc);
+        if(accounts){
+          var acc = plugin.Account();
+          // add saved accounts
+          for(var i=0; i<accounts.length; i++){
+              acc.user = accounts[i].username;
+              acc.pass = accounts[i].password;
+              acc.type = "XMPP";
+              hw.addAccount(acc);
+          }
         }
         hw.startRepost();
         hw.getInitialPosts(checkForPost);
-    }
+    /*}*/
 };
 
 

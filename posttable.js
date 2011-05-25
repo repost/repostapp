@@ -128,7 +128,17 @@ this.posttable = function(){
     // add the post(expecting innerHTML) to rank whatever
     // If there is a post already there is will remove it
     this.addPost = function( post, rank){
- 
+        
+        // Hack to remove welcome
+        if(wel){
+          if ( wel.hasChildNodes() )
+          {
+            while ( wel.childNodes.length >= 1 )
+            {
+              wel.removeChild( wel.firstChild );       
+            } 
+          }
+        }
         var pos = this.rankToxy(rank);
         var row;
         // check we got enough rows
