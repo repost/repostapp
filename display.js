@@ -146,18 +146,20 @@ function xmlPost(uuid, metric){
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank){
     if( post.content ){
-      var con = buildFromJSON(post.content);
-      con.setUuid(post.uuid);
-      con.setMetric(post.metric);
-      ptable.insertPost(con,rank);
-      // Create a simple text notification:
-      var notification = webkitNotifications.createNotification(
-        'icon-16.jpeg',  // icon url - can be relative
-          'New Repost:',
-          con.getCaption()  // notification title
-      );
-      // Then show the notification.
-      //notification.show();
+        var con = buildFromJSON(post.content);
+        con.setUuid(post.uuid);
+        con.setMetric(post.metric);
+        ptable.insertPost(con,rank);
+        // Create a simple text notification:
+        var notification = webkitNotifications.createNotification(
+                'icon-16.jpeg',  // icon url - can be relative
+                'New Repost:',
+                con.getCaption()  // notification title
+                );
+        notification.onclick = function(){ window.focus(); this.cancel(); };
+        setTimeout(function(){ notification.cancel();}, '10000');
+        // Then show the notification.
+        notification.show();
     }
 };
 
