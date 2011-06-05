@@ -143,6 +143,7 @@ function xmlPost(uuid, metric){
     xmlpost.setAttribute("data-metric",metric);
     return xmlpost;    
 };
+
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank){
     if( post.content ){
@@ -150,18 +151,67 @@ function checkForPost(post,rank){
         con.setUuid(post.uuid);
         con.setMetric(post.metric);
         ptable.insertPost(con,rank);
-        // Create a simple text notification:
-        var notification = webkitNotifications.createNotification(
-                'icon-16.jpeg',  // icon url - can be relative
-                'New Repost:',
-                con.getCaption()  // notification title
-                );
-        notification.onclick = function(){ window.focus(); this.cancel(); };
-        setTimeout(function(){ notification.cancel();}, '10000');
-        // Then show the notification.
-        notification.show();
-    }
+        repostNotify.queueNotification(con.getCaption());
+       }
 };
+
+this.repostNotification = function(){
+
+  var msgQueue;
+  var timeout;
+
+  this.init = function(){
+    this.msgQueue = new Array();
+  };
+  
+  this.sendMsg = function(msg){
+    // Create a simple text notification:
+    var notification = webkitNotifications.createNotification(
+        'icon-16.jpeg',  // icon url - can be relative
+        'New Repost:',
+        msg
+        );
+    notification.onclick = function(){ window.focus(); this.cancel(); };
+    setTimeout(function(){ notification.cancel();}, '5000');
+    notification.show();
+  };
+  
+  // On the timeout if there is only 1 post send out the caption
+  // more than one send out the number
+  this.onTimeOut = function(){
+    this.timeout = null;
+    if(this.msgQueue.length == 1){
+      this.sendMsg(this.msgQueue.pop());
+    }else if( this.msgQueue.length > 1){
+      this.sendMsg(this.msgQueue.length + " New Posts");
+      while(this.msgQueue.length > 0){
+        this.msgQueue.pop();
+      }
+    }
+  };
+  
+  // Need to make timeout a closure so we can access our object
+  this.closedOnTimeOut = function(){
+    var _this = this;
+    return function(){
+      _this.onTimeOut();
+    };
+  };
+
+  // Queue up notifications so we don't get an explosition across the screen
+  this.queueNotification = function(message){
+    if(message){
+      this.msgQueue.push(message);
+      if(this.timeout == null){
+        this.timeout = setTimeout(this.closedOnTimeOut(), '1000'); // Time to queue em up before flushing
+      }
+    }
+  };
+
+  this.init();
+
+};
+
 
 // Creates the link to the options page. Should probably redirect in future.
 function createOptionsLink(){
@@ -198,6 +248,8 @@ var hw; // a repost object
 var textbox; // Text post input box
 var links;
 
+var repostNotify;
+
 var wel;
 
 function main() {
@@ -213,7 +265,7 @@ function main() {
         // Create input windows
         textbox = new textPostBox();
         textbox.init();
-
+        repostNotify = new repostNotification();
         wel = document.getElementById("welcome");
         // attach repost shortcuts
         addShortCuts();
