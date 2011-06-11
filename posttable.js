@@ -283,8 +283,7 @@ this.posttable = function(){
         if (postxml["upvoted"]){
             uparrow.src = "./hpuselect.png";
         }
-        var test = post.getXml();
-        //postspace.appendChild(post.getXml());
+        //var test = post.getXml();
         postspace.appendChild(post.getXml())
         cell.appendChild(postspace);
         //table.rows[pos.y].cells[pos.x].appendChild(postspace);

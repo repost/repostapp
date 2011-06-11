@@ -59,6 +59,7 @@ this.postImage = function(){
         var previewimage = document.createElement("image");
         previewimage.className = "imagepreview";
         previewimage.src = image;
+        previewimage.alt = caption;
 
         var contextlink = document.createElement('a');
         contextlink.href = context;
@@ -66,11 +67,12 @@ this.postImage = function(){
         contextlink.appendChild(previewimage);
         imagepost.appendChild(contextlink);
 
+        /*
         var previewcaption = document.createElement("div");
         previewcaption.className = "imagepostcaption postcaption";
         previewcaption.innerHTML = caption;
         imagepost.appendChild(previewcaption);
-
+        */
         var xmlpost = xmlPost(uuid, metric);
         xmlpost.appendChild(imagepost);
         return xmlpost;
