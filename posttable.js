@@ -20,11 +20,15 @@ this.posttable = function(){
     var numentries = 0; // number of items in table
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
+    var divtable;
 
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
-        table = document.createElement("table"); 
-        page.appendChild(table); 
+        //table = document.createElement("table"); 
+        divtable = document.createElement("div");
+        divtable.id = "divtable";
+        //page.appendChild(table); 
+        page.appendChild(divtable); 
     }; 
 
     // Deletes a post from the table given rank
@@ -35,11 +39,21 @@ this.posttable = function(){
 
     // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
+        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        if ( contents )
+        {
+            while (contents.hasChildNodes())
+            {
+                contents.removeChild(contents.lastChild);
+            }
+        }
+        /*
         var contents = table.rows[pos.y].deleteCell(pos.x);
         if( table.rows[pos.y].cells.length == 0 ){
              table.deleteRow(pos.y);
              rows--;
         }
+        */
         numentries--;
     };
 
@@ -79,12 +93,20 @@ this.posttable = function(){
     
     // Return copy post from coord (x,y)
     this.getPostXY = function(pos){
-        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.length;x++){
-            if(contents[x].className == "post"){
-                var post = new postHolder();
-                post.setXml(contents[x]);
-                return post;
+        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
+        // nastiness, go through the div to find postspace
+        // then go through postspace to get post. surely there's a better way
+        for(x=0; x<contents.childNodes.length;x++){
+            if(contents.childNodes[x].className == "postspace"){
+                var con = contents.childNodes[x];
+                for(y=0; y<con.childNodes.length;y++){
+                    if(con.childNodes[y].className == "post"){
+                        var post = new postHolder();
+                        post.setXml(con.childNodes[y]);
+                        return post;
+                    }
+                }
             }
         }
         return null;
@@ -92,9 +114,10 @@ this.posttable = function(){
 
     // Return post from coord (x,y)
     this.getPostXYPtr = function(pos){
-        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.length;x++){
-            if(contents[x].className == "post"){
+        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
+        for(x=0; x<contents.childNodes.length;x++){
+            if(contents.childNodes[x].className == "post"){
                 return contents[x];
             }
         }
@@ -110,10 +133,35 @@ this.posttable = function(){
     // inserts a post at the given location and 
     // shuffles all posts behind it up a rank.
     this.insertPost = function(post, rank){
+
+        // shuffle shit along
+        for ( var i = numentries; i > rank; i-- )
+        {
+            var pos = this.rankToxy(i-1);
+            var temppost = this.getPostXY(pos);
+            if (temppost) {
+                this.deletePostXY(pos);
+                this.addPost(temppost,(i));
+            }
+        }
+        /* not quite
+        for ( var i = rank; i < numentries; i++ )
+        {
+            var pos = this.rankToxy(i);
+            var temppost = this.getPostXY(pos);
+            if (temppost) {
+                this.deletePostXY(pos);
+                this.addPost(temppost,(i+1));
+            }
+        }
+        */
         //insert at position
         this.addPost(post,rank);
-	    var pos = this.rankToxy(rank);
+        var pos = this.rankToxy(rank);
         var i = pos.y;
+        var row = document.getElementById("divRow"+pos.y);
+
+        /*
         while( table.rows[i].cells.length > cols ){
             var pos;
             pos.x = table.rows[i].cells.length - 1;
@@ -123,6 +171,7 @@ this.posttable = function(){
             this.deletePostXY(pos);
             i++;
         }
+        */
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -142,16 +191,26 @@ this.posttable = function(){
         var pos = this.rankToxy(rank);
         var row;
         // check we got enough rows
-        if((rows) <= pos.y){
-            row = table.insertRow(rows++);
-        }else{
-	        row = table.rows[pos.y];
+        if ( rows <= pos.y) {
+            //row = table.insertRow(rows++);
+            row = document.createElement("div");
+            row.id = "divRow"+rows++;
+            row.className = "divrow";
+            divtable.appendChild(row);
+        }
+        else {
+            row = document.getElementById("divRow"+pos.y);
         }
 
         // check if cell exists
-        var cell = row.insertCell(pos.x);
-        // check we go the cel
-        cell.className = "postcell";
+        //var cell = row.insertCell(pos.x);
+        var cell = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        if ( !cell ) {
+            cell = document.createElement("div");
+            cell.id = "divRow"+pos.y+"Col"+pos.x;
+            cell.className = "divCol"+pos.x+" divcol";
+            row.appendChild(cell);
+        }
 
         //create the general stuff
         var postspace = document.createElement("div");
@@ -214,9 +273,9 @@ this.posttable = function(){
         postspace.onmousedown = function(){
         };
         postspace.onmouseup = function(){
-        };				
+        };                
         postspace.onclick = function(){
-        };			
+        };            
         
         numentries++;
         // Ensure that upvote highlighting follows post around table
@@ -224,8 +283,11 @@ this.posttable = function(){
         if (postxml["upvoted"]){
             uparrow.src = "./hpuselect.png";
         }
-        postspace.appendChild(post.getXml());
-        table.rows[pos.y].cells[pos.x].appendChild(postspace);
+        var test = post.getXml();
+        //postspace.appendChild(post.getXml());
+        postspace.appendChild(post.getXml())
+        cell.appendChild(postspace);
+        //table.rows[pos.y].cells[pos.x].appendChild(postspace);
     };
     
     this.createTable();
