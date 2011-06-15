@@ -283,7 +283,7 @@ function main() {
           for(var i=0; i<accounts.length; i++){
               acc.user = accounts[i].username;
               acc.pass = accounts[i].password;
-              acc.type = "XMPP";
+              acc.type = accounts[i].type;
               hw.addAccount(acc);
           }
         }
