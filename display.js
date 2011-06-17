@@ -30,110 +30,6 @@ chrome.extension.onRequest.addListener(
      }
 );
 
-// Creating Text post from main page
-this.textPostBox = function(x,y){
-    
-    // Location
-    var X = x;
-    var Y = y;
-    
-    // Content
-    var caption;
-    var content;
-
-     this.init = function(){
-
-        var tb; /* Table to form things up */
-        var row; /* temp row */
-        var cell; /* temp cell */
-        var label; /* temp label */
-        var postbutton; /* send that text */
-
-        // Create dialog
-        textPostBox = document.createElement('div');
-        textPostBox.className = "floater textpostbox";
-        // Caption
-        label = document.createElement("label");
-        label.innerHTML = "Caption:";
-        label.className = "caption";
-        caption = document.createElement("input");
-        caption.className = "captioninput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(caption);
-        // Content
-        label = document.createElement("label");
-        label.innerHTML = "Content:";
-        label.className = "content";
-        content = document.createElement("textarea");
-        content.className = "contentinput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(content);
-        // Post button
-        postbutton = document.createElement("button");
-        postbutton.innerText = "Ahoy Buttercup";
-        postbutton.onclick = this.sendPost(this,textPostBox);
-        postbutton.className = "sendtext";
-        textPostBox.appendChild(postbutton);
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "floatclose";
-        close.onclick = this.onclickclose(this);
-        textPostBox.appendChild(close);
-        textPostBox.style.visibility = "hidden";
-        document.body.appendChild(textPostBox);
-    };
-    
-    this.onclickclose = function(popup){
-        return function(){
-            popup.close();
-        };
-    };
-
-    this.con = function(){
-        return content.value;
-    };
-
-    this.cap = function(){
-        return caption.value;
-    };
-
-    this.sendPost = function(postbox, textPostBox){
-        return function(){
-            // Lets send this post
-            var t = new postText();
-            t.setCaption(postbox.cap());
-            t.setContent(postbox.con());
-            t.setLink("");
-            t.setUuid("");
-            t.setMetric("");
-            sendPost(t);
-            postbox.close();
-        };
-    };
-
-    this.close = function(){
-        this.textClear();
-        textPostBox.style.visibility = "hidden";
-    };
-
-    this.textFocus = function(){
-        caption.focus();
-    };
-    
-    this.textClear = function(){
-        caption.value = "";
-        content.value = "";
-    };
-
-    this.createTextPostBox = function(x, y){
-        textPostBox.style.visibility = "visible";
-        textPostBox.style.top = y + "px";
-        textPostBox.style.left = x + "px";
-        this.textFocus();
-    };
-};
-
 // Returns the generic post container to attach visual elements
 // to
 function xmlPost(uuid, metric){
@@ -229,7 +125,7 @@ function addShortCuts(){
             var code = e.keyCode;
             var c = String.fromCharCode(code).toLowerCase();
             if(c == "t"){ // Text Post Box Popup
-                textbox.createTextPostBox();
+                textbox.display();
             }
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
@@ -263,8 +159,7 @@ function main() {
         // start repost
         ptable = new posttable();
         // Create input windows
-        textbox = new textPostBox();
-        textbox.init();
+        textbox = new textPostBox(sendPost);
         repostNotify = new repostNotification();
         wel = document.getElementById("welcome");
         // attach repost shortcuts
