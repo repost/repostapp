@@ -84,8 +84,7 @@ this.imagePostBox = function(sendPostCB){
 				curpost = new postImage();
 				curpost.setImage(event.currentTarget.src);
 				curpost.setContext(event.currentTarget.baseURI);
-				postbox.createimagePostBox(event.currentTarget.src,
-						event.clientX, event.clientY);
+				postbox.display(event.clientX, event.clientY);
 				postbox.focus();
 				event.returnValue = false;
 				return false;
@@ -93,7 +92,7 @@ this.imagePostBox = function(sendPostCB){
 		};
 	};
 
-	this.display = function(image, x, y){
+	this.display = function(x, y){
 		imagePostBox.style.visibility = "visible";
 		imagePostBox.style.top = y + "px";
 		imagePostBox.style.left = x + "px";
@@ -103,15 +102,15 @@ this.imagePostBox = function(sendPostCB){
 
 }
 
-contentClicker = function() {
+this.contentClicker = function() {
 
 	var imagebox;
 	var textbox;
 
 	this.init = function(){
-		imagebox = new imagePostBox(sendPost());
-		textbox = new textPostBox(sendPost());
-		document.addEventListener("keydown", shortcuts);
+		imagebox = new imagePostBox(this.sendPost());
+		textbox = new textPostBox(this.sendPost());
+		document.addEventListener("keydown", this.shortcuts());
 	};
 
 	this.shortcuts = function(contentclicker){
@@ -128,7 +127,7 @@ contentClicker = function() {
 
 	this.sendPost = function(){
 			return function(post){
-	    chrome.extension.sendRequest(JSON.stringify(cur_post), 
+	    chrome.extension.sendRequest(JSON.stringify(post), 
 			    function(response) {
 			        console.log(response.farewell);
 			     });

@@ -104,6 +104,6 @@ this.textPostBox = function(sendPostCB){
         textPostBox.style.left = x + "px";
         this.focus();
     };
-	this.init(); // Start this shit
+	  this.init(); // Start this shit
 };
 
