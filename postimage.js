@@ -50,8 +50,7 @@ this.postImage = function(){
     this.getImage = function(i){
         return image;
     };
-
-    // Construct image content from its parts
+    
     this.getXml = function() {
         var imagepost = document.createElement("div");
         imagepost.className = "imagepost"

@@ -13,7 +13,7 @@
       "all_frames": true,
       "matches": ["http://*/*","https://*/*"],
       "css" : ["content.css"],
-      "js": ["content.js","posttext.js","postimage.js"],
+      "js": ["posttext.js","postimage.js","content.js"],
       "run_at": "document_end"
     }
   ],
