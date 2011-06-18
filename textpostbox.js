@@ -1,19 +1,19 @@
 // Creating Text post from main page
 this.textPostBox = function(sendPostCB){
-    
-		// Dialog
-		var textPostBox;
+
+    // Dialog
+    var textPostBox;
 
     // Content
     var caption;
     var content;
-		
-		// Send Post callback
-		var spCB = sendPostCB;
 
-     this.init = function(){
-	
-				var close; /* close button */
+    // Send Post callback
+    var spCB = sendPostCB;
+
+    this.init = function(){
+
+        var close; /* close button */
         var label; /* temp label */
         var postbutton; /* send that text */
 
@@ -51,7 +51,7 @@ this.textPostBox = function(sendPostCB){
         textPostBox.style.visibility = "hidden";
         document.body.appendChild(textPostBox);
     };
-    
+
     this.onclickclose = function(popup){
         return function(){
             popup.close();
@@ -65,18 +65,24 @@ this.textPostBox = function(sendPostCB){
     this.cap = function(){
         return caption.value;
     };
-		
-		this.sendPost = function(post){
-		    spCB(post);
-		};
+
+    this.sendPost = function(post){
+        spCB(post);
+    };
 
     this.submitPost = function(postbox){
-        return function(){
+        return function(event){
             // Lets send this post
             var t = new postText();
             t.setCaption(postbox.cap());
             t.setContent(postbox.con());
-            t.setLink("");
+            // See if we are posting from repost page
+            var rpurl = new RegExp("chrome-extension://.*");
+            if(rpurl.test(event.currentTarget.baseURI)){
+                t.setLink("");
+            }else{
+                t.setLink(event.currentTarget.baseURI);
+            }
             t.setUuid("");
             t.setMetric("");
             postbox.sendPost(t);
@@ -92,7 +98,7 @@ this.textPostBox = function(sendPostCB){
     this.focus = function(){
         caption.focus();
     };
-    
+
     this.clear = function(){
         caption.value = "";
         content.value = "";
@@ -104,6 +110,6 @@ this.textPostBox = function(sendPostCB){
         textPostBox.style.left = x + "px";
         this.focus();
     };
-	  this.init(); // Start this shit
+    this.init(); // Start this shit
 };
 
