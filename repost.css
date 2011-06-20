@@ -244,17 +244,19 @@ span.name {
 }
 
 .linkbox{
-  top: 50px;
-  left: 50px;
-  width: 600px;
-  height: 420px;
+  top: 10%;
+  height: 80%;
+  left: 10%;
+  width: 80%;
  }
 
 .infovis{
     opacity:1;
-    margin: 15px 15px 15px 15px;
-    height: 400px;
-    width: 600px;
+    margin: auto;
+    top: 1%;
+    height: 98%;
+    left: 1%;
+    width: 98%;
 }
 
 .caption{
