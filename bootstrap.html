@@ -10,16 +10,20 @@ function boot() {
             var exturl = chrome.extension.getURL("main.html");
             var booturl = chrome.extension.getURL("bootstrap.html");
             var bootid;
+            var mainid;
             for (var i = 0, tab; tab = tabs[i]; i++) {
                 if (tab.url && (tab.url == exturl)) {
-                    chrome.tabs.update(tab.id, {selected: true});
-                    window.close();
-                    return;
+                    mainid = tab.id;
                 }else if (tab.url && (tab.url == booturl)) {
                     bootid = tab.id;
                 }
             }
-            chrome.tabs.update(bootid,{url: "main.html"});
+            if(mainid && bootid){
+                chrome.tabs.update(mainid, {selected: true});
+                chrome.tabs.remove(bootid);
+            }else{
+                chrome.tabs.update(bootid,{url: "main.html"});
+            }
     });
 }
 </script>
