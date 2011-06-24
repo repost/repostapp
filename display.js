@@ -23,10 +23,26 @@ function sendPost(p){
 // Listener function waiting for user to interact with page and
 // repost something.
 chrome.extension.onRequest.addListener(
-     function(request, sender, sendResponse) {
-        var post = buildFromJSON(request);
-        sendPost(post);
-        sendResponse({}); // snub them.
+		function(request, sender, sendResponse) {
+			 if(request.type && (request.type == "rp_sendPost")){
+			    var post = buildFromJSON(request);
+					sendPost(post);
+					sendResponse({}); // snub them.
+			 }
+     }
+);
+
+chrome.extension.onRequest.addListener(
+     function(msg, sender, sendResponse) {
+				if(msg.type && (msg.type == "rp_newPost")){
+					if( msg.post.content ){
+							var con = buildFromJSON(msg.post.content);
+							con.setUuid(msg.post.uuid);
+							con.setMetric(msg.post.metric);
+							ptable.insertPost(con, msg.rank);
+							repostNotify.queueNotification(con.getCaption());
+					}
+				}
      }
 );
 
@@ -38,17 +54,6 @@ function xmlPost(uuid, metric){
     xmlpost.setAttribute("data-uuid",uuid);
     xmlpost.setAttribute("data-metric",metric);
     return xmlpost;    
-};
-
-// Callback called when the rpeost plugin has a new post
-function checkForPost(post,rank){
-    if( post.content ){
-        var con = buildFromJSON(post.content);
-        con.setUuid(post.uuid);
-        con.setMetric(post.metric);
-        ptable.insertPost(con,rank);
-        repostNotify.queueNotification(con.getCaption());
-       }
 };
 
 this.repostNotification = function(){
@@ -149,42 +154,25 @@ var repostNotify;
 var wel;
 
 function main() {
-    // Check we have an account to log into
-    var accounts = loadAccounts();
-    /*if( accounts == null || accounts.length == 0 ){
-        // direct to options page
-        var page = document.getElementById("repost"); 
-        page.appendChild(createOptionsLink());
-    }else{*/
-        // start repost
-        ptable = new posttable();
-        // Create input windows
-        textbox = new textPostBox(sendPost);
-        repostNotify = new repostNotification();
-        wel = document.getElementById("welcome");
-        // attach repost shortcuts
-        addShortCuts();
-        // init the posttable
-        plugin = document.getElementById("plugin");
-        hw = plugin.rePoster();
-        hw.init();
-        hw.setNewPostCB(checkForPost);
-        // Create link management window
-        links = new linkVisual();
-        links.init();
-        if(accounts){
-          var acc = plugin.Account();
-          // add saved accounts
-          for(var i=0; i<accounts.length; i++){
-              acc.user = accounts[i].username;
-              acc.pass = accounts[i].password;
-              acc.type = accounts[i].type;
-              hw.addAccount(acc);
-          }
-        }
-        hw.startRepost();
-        hw.getInitialPosts(checkForPost);
-    /*}*/
+		// start repost
+		ptable = new posttable();
+		// Create input windows
+		textbox = new textPostBox(sendPost);
+		repostNotify = new repostNotification();
+		wel = document.getElementById("welcome");
+		// attach repost shortcuts
+		addShortCuts();
+		// init the posttable
+		var request = {"type": "rp_pluginRequest"};
+		chrome.extension.sendRequest(request,
+							function(response) {
+								plugin = response.plugin;
+								hw = response.repost;
+							});
+		plugin = document.getElementById("plugin");
+		// Create link management window
+		links = new linkVisual();
+		links.init();
 };
 
 

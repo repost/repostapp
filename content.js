@@ -129,7 +129,8 @@ this.contentClicker = function() {
 
     this.sendPost = function(){
         return function(post){
-            chrome.extension.sendRequest(JSON.stringify(post), 
+					var msg = {"type": "rp_sendPost", "post": post};
+            chrome.extension.sendRequest("",msg,
                     function(response) {
                     console.log(response.farewell);
                     });
