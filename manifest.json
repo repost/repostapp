@@ -12,8 +12,8 @@
     {
       "all_frames": true,
       "matches": ["http://*/*","https://*/*"],
-      "css" : ["content.css"],
-      "js": ["content.js","posttext.js","postimage.js"],
+      "css" : ["css/content.css"],
+      "js": ["js/content.js","js/posttext.js","js/postimage.js"],
       "run_at": "document_end"
     }
   ],
