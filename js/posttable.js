@@ -101,10 +101,10 @@ this.posttable = function(){
         // nastiness, go through the div to find postspace
         // then go through postspace to get post. surely there's a better way
         for(x=0; x<contents.childNodes.length;x++){
-            if(contents.childNodes[x].className == "postspace"){
+            if(contents.childNodes[x].className.search("postspace")){
                 var con = contents.childNodes[x];
                 for(y=0; y<con.childNodes.length;y++){
-                    if(con.childNodes[y].className == "post"){
+                    if(con.childNodes[y].className.search("post")){
                         var post = new postHolder();
                         post.setXml(con.childNodes[y]);
                         return post;
@@ -129,8 +129,9 @@ this.posttable = function(){
 
     // Return the uuid from the (x,y)
     this.getUuid = function(pos){
-        var postcon = this.getPostXY(pos).getXml();
-        return postcon.attributes["data-uuid"].value;
+        return $("#divRow"+pos.y+"Col"+pos.x+" .post").attr("data-uuid");
+        //var postcon = this.getPostXY(pos).getXml();
+        //return postcon.attributes["data-uuid"].value;
     };
 
     // inserts a post at the given location and 
@@ -220,9 +221,11 @@ this.posttable = function(){
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
-            var pos = {x:this.parentNode.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.parentNode.rowIndex};
-            var post = ptable.getPostXYPtr(pos);
+            //var pos = {x:this.parentNode.parentNode.cellIndex,
+            //            y:this.parentNode.parentNode.parentNode.rowIndex};
+            //var post = ptable.getPostXYPtr(pos);
+            var pos = ptable.rankToxy(rank);
+            var post = ptable.getPostXY(ptable.rankToxy(rank));
             post["upvoted"] = true;
             var u = ptable.getUuid(pos);
             hw.upboat(ptable.getUuid(pos));
@@ -245,8 +248,9 @@ this.posttable = function(){
         };
 
         downarrow.onclick = function(){
-            var pos = {x:this.parentNode.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.parentNode.rowIndex};
+            //var pos = {x:this.parentNode.parentNode.cellIndex,
+            //            y:this.parentNode.parentNode.parentNode.rowIndex};
+            var pos = ptable.rankToxy(rank);
             hw.downboat(ptable.getUuid(pos));
             ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
         };
