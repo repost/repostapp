@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="jquery-1.6.1.min.js"></script>
+<script src="jquery.lightbox-0.5.min.js"></script>
 <script src="jit.js"></script>
 <script src="links.js"></script>
 <script src="settings.js"></script>
@@ -8,16 +10,22 @@
 <script src="posttext.js"></script>
 <script src="posttable.js"></script>
 <script src="display.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $('a').lightBox(); // Select all links in the page
+    });
+</script>
 <link href="repost.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="jquery.lightbox-0.5.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body onload="main();">
 <div id="repost" align=center></div>
 <div id="log" align=center></div>
 <object type="application/reposter" id="plugin" width="0" height="0"> </object>
 <div id="welcome" align=center valign=middle>
-  <img src="welcome.jpeg" width=400px>
+  <img src="welcome.jpeg" width=400px />
   <br>
-  <img src="instructions.jpeg" width=300px>
+  <img src="instructions.jpeg" width=300px />
 </div>
 </body>
 </html>

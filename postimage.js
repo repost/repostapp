@@ -56,14 +56,16 @@ this.postImage = function(){
         var imagepost = document.createElement("div");
         imagepost.className = "imagepost"
 
-        var previewimage = document.createElement("image");
+        var previewimage = document.createElement("img");
         previewimage.className = "imagepreview";
         previewimage.src = image;
         previewimage.alt = caption;
 
         var contextlink = document.createElement('a');
         contextlink.href = context;
+        /*
         contextlink.target = "_blank";
+        */
         contextlink.appendChild(previewimage);
         imagepost.appendChild(contextlink);
 
