@@ -21,6 +21,9 @@ this.posttable = function(){
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
     var divtable;
+    var MAX_ROWS = 4;       // dependent upon how much stuff you add
+    var MAX_COLS = 4;       // Standard 5 cols wide   
+    var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
@@ -141,37 +144,18 @@ this.posttable = function(){
             var temppost = this.getPostXY(pos);
             if (temppost) {
                 this.deletePostXY(pos);
-                this.addPost(temppost,(i));
+                /* only add posts that fit in our page */
+                if ( i < MAX_POSTS ) {
+                    this.addPost(temppost,(i));
+                }
             }
         }
-        /* not quite
-        for ( var i = rank; i < numentries; i++ )
-        {
-            var pos = this.rankToxy(i);
-            var temppost = this.getPostXY(pos);
-            if (temppost) {
-                this.deletePostXY(pos);
-                this.addPost(temppost,(i+1));
-            }
-        }
-        */
         //insert at position
         this.addPost(post,rank);
         var pos = this.rankToxy(rank);
         var i = pos.y;
         var row = document.getElementById("divRow"+pos.y);
 
-        /*
-        while( table.rows[i].cells.length > cols ){
-            var pos;
-            pos.x = table.rows[i].cells.length - 1;
-            pos.y = i;
-            var post = this.getPostXY(pos);
-            this.addPost(post,((1+i)*cols));
-            this.deletePostXY(pos);
-            i++;
-        }
-        */
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -190,6 +174,7 @@ this.posttable = function(){
         }
         var pos = this.rankToxy(rank);
         var row;
+
         // check we got enough rows
         if ( rows <= pos.y) {
             //row = table.insertRow(rows++);
