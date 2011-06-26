@@ -60,9 +60,11 @@ this.postImage = function(){
         previewimage.className = "imagepreview";
         previewimage.src = image;
         previewimage.alt = caption;
+        previewimage.title = caption;
 
         var contextlink = document.createElement('a');
         contextlink.href = context;
+        contextlink.className = "lightbox";
         /*
         contextlink.target = "_blank";
         */
