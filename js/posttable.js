@@ -271,6 +271,7 @@ this.posttable = function(){
         //var test = post.getXml();
         postspace.appendChild(post.getXml())
         cell.appendChild(postspace);
+        $('a.lightbox').lightBox();
         //table.rows[pos.y].cells[pos.x].appendChild(postspace);
     };
     
