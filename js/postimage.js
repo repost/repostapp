@@ -65,6 +65,7 @@ this.postImage = function(){
         var contextlink = document.createElement('a');
         contextlink.href = context;
         contextlink.className = "lightbox";
+        contextlink.rel = "lightbox";
         /*
         contextlink.target = "_blank";
         */
