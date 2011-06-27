@@ -120,10 +120,6 @@ this.posttable = function(){
         }
         //insert at position
         this.addPost(post,rank);
-
-        //var pos = this.rankToxy(rank);
-        //var i = pos.y;
-        //var row = document.getElementById("divRow"+pos.y);
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -131,20 +127,15 @@ this.posttable = function(){
     this.addPost = function( post, rank){
         
         // Hack to remove welcome
-        if(wel){
-          if ( wel.hasChildNodes() )
-          {
-            while ( wel.childNodes.length >= 1 )
-            {
-              wel.removeChild( wel.firstChild );       
-            } 
-          }
+        if ( $("#welcome").length ) {
+            $("#welcome").remove();
         }
+
         var pos = this.rankToxy(rank);
         var row;
 
         // check we got enough rows
-        if ( rows <= pos.y) {
+        if ( rows <= pos.y ) {
             //row = table.insertRow(rows++);
             row = document.createElement("div");
             row.id = "divRow"+rows++;
