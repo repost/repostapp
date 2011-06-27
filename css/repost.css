@@ -33,12 +33,16 @@ table{
     position: relative; 
 }
 .downhand{
-    top:40px;
-    left:240px;
+    position: absolute;
+    bottom:0%;
+    left:80%;
+    z-index:1;
 }
 .uphand{
-    top:20px;
-    left:240px;
+    position: absolute;
+    top:0%;
+    left:80%;
+    z-index:1;
 }
 div.metric{
     top:30px;
