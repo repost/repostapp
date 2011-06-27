@@ -30,6 +30,110 @@ chrome.extension.onRequest.addListener(
      }
 );
 
+// Creating Text post from main page
+this.textPostBox = function(x,y){
+    
+    // Location
+    var X = x;
+    var Y = y;
+    
+    // Content
+    var caption;
+    var content;
+
+     this.init = function(){
+
+        var tb; /* Table to form things up */
+        var row; /* temp row */
+        var cell; /* temp cell */
+        var label; /* temp label */
+        var postbutton; /* send that text */
+
+        // Create dialog
+        textPostBox = document.createElement('div');
+        textPostBox.className = "floater textpostbox";
+        // Caption
+        label = document.createElement("label");
+        label.innerHTML = "Caption:";
+        label.className = "caption";
+        caption = document.createElement("input");
+        caption.className = "captioninput";
+        textPostBox.appendChild(label);
+        textPostBox.appendChild(caption);
+        // Content
+        label = document.createElement("label");
+        label.innerHTML = "Content:";
+        label.className = "content";
+        content = document.createElement("textarea");
+        content.className = "contentinput";
+        textPostBox.appendChild(label);
+        textPostBox.appendChild(content);
+        // Post button
+        postbutton = document.createElement("button");
+        postbutton.innerText = "Ahoy Buttercup";
+        postbutton.onclick = this.sendPost(this,textPostBox);
+        postbutton.className = "sendtext";
+        textPostBox.appendChild(postbutton);
+        // 'X'
+        close = document.createElement("span");
+        close.innerHTML = "x";
+        close.className = "floatclose";
+        close.onclick = this.onclickclose(this);
+        textPostBox.appendChild(close);
+        textPostBox.style.visibility = "hidden";
+        document.body.appendChild(textPostBox);
+    };
+    
+    this.onclickclose = function(popup){
+        return function(){
+            popup.close();
+        };
+    };
+
+    this.con = function(){
+        return content.value;
+    };
+
+    this.cap = function(){
+        return caption.value;
+    };
+
+    this.sendPost = function(postbox, textPostBox){
+        return function(){
+            // Lets send this post
+            var t = new postText();
+            t.setCaption(postbox.cap());
+            t.setContent(postbox.con());
+            t.setLink("");
+            t.setUuid("");
+            t.setMetric("");
+            sendPost(t);
+            postbox.close();
+        };
+    };
+
+    this.close = function(){
+        this.textClear();
+        textPostBox.style.visibility = "hidden";
+    };
+
+    this.textFocus = function(){
+        caption.focus();
+    };
+    
+    this.textClear = function(){
+        caption.value = "";
+        content.value = "";
+    };
+
+    this.createTextPostBox = function(x, y){
+        textPostBox.style.visibility = "visible";
+        textPostBox.style.top = y + "px";
+        textPostBox.style.left = x + "px";
+        this.textFocus();
+    };
+};
+
 // Returns the generic post container to attach visual elements
 // to
 function xmlPost(uuid, metric){
@@ -39,75 +143,23 @@ function xmlPost(uuid, metric){
     xmlpost.setAttribute("data-metric",metric);
     return xmlpost;    
 };
-
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank){
     if( post.content ){
-        var con = buildFromJSON(post.content);
-        con.setUuid(post.uuid);
-        con.setMetric(post.metric);
-        ptable.insertPost(con,rank);
-        repostNotify.queueNotification(con.getCaption());
-       }
-};
-
-this.repostNotification = function(){
-
-  var msgQueue;
-  var timeout;
-
-  this.init = function(){
-    this.msgQueue = new Array();
-  };
-  
-  this.sendMsg = function(msg){
-    // Create a simple text notification:
-    var notification = webkitNotifications.createNotification(
+      var con = buildFromJSON(post.content);
+      con.setUuid(post.uuid);
+      con.setMetric(post.metric);
+      ptable.insertPost(con,rank);
+      // Create a simple text notification:
+      var notification = webkitNotifications.createNotification(
         'icon-16.jpeg',  // icon url - can be relative
-        'New Repost:',
-        msg
-        );
-    notification.onclick = function(){ window.focus(); this.cancel(); };
-    setTimeout(function(){ notification.cancel();}, '5000');
-    notification.show();
-  };
-  
-  // On the timeout if there is only 1 post send out the caption
-  // more than one send out the number
-  this.onTimeOut = function(){
-    this.timeout = null;
-    if(this.msgQueue.length == 1){
-      this.sendMsg(this.msgQueue.pop());
-    }else if( this.msgQueue.length > 1){
-      this.sendMsg(this.msgQueue.length + " New Posts");
-      while(this.msgQueue.length > 0){
-        this.msgQueue.pop();
-      }
+          'New Repost:',
+          con.getCaption()  // notification title
+      );
+      // Then show the notification.
+      //notification.show();
     }
-  };
-  
-  // Need to make timeout a closure so we can access our object
-  this.closedOnTimeOut = function(){
-    var _this = this;
-    return function(){
-      _this.onTimeOut();
-    };
-  };
-
-  // Queue up notifications so we don't get an explosition across the screen
-  this.queueNotification = function(message){
-    if(message){
-      this.msgQueue.push(message);
-      if(this.timeout == null){
-        this.timeout = setTimeout(this.closedOnTimeOut(), '1000'); // Time to queue em up before flushing
-      }
-    }
-  };
-
-  this.init();
-
 };
-
 
 // Creates the link to the options page. Should probably redirect in future.
 function createOptionsLink(){
@@ -125,7 +177,7 @@ function addShortCuts(){
             var code = e.keyCode;
             var c = String.fromCharCode(code).toLowerCase();
             if(c == "t"){ // Text Post Box Popup
-                textbox.display();
+                textbox.createTextPostBox();
             }
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
@@ -144,8 +196,6 @@ var hw; // a repost object
 var textbox; // Text post input box
 var links;
 
-var repostNotify;
-
 var wel;
 
 function main() {
@@ -159,8 +209,9 @@ function main() {
         // start repost
         ptable = new posttable();
         // Create input windows
-        textbox = new textPostBox(sendPost);
-        repostNotify = new repostNotification();
+        textbox = new textPostBox();
+        textbox.init();
+
         wel = document.getElementById("welcome");
         // attach repost shortcuts
         addShortCuts();
@@ -178,7 +229,7 @@ function main() {
           for(var i=0; i<accounts.length; i++){
               acc.user = accounts[i].username;
               acc.pass = accounts[i].password;
-              acc.type = accounts[i].type;
+              acc.type = "XMPP";
               hw.addAccount(acc);
           }
         }

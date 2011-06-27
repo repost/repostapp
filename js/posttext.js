@@ -50,15 +50,6 @@ this.postText = function(){
         return link;
     };
 
-    var addBlankPageTarget  = {
-        callback: function( text, href ) {
-            return href ? '<a href="' + href + '" title="' + href + '" target="_blank" >' 
-                    + text + '</a>' : text;
-        },
-        punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
-    };
-
-    // Construct image content from its parts
     // Construct image content from its parts
     this.getXml = function() {
         var xmlpost; /* generic xml post holder */
@@ -66,9 +57,9 @@ this.postText = function(){
         var cap = document.createElement("div");
         var text = document.createElement("div");
         
-        cap.innerHTML = linkify(caption, addBlankPageTarget);
+        cap.innerHTML = caption;
         cap.className = "textpostcaption postcaption";
-        text.innerHTML = linkify(cont, addBlankPageTarget);
+        text.innerHTML = cont;
         text.className = "posttextbody";
         textpost.className = "textpost";
         textpost.appendChild(cap);

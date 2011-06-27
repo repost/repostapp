@@ -170,39 +170,17 @@ this.linkVisual = function() {
         var acctlen = accts.length;
         var linktree = new Array();
         var acctree = new Array();
-        
-        // create you at the center
-        var you = createTreeElement("you", "you", "you");
-        acctree.push(you);
 
         // create account tree
         for(var i=0; i<acctlen; i++) {
-            var treeobj;
-            if(accts[i].status == "online")
-            {
-                treeobj = createTreeElement(accts[i].user, accts[i].user, "onlineacct");
-            }
-            else
-            {
-                treeobj = createTreeElement(accts[i].user, accts[i].user, "offlineacct");
-            }
+            var treeobj = createTreeElement(accts[i].user, accts[i].user, "hostobj");
             acctree.push(treeobj);
-            var adjobj = createAdjacency(accts[i].user);
-            you.adjacencies.push(adjobj);
         }
         // create link tree
         for(var i=0; i<linklen; i++) {
             for(var x=0; x<acctree.length; x++) {
                 if(acctree[x].name == links[i].host) {
-                    var treeobj; 
-                    if(links[i].status == "online") {
-                        treeobj = createTreeElement(links[i].name, links[i].name, "onlinelink");
-                    }else if(links[i].status == "reposter") {
-                        treeobj = createTreeElement(links[i].name, links[i].name, "reposterlink");
-                    }else{
-                        treeobj = createTreeElement(links[i].name, links[i].name, "offlinelink");
-                    }
-
+                    var treeobj = createTreeElement(links[i].name, links[i].name, "buddyobj");
                     var adjobj = createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
@@ -257,42 +235,15 @@ this.createAdjacency = function(nodeto){
 };
 
 this.createTreeElement = function(name, id, type){
-    if(type == "onlinelink"){
+    if(type == "buddyobj"){
         var obj = {
             $reposttype: "buddyobj",
             $color:  "#C74243",
             $type:  "circle",
             $dim:  15
         };
-    }else if(type == "reposterlink"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#00BB3F",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "offlinelink"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#777777",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "onlineacct"){
-        var obj = {
-            $reposttype: "hostobj",
-            $color:  "#EBB056",
-            $type:  "circle",
-            $dim:  25
-        };
-    }else if(type == "offlineacct"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#777777",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "you"){
+
+    }else if(type == "hostobj"){
         var obj = {
             $reposttype: "hostobj",
             $color:  "#EBB056",

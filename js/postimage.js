@@ -50,26 +50,39 @@ this.postImage = function(){
     this.getImage = function(i){
         return image;
     };
-    
+
+    // Construct image content from its parts
     this.getXml = function() {
         var imagepost = document.createElement("div");
         imagepost.className = "imagepost"
 
-        var previewimage = document.createElement("image");
+        var previewimage = document.createElement("img");
         previewimage.className = "imagepreview";
         previewimage.src = image;
+        previewimage.alt = caption;
+        previewimage.title = caption;
 
         var contextlink = document.createElement('a');
         contextlink.href = context;
-        contextlink.target = "_blank";
+        // only use lightbox for pics
+        patt=/(jpg|png|gif|bmp)/;
+        if ( context.match (patt))
+        {
+            contextlink.className = "lightbox";
+        }
+        else
+        {
+            contextlink.target = "_blank";
+        }
         contextlink.appendChild(previewimage);
         imagepost.appendChild(contextlink);
 
+        /*
         var previewcaption = document.createElement("div");
         previewcaption.className = "imagepostcaption postcaption";
         previewcaption.innerHTML = caption;
         imagepost.appendChild(previewcaption);
-
+        */
         var xmlpost = xmlPost(uuid, metric);
         xmlpost.appendChild(imagepost);
         return xmlpost;

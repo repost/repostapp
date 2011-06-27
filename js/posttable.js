@@ -1,3 +1,11 @@
+// helper function to get outer html
+(function($) {
+   $.fn.outerHTML = function() {
+       return $(this).clone().wrap('<div></div>').parent().html();
+   }
+})(jQuery);
+
+
 // Holds the post while we move posts around
 this.postHolder = function(){
 
@@ -20,11 +28,18 @@ this.posttable = function(){
     var numentries = 0; // number of items in table
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
+    var divtable;
+    var MAX_ROWS = 4;       // dependent upon how much stuff you add
+    var MAX_COLS = 4;       // Standard 5 cols wide   
+    var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
         var page = document.getElementById("repost"); 
-        table = document.createElement("table"); 
-        page.appendChild(table); 
+        //table = document.createElement("table"); 
+        divtable = document.createElement("div");
+        divtable.id = "divtable";
+        //page.appendChild(table); 
+        page.appendChild(divtable); 
     }; 
 
     // Deletes a post from the table given rank
@@ -35,27 +50,23 @@ this.posttable = function(){
 
     // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
-        var contents = table.rows[pos.y].deleteCell(pos.x);
-        if( table.rows[pos.y].cells.length == 0 ){
-             table.deleteRow(pos.y);
-             rows--;
-        }
+        // hack so chrome repaints the screen nicely when downvoting
+        $("#divRow"+pos.y+"Col"+pos.x).hide(0);
+        $("#divRow"+pos.y+"Col"+pos.x).empty();
         numentries--;
     };
 
     // Deletes a post and shuffles all items in the table down.
     this.delShufflePost = function(rank){
         var pos = this.rankToxy(rank);
-        var r = rank;
 
-        for( i = pos.y; i < rows; i++ ){
-            this.deletePost(r);
-            if( (i+1) >= rows ){
+        for( i = rank; i < numentries; i++ ) {
+            this.deletePost(i);
+            if ( ( i + 1 ) > numentries ) {
                 break;
             }
-            var post = this.getPost((1+i)*cols);
-            this.addPost(post,((1+i)*cols-1));
-            r = (1+i)*cols;
+            var post = this.getPostXY(this.rankToxy(1+i));
+            this.addPost(post,i);
         }
     };
 
@@ -78,23 +89,22 @@ this.posttable = function(){
     };
     
     // Return copy post from coord (x,y)
-    this.getPostXY = function(pos){
-        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.length;x++){
-            if(contents[x].className == "post"){
-                var post = new postHolder();
-                post.setXml(contents[x]);
-                return post;
-            }
-        }
-        return null;
+    this.getPostXY = function(pos) {
+        var post = new postHolder();
+        var postdom = $("#divRow"+pos.y+"Col"+pos.x+" .post");
+        if ( postdom == null )
+          return null;
+
+        post.setXml(postdom[0]);
+        return post;
     };
 
     // Return post from coord (x,y)
     this.getPostXYPtr = function(pos){
-        var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.length;x++){
-            if(contents[x].className == "post"){
+        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
+        for(x=0; x<contents.childNodes.length;x++){
+            if(contents.childNodes[x].className == "post"){
                 return contents[x];
             }
         }
@@ -103,26 +113,32 @@ this.posttable = function(){
 
     // Return the uuid from the (x,y)
     this.getUuid = function(pos){
-        var postcon = this.getPostXY(pos).getXml();
-        return postcon.attributes["data-uuid"].value;
+        return $("#divRow"+pos.y+"Col"+pos.x+" .post").attr("data-uuid");
     };
 
     // inserts a post at the given location and 
     // shuffles all posts behind it up a rank.
     this.insertPost = function(post, rank){
+
+        // shuffle shit along
+        for ( var i = numentries; i > rank; i-- )
+        {
+            var pos = this.rankToxy(i-1);
+            var temppost = this.getPostXY(pos);
+            if (temppost) {
+                this.deletePostXY(pos);
+                /* only add posts that fit in our page */
+                if ( i < MAX_POSTS ) {
+                    this.addPost(temppost,(i));
+                }
+            }
+        }
         //insert at position
         this.addPost(post,rank);
-	    var pos = this.rankToxy(rank);
-        var i = pos.y;
-        while( table.rows[i].cells.length > cols ){
-            var pos;
-            pos.x = table.rows[i].cells.length - 1;
-            pos.y = i;
-            var post = this.getPostXY(pos);
-            this.addPost(post,((1+i)*cols));
-            this.deletePostXY(pos);
-            i++;
-        }
+
+        //var pos = this.rankToxy(rank);
+        //var i = pos.y;
+        //var row = document.getElementById("divRow"+pos.y);
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -141,17 +157,30 @@ this.posttable = function(){
         }
         var pos = this.rankToxy(rank);
         var row;
+
         // check we got enough rows
-        if((rows) <= pos.y){
-            row = table.insertRow(rows++);
-        }else{
-	        row = table.rows[pos.y];
+        if ( rows <= pos.y) {
+            //row = table.insertRow(rows++);
+            row = document.createElement("div");
+            row.id = "divRow"+rows++;
+            row.className = "divrow";
+            divtable.appendChild(row);
+        }
+        else {
+            row = document.getElementById("divRow"+pos.y);
         }
 
         // check if cell exists
-        var cell = row.insertCell(pos.x);
-        // check we go the cel
-        cell.className = "postcell";
+        //var cell = row.insertCell(pos.x);
+        var cell = document.getElementById("divRow"+pos.y+"Col"+pos.x);
+        if ( !cell ) {
+            cell = document.createElement("div");
+            cell.id = "divRow"+pos.y+"Col"+pos.x;
+            cell.className = "divCol"+pos.x+" divcol";
+            row.appendChild(cell);
+        }
+        // hack so chrome repaints the screen nicely when downvoting
+        $("#divRow"+pos.y+"Col"+pos.x).show(0);
 
         //create the general stuff
         var postspace = document.createElement("div");
@@ -176,11 +205,9 @@ this.posttable = function(){
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
-            var pos = {x:this.parentNode.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.parentNode.rowIndex};
-            var post = ptable.getPostXYPtr(pos);
-            post["upvoted"] = true;
-            var u = ptable.getUuid(pos);
+            var pos = ptable.rankToxy(rank);
+            var uppost = ptable.getPostXY(pos);
+            uppost["upvoted"] = true;
             hw.upboat(ptable.getUuid(pos));
         };
 
@@ -201,12 +228,14 @@ this.posttable = function(){
         };
 
         downarrow.onclick = function(){
-            var pos = {x:this.parentNode.parentNode.cellIndex,
-                        y:this.parentNode.parentNode.parentNode.rowIndex};
+            //var pos = {x:this.parentNode.parentNode.cellIndex,
+            //            y:this.parentNode.parentNode.parentNode.rowIndex};
+            var pos = ptable.rankToxy(rank);
             hw.downboat(ptable.getUuid(pos));
-            ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
+            ptable.delShufflePost(rank);
         };
 
+        /*
         postspace.onmouseover = function(){
         };
         postspace.onmouseout =  function() {
@@ -214,9 +243,10 @@ this.posttable = function(){
         postspace.onmousedown = function(){
         };
         postspace.onmouseup = function(){
-        };				
+        };                
         postspace.onclick = function(){
-        };			
+        };            
+        */
         
         numentries++;
         // Ensure that upvote highlighting follows post around table
@@ -224,8 +254,23 @@ this.posttable = function(){
         if (postxml["upvoted"]){
             uparrow.src = "./hpuselect.png";
         }
+
+        //var test = post.getXml();
         postspace.appendChild(post.getXml());
-        table.rows[pos.y].cells[pos.x].appendChild(postspace);
+        cell.appendChild(postspace);
+
+        $(".downhand").hide();
+        $(".uphand").hide();
+        $("#"+cell.id+" .postspace").mouseenter(function() {
+            $("#"+cell.id+" .uphand").fadeIn("fast");
+            $("#"+cell.id+" .downhand").fadeIn("fast");
+          }).mouseleave(function() {
+            $("#"+cell.id+" .uphand").fadeOut("fast");
+            $("#"+cell.id+" .downhand").fadeOut("fast");
+        });
+
+        // lightbox all images
+        $('a.lightbox').lightBox();
     };
     
     this.createTable();
