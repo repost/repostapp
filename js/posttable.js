@@ -1,3 +1,11 @@
+// helper function to get outer html
+(function($) {
+   $.fn.outerHTML = function() {
+       return $(this).clone().wrap('<div></div>').parent().html();
+   }
+})(jQuery);
+
+
 // Holds the post while we move posts around
 this.postHolder = function(){
 
@@ -95,24 +103,14 @@ this.posttable = function(){
     };
     
     // Return copy post from coord (x,y)
-    this.getPostXY = function(pos){
-        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
-        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        // nastiness, go through the div to find postspace
-        // then go through postspace to get post. surely there's a better way
-        for(x=0; x<contents.childNodes.length;x++){
-            if(contents.childNodes[x].className.search("postspace")){
-                var con = contents.childNodes[x];
-                for(y=0; y<con.childNodes.length;y++){
-                    if(con.childNodes[y].className.search("post")){
-                        var post = new postHolder();
-                        post.setXml(con.childNodes[y]);
-                        return post;
-                    }
-                }
-            }
-        }
-        return null;
+    this.getPostXY = function(pos) {
+        var post = new postHolder();
+        var postdom = $("#divRow"+pos.y+"Col"+pos.x+" .post");
+        if ( postdom == null )
+          return null;
+
+        post.setXml(postdom[0]);
+        return post;
     };
 
     // Return post from coord (x,y)
@@ -225,8 +223,8 @@ this.posttable = function(){
             //            y:this.parentNode.parentNode.parentNode.rowIndex};
             //var post = ptable.getPostXYPtr(pos);
             var pos = ptable.rankToxy(rank);
-            var post = ptable.getPostXY(ptable.rankToxy(rank));
-            post["upvoted"] = true;
+            var uppost = ptable.getPostXY(ptable.rankToxy(rank));
+            uppost["upvoted"] = true;
             var u = ptable.getUuid(pos);
             hw.upboat(ptable.getUuid(pos));
         };
@@ -255,6 +253,7 @@ this.posttable = function(){
             ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
         };
 
+        /*
         postspace.onmouseover = function(){
         };
         postspace.onmouseout =  function() {
@@ -265,6 +264,7 @@ this.posttable = function(){
         };                
         postspace.onclick = function(){
         };            
+        */
         
         numentries++;
         // Ensure that upvote highlighting follows post around table
@@ -272,11 +272,13 @@ this.posttable = function(){
         if (postxml["upvoted"]){
             uparrow.src = "./hpuselect.png";
         }
+
         //var test = post.getXml();
-        postspace.appendChild(post.getXml())
+        postspace.appendChild(post.getXml());
         cell.appendChild(postspace);
+
+        // lightbox all images
         $('a.lightbox').lightBox();
-        //table.rows[pos.y].cells[pos.x].appendChild(postspace);
     };
     
     this.createTable();
