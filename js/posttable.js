@@ -24,13 +24,12 @@ this.postHolder = function(){
 this.posttable = function(){
  
     var rows = 0;       // dependent upon how much stuff you add
-    var cols = 4;       // Standard 5 cols wide   
     var numentries = 0; // number of items in table
     var table;          // table instance 
     var tableover = false; // Mouse currently over table
     var divtable;
     var MAX_ROWS = 4;       // dependent upon how much stuff you add
-    var MAX_COLS = 4;       // Standard 5 cols wide   
+    var MAX_COLS = 4;       // Standard 4 cols wide   
     var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
@@ -72,13 +71,13 @@ this.posttable = function(){
 
     // Convert xy to rank
     this.xytorank = function(x,y){
-       return (y*cols + x);
+       return (y*MAX_COLS + x);
     };
 
     // Converts a rank into a position in the table.
     this.rankToxy = function(rank){
-        var y = Math.floor(rank / cols);
-        var x = (rank - cols*y);
+        var y = Math.floor(rank / MAX_COLS);
+        var x = (rank - MAX_COLS*y);
         return{ y:y, x:x};
     };
 
