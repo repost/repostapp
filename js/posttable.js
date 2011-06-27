@@ -50,6 +50,8 @@ this.posttable = function(){
 
     // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
+        // hack so chrome repaints the screen nicely when downvoting
+        $("#divRow"+pos.y+"Col"+pos.x).hide(0);
         $("#divRow"+pos.y+"Col"+pos.x).empty();
         numentries--;
     };
@@ -179,6 +181,8 @@ this.posttable = function(){
             cell.className = "divCol"+pos.x+" divcol";
             row.appendChild(cell);
         }
+        // hack so chrome repaints the screen nicely when downvoting
+        $("#divRow"+pos.y+"Col"+pos.x).show(0);
 
         //create the general stuff
         var postspace = document.createElement("div");
@@ -204,9 +208,8 @@ this.posttable = function(){
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
             var pos = ptable.rankToxy(rank);
-            var uppost = ptable.getPostXY(ptable.rankToxy(rank));
+            var uppost = ptable.getPostXY(pos);
             uppost["upvoted"] = true;
-            var u = ptable.getUuid(pos);
             hw.upboat(ptable.getUuid(pos));
         };
 
@@ -231,7 +234,7 @@ this.posttable = function(){
             //            y:this.parentNode.parentNode.parentNode.rowIndex};
             var pos = ptable.rankToxy(rank);
             hw.downboat(ptable.getUuid(pos));
-            ptable.delShufflePost(ptable.xytorank(pos.x,pos.y));
+            ptable.delShufflePost(rank);
         };
 
         /*
