@@ -64,11 +64,16 @@ this.postImage = function(){
 
         var contextlink = document.createElement('a');
         contextlink.href = context;
-        contextlink.className = "lightbox";
-        contextlink.rel = "lightbox";
-        /*
-        contextlink.target = "_blank";
-        */
+        // only use lightbox for pics
+        patt=/(jpg|png|gif|bmp)/;
+        if ( context.match (patt))
+        {
+            contextlink.className = "lightbox";
+        }
+        else
+        {
+            contextlink.target = "_blank";
+        }
         contextlink.appendChild(previewimage);
         imagepost.appendChild(contextlink);
 
