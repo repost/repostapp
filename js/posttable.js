@@ -59,16 +59,14 @@ this.posttable = function(){
     // Deletes a post and shuffles all items in the table down.
     this.delShufflePost = function(rank){
         var pos = this.rankToxy(rank);
-        var r = rank;
 
-        for( i = pos.y; i < rows; i++ ){
-            this.deletePost(r);
-            if( (i+1) >= rows ){
+        for( i = rank; i < numentries; i++ ) {
+            this.deletePost(i);
+            if ( ( i + 1 ) > numentries ) {
                 break;
             }
-            var post = this.getPost((1+i)*cols);
-            this.addPost(post,((1+i)*cols-1));
-            r = (1+i)*cols;
+            var post = this.getPostXY(this.rankToxy(1+i));
+            this.addPost(post,i);
         }
     };
 
