@@ -50,6 +50,8 @@ this.posttable = function(){
 
     // Delete a post from table given xy coords
     this.deletePostXY = function(pos){
+        $("#divRow"+pos.y+"Col"+pos.x).empty();
+        /*
         var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
         if ( contents )
         {
@@ -58,7 +60,6 @@ this.posttable = function(){
                 contents.removeChild(contents.lastChild);
             }
         }
-        /*
         var contents = table.rows[pos.y].deleteCell(pos.x);
         if( table.rows[pos.y].cells.length == 0 ){
              table.deleteRow(pos.y);
