@@ -25,8 +25,6 @@ this.posttable = function(){
  
     var rows = 0;       // dependent upon how much stuff you add
     var numentries = 0; // number of items in table
-    var table;          // table instance 
-    var tableover = false; // Mouse currently over table
     var divtable;
     var MAX_ROWS = 4;       // dependent upon how much stuff you add
     var MAX_COLS = 4;       // Standard 4 cols wide   
