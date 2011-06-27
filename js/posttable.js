@@ -128,8 +128,6 @@ this.posttable = function(){
     // Return the uuid from the (x,y)
     this.getUuid = function(pos){
         return $("#divRow"+pos.y+"Col"+pos.x+" .post").attr("data-uuid");
-        //var postcon = this.getPostXY(pos).getXml();
-        //return postcon.attributes["data-uuid"].value;
     };
 
     // inserts a post at the given location and 
@@ -151,10 +149,10 @@ this.posttable = function(){
         }
         //insert at position
         this.addPost(post,rank);
-        var pos = this.rankToxy(rank);
-        var i = pos.y;
-        var row = document.getElementById("divRow"+pos.y);
 
+        //var pos = this.rankToxy(rank);
+        //var i = pos.y;
+        //var row = document.getElementById("divRow"+pos.y);
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -219,9 +217,6 @@ this.posttable = function(){
         // add some action code to the cells
         uparrow.onclick = function(){
             uparrow.src = "./hpuselect.png";
-            //var pos = {x:this.parentNode.parentNode.cellIndex,
-            //            y:this.parentNode.parentNode.parentNode.rowIndex};
-            //var post = ptable.getPostXYPtr(pos);
             var pos = ptable.rankToxy(rank);
             var uppost = ptable.getPostXY(ptable.rankToxy(rank));
             uppost["upvoted"] = true;
@@ -276,6 +271,16 @@ this.posttable = function(){
         //var test = post.getXml();
         postspace.appendChild(post.getXml());
         cell.appendChild(postspace);
+
+        $(".downhand").hide();
+        $(".uphand").hide();
+        $("#"+cell.id+" .postspace").mouseenter(function() {
+            $("#"+cell.id+" .uphand").fadeIn("fast");
+            $("#"+cell.id+" .downhand").fadeIn("fast");
+          }).mouseleave(function() {
+            $("#"+cell.id+" .uphand").fadeOut("fast");
+            $("#"+cell.id+" .downhand").fadeOut("fast");
+        });
 
         // lightbox all images
         $('a.lightbox').lightBox();
