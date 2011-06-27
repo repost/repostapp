@@ -96,18 +96,6 @@ this.posttable = function(){
         return post;
     };
 
-    // Return post from coord (x,y)
-    this.getPostXYPtr = function(pos){
-        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
-        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.childNodes.length;x++){
-            if(contents.childNodes[x].className == "post"){
-                return contents[x];
-            }
-        }
-        return null;
-    };
-
     // Return the uuid from the (x,y)
     this.getUuid = function(pos){
         return $("#divRow"+pos.y+"Col"+pos.x+" .post").attr("data-uuid");
