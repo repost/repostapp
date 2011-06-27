@@ -19,6 +19,8 @@ this.acctList = function(){
         var row = table.createTHead().insertRow(0); // Heading
         row.className = "acctListHeading";
         var cell = row.insertCell(0);
+        cell.innerHTML = "Type";
+        cell = row.insertCell(0);
         cell.innerHTML = "Username";
         cell = row.insertCell(0);
         cell.innerHTML = "Enabled";
@@ -36,6 +38,12 @@ this.acctList = function(){
             al.select(e.currentTarget.rowIndex);
         };
         var cell = row.insertCell(0);
+        var accttype = document.createElement("div");
+        cell.appendChild(accttype);
+        accttype.className = "acctListtype";
+        accttype.innerHTML = account.type;
+ 
+        cell = row.insertCell(0);
         var acctname = document.createElement("div");
         cell.appendChild(acctname);
         acctname.className = "acctListusername";
@@ -101,6 +109,7 @@ this.addAcctPopup = function(){
     var popup;
     var username;
     var password;
+    var type;
 
     this.createPopup = function(){
 
@@ -113,6 +122,17 @@ this.addAcctPopup = function(){
         password = document.createElement("input");
         password.type = "password";
 
+        type = document.createElement("select");
+        type.name = "Account Type";
+        var acctype = document.createElement('option');
+        acctype.value = 'Gtalk';
+        acctype.appendChild(document.createTextNode('Gtalk'));
+        type.appendChild(acctype);
+        acctype = document.createElement('option');
+        acctype.value = 'XMPP';
+        acctype.appendChild(document.createTextNode('XMPP'));
+        type.appendChild(acctype);
+
         var add = document.createElement("button");
         add.innerText = "Add";
         add.onclick = this.addFromPopup(this);
@@ -123,6 +143,7 @@ this.addAcctPopup = function(){
 
         popup.appendChild(username);
         popup.appendChild(password);
+        popup.appendChild(type);
         popup.appendChild(add);
         popup.appendChild(cancel);
     };
@@ -133,6 +154,10 @@ this.addAcctPopup = function(){
 
     this.password = function(){
         return password.value;
+    };
+
+    this.type = function(){
+        return type.value;
     };
 
     this.getPopup = function(){
@@ -148,6 +173,7 @@ this.addAcctPopup = function(){
            var acc = new account();
            acc.username = popup.username();
            acc.password = popup.password();
+           acc.type = popup.type();
            acc.enabled="true";
            al.addAcct(acc);
            saveAccountList();

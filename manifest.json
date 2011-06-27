@@ -4,7 +4,7 @@
   "description": "experience together",
   "app": {
     "launch": {
-      "local_path": "main.html"
+      "local_path": "bootstrap.html"
     }
   },
   "options_page": "options.html",

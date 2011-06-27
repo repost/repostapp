@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="boot();">
+</body>
+<script>
+function boot() {
+    chrome.tabs.getAllInWindow(undefined, function(tabs) {
+            var exturl = chrome.extension.getURL("main.html");
+            var booturl = chrome.extension.getURL("bootstrap.html");
+            var bootid;
+            var mainid;
+            for (var i = 0, tab; tab = tabs[i]; i++) {
+                if (tab.url && (tab.url == exturl)) {
+                    mainid = tab.id;
+                }else if (tab.url && (tab.url == booturl)) {
+                    bootid = tab.id;
+                }
+            }
+            if(mainid && bootid){
+                chrome.tabs.update(mainid, {selected: true});
+                chrome.tabs.remove(bootid);
+            }else{
+                chrome.tabs.update(bootid,{url: "main.html"});
+            }
+    });
+}
+</script>
+</html>
+
