@@ -96,6 +96,7 @@ this.imagePostBox = function(sendPostCB){
     };
 
     this.display = function(x, y){
+        imagePostBox.style.display = "inline";
         imagePostBox.style.visibility = "visible";
         imagePostBox.style.top = y + "px";
         imagePostBox.style.left = x + "px";
