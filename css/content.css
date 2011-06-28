@@ -7,7 +7,7 @@ div.repostdialog {
   padding: 7px 10px 7px 10px;
   z-index:99999999;
 }
-.label {
+div.repostdialog .label {
     font-family:"Lucida Console", Courier New, monospace;
     margin: 0 5px 0 0 ;
 }
