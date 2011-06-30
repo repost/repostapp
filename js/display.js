@@ -8,9 +8,8 @@ function buildFromJSON(content){
       obj.loadFromJSON(objstr);
       return obj;
     }
-    return;
-};
-
+    return; 
+}; 
 // Sends and inserts jsPosts
 function sendPost(p){
     var post = plugin.Post();
@@ -41,14 +40,14 @@ function xmlPost(uuid, metric){
 };
 
 // Callback called when the rpeost plugin has a new post
-function checkForPost(post,rank){
-    if( post.content ){
+function checkForPost(post,rank) {
+    if( post.content ) {
         var con = buildFromJSON(post.content);
         con.setUuid(post.uuid);
         con.setMetric(post.metric);
         ptable.insertPost(con,rank);
         repostNotify.queueNotification(con.getCaption());
-       }
+   }
 };
 
 this.repostNotification = function(){
@@ -137,6 +136,12 @@ function addShortCuts(){
     document.addEventListener("keydown",shortFunc);
 };
 
+function checkStatus() {
+    statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
+    setTimeout("checkStatus()", 10000);
+}
+
+
 var ptable; // Mainpage table display
 var plugin; // the repost plugin instance
 var hw; // a repost object
@@ -147,44 +152,44 @@ var links;
 var repostNotify;
 
 var wel;
+var statusBar;
 
 function main() {
     // Check we have an account to log into
     var accounts = loadAccounts();
-    /*if( accounts == null || accounts.length == 0 ){
-        // direct to options page
-        var page = document.getElementById("repost"); 
-        page.appendChild(createOptionsLink());
-    }else{*/
-        // start repost
-        ptable = new posttable();
-        // Create input windows
-        textbox = new textPostBox(sendPost);
-        repostNotify = new repostNotification();
-        wel = document.getElementById("welcome");
-        // attach repost shortcuts
-        addShortCuts();
-        // init the posttable
-        plugin = document.getElementById("plugin");
-        hw = plugin.rePoster();
-        hw.init();
-        hw.setNewPostCB(checkForPost);
-        // Create link management window
-        links = new linkVisual();
-        links.init();
-        if(accounts){
-          var acc = plugin.Account();
-          // add saved accounts
-          for(var i=0; i<accounts.length; i++){
-              acc.user = accounts[i].username;
-              acc.pass = accounts[i].password;
-              acc.type = accounts[i].type;
-              hw.addAccount(acc);
-          }
+    // start repost
+    ptable = new posttable();
+    // Create input windows
+    textbox = new textPostBox(sendPost);
+    repostNotify = new repostNotification();
+    wel = document.getElementById("welcome");
+    // attach repost shortcuts
+    addShortCuts();
+    // init the posttable
+    plugin = document.getElementById("plugin");
+    hw = plugin.rePoster();
+    hw.init();
+    hw.setNewPostCB(checkForPost);
+
+    // setup status bar
+    statusBar = new statusBar();
+
+    // Create link management window
+    links = new linkVisual();
+    links.init();
+    if(accounts){
+        var acc = plugin.Account();
+        // add saved accounts
+        for(var i=0; i<accounts.length; i++){
+            acc.user = accounts[i].username;
+            acc.pass = accounts[i].password;
+            acc.type = accounts[i].type;
+            hw.addAccount(acc);
         }
-        hw.startRepost();
-        hw.getInitialPosts(checkForPost);
-    /*}*/
+    }
+    hw.startRepost();
+    hw.getInitialPosts(checkForPost);
+    setTimeout("checkStatus()",10000);
 };
 
 
