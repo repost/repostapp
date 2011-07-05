@@ -26,7 +26,7 @@ this.imagePostBox = function(sendPostCB){
         label.className = "label";
         caption = document.createElement("input");
         caption.className = "caption";
-        caption.addEventListener('keypress', this.submitPost(), false);
+        caption.addEventListener('keypress', this.submitPost(this), false);
         label.appendChild(caption);
         imagePostBox.appendChild(label);
         imagePostBox.style.visibility = "hidden";
@@ -60,7 +60,7 @@ this.imagePostBox = function(sendPostCB){
 
     this.clear = function(){
         caption.value = "";
-        image.value = "";
+        image = "";
     };
 
     this.focus = function(){
@@ -73,7 +73,7 @@ this.imagePostBox = function(sendPostCB){
                 curpost.setCaption(caption.value);
                 spCB(curpost);
                 imagePostBox.style.visibility = "hidden";
-                postbox.clear();
+                postbox.close();
             }
         };
     };
@@ -83,7 +83,8 @@ this.imagePostBox = function(sendPostCB){
             if(event.altKey){
                 curpost = new postImage();
                 curpost.setImage(event.currentTarget.src);
-                curpost.setContext(event.currentTarget.baseURI);
+							  image = event.currentTarget.src;
+								curpost.setContext(event.currentTarget.baseURI);
                 postbox.display(event.clientX, event.clientY);
                 postbox.focus();
                 event.returnValue = false;
