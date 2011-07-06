@@ -17,39 +17,36 @@ this.textPostBox = function(sendPostCB) {
         var label; /* temp label */
         var postbutton; /* send that text */
 
-        // Create dialog
         textPostBox = document.createElement('div');
-        textPostBox.className = "floater textpostbox";
-        // Caption
-        label = document.createElement("label");
-        label.innerHTML = "Caption:";
-        label.className = "caption";
         caption = document.createElement("input");
-        caption.className = "captioninput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(caption);
-        // Content
-        label = document.createElement("label");
-        label.innerHTML = "Content:";
-        label.className = "content";
         content = document.createElement("textarea");
-        content.className = "contentinput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(content);
-        // Post button
-        postbutton = document.createElement("button");
-        postbutton.innerText = "Ahoy Buttercup";
-        postbutton.onclick = this.submitPost(this);
-        postbutton.className = "sendtext";
-        textPostBox.appendChild(postbutton);
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "floatclose";
-        close.onclick = this.onclickclose(this);
-        textPostBox.appendChild(close);
-        textPostBox.style.visibility = "hidden";
-        document.body.appendChild(textPostBox);
+
+        // Create dialog
+        $(textPostBox)
+            .addClass("floater textpostbox")
+            // Caption
+            .append($(document.createElement('label'))
+                        .addClass("caption")
+                        .html("Caption:"))
+            .append($(caption)
+                        .addClass("captioninput"))
+            // Content
+            .append($(document.createElement('label'))
+                        .addClass("content")
+                        .html("Content:"))
+            .append($(content)
+                        .addClass("contentinput"))
+            // Post button
+            .append($(document.createElement('button'))
+                        .addClass("sendtext")
+                        .html("Ahoy Buttercup")
+                        .click(this.submitPost(this)))
+            // 'X'
+            .append($(document.createElement('span'))
+                        .addClass("floatclose")
+                        .html("x")
+                        .click(this.onclickclose(this)))
+            .appendTo('body');
     };
 
     this.onclickclose = function(popup){
@@ -80,7 +77,7 @@ this.textPostBox = function(sendPostCB) {
             var rpurl = new RegExp("chrome-extension://.*");
             if(rpurl.test(event.currentTarget.baseURI)){
                 t.setLink("");
-            }else{
+            } else {
                 t.setLink(event.currentTarget.baseURI);
             }
             t.setUuid("");
@@ -104,7 +101,7 @@ this.textPostBox = function(sendPostCB) {
         content.value = "";
     };
 
-    this.display = function(x, y){
+    this.display = function(x, y) {
         textPostBox.style.visibility = "visible";
         textPostBox.style.top = y + "px";
         textPostBox.style.left = x + "px";
