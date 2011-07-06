@@ -20,6 +20,9 @@ this.imagePostBox = function(sendPostCB){
         // Create Dialog
         imagePostBox = document.createElement('div');
         imagePostBox.className = "repostdialog";
+        imagePostBox.style.visibility = "hidden";
+        imagePostBox.style.display = "none";
+
         // Caption
         label = document.createElement("label");
         label.innerHTML = "What say you:";
@@ -29,7 +32,7 @@ this.imagePostBox = function(sendPostCB){
         caption.addEventListener('keypress', this.submitPost(this), false);
         label.appendChild(caption);
         imagePostBox.appendChild(label);
-        imagePostBox.style.visibility = "hidden";
+
         // 'X'
         close = document.createElement("span");
         close.innerHTML = "x";
@@ -94,6 +97,7 @@ this.imagePostBox = function(sendPostCB){
     };
 
     this.display = function(x, y){
+        imagePostBox.style.display = "inline";
         imagePostBox.style.visibility = "visible";
         imagePostBox.style.top = y + "px";
         imagePostBox.style.left = x + "px";

@@ -24,13 +24,10 @@ this.postHolder = function(){
 this.posttable = function(){
  
     var rows = 0;       // dependent upon how much stuff you add
-    var cols = 4;       // Standard 5 cols wide   
     var numentries = 0; // number of items in table
-    var table;          // table instance 
-    var tableover = false; // Mouse currently over table
     var divtable;
     var MAX_ROWS = 4;       // dependent upon how much stuff you add
-    var MAX_COLS = 4;       // Standard 5 cols wide   
+    var MAX_COLS = 4;       // Standard 4 cols wide   
     var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
@@ -72,13 +69,13 @@ this.posttable = function(){
 
     // Convert xy to rank
     this.xytorank = function(x,y){
-       return (y*cols + x);
+       return (y*MAX_COLS + x);
     };
 
     // Converts a rank into a position in the table.
     this.rankToxy = function(rank){
-        var y = Math.floor(rank / cols);
-        var x = (rank - cols*y);
+        var y = Math.floor(rank / MAX_COLS);
+        var x = (rank - MAX_COLS*y);
         return{ y:y, x:x};
     };
 
@@ -97,18 +94,6 @@ this.posttable = function(){
 
         post.setXml(postdom[0]);
         return post;
-    };
-
-    // Return post from coord (x,y)
-    this.getPostXYPtr = function(pos){
-        var contents = document.getElementById("divRow"+pos.y+"Col"+pos.x);
-        //var contents = table.rows[pos.y].cells[pos.x].children[0].children;
-        for(x=0; x<contents.childNodes.length;x++){
-            if(contents.childNodes[x].className == "post"){
-                return contents[x];
-            }
-        }
-        return null;
     };
 
     // Return the uuid from the (x,y)
@@ -135,10 +120,6 @@ this.posttable = function(){
         }
         //insert at position
         this.addPost(post,rank);
-
-        //var pos = this.rankToxy(rank);
-        //var i = pos.y;
-        //var row = document.getElementById("divRow"+pos.y);
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -146,20 +127,15 @@ this.posttable = function(){
     this.addPost = function( post, rank){
         
         // Hack to remove welcome
-        if(wel){
-          if ( wel.hasChildNodes() )
-          {
-            while ( wel.childNodes.length >= 1 )
-            {
-              wel.removeChild( wel.firstChild );       
-            } 
-          }
+        if ( $("#welcome").length ) {
+            $("#welcome").remove();
         }
+
         var pos = this.rankToxy(rank);
         var row;
 
         // check we got enough rows
-        if ( rows <= pos.y) {
+        if ( rows <= pos.y ) {
             //row = table.insertRow(rows++);
             row = document.createElement("div");
             row.id = "divRow"+rows++;

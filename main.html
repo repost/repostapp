@@ -11,12 +11,17 @@
 <script src="js/ba-linkify.js"></script>
 <script src="js/textpostbox.js"></script>
 <script src="js/posttable.js"></script>
+<script src="js/status.js"></script>
 <script src="js/display.js"></script>
 <link href="css/repost.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="css/jquery.lightbox-0.5.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body onload="main();">
-<div id="repost" align=center></div>
+    <div id="repostMenu">
+        <span class="statusCircle">&nbsp;</span>
+    </div>
+    <div id="repost"></div>
+<div id="repostContacts"></div>
 <div id="log" align=center></div>
 <object type="application/reposter" id="plugin" width="0" height="0"> </object>
 <div id="welcome" align=center valign=middle>
