@@ -165,7 +165,7 @@ this.posttable = function(){
 
         var uparrow = document.createElement("image");
         uparrow.className = "uphand votehand";
-        uparrow.src = "./hpu.png";
+        uparrow.src = "./images/hpu.png";
         postspace.appendChild(uparrow);
 
         var met = document.createElement("div");
@@ -175,12 +175,12 @@ this.posttable = function(){
 
         var downarrow = document.createElement("image");
         downarrow.className = "downhand votehand";
-        downarrow.src = "./hpd.png";
+        downarrow.src = "./images/hpd.png";
         postspace.appendChild(downarrow);
 
         // add some action code to the cells
         uparrow.onclick = function(){
-            uparrow.src = "./hpuselect.png";
+            uparrow.src = "./images/hpuselect.png";
             var pos = ptable.rankToxy(rank);
             var uppost = ptable.getPostXY(pos);
             uppost["upvoted"] = true;
@@ -228,7 +228,7 @@ this.posttable = function(){
         // Ensure that upvote highlighting follows post around table
         var postxml = post.getXml();
         if (postxml["upvoted"]){
-            uparrow.src = "./hpuselect.png";
+            uparrow.src = "./images/hpuselect.png";
         }
 
         //var test = post.getXml();

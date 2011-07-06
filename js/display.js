@@ -62,7 +62,7 @@ this.repostNotification = function(){
   this.sendMsg = function(msg){
     // Create a simple text notification:
     var notification = webkitNotifications.createNotification(
-        'icon-16.jpeg',  // icon url - can be relative
+        'images/icon-16.jpeg',  // icon url - can be relative
         'New Repost:',
         msg
         );
