@@ -12,6 +12,8 @@ this.statusBar = function() {
             else {
                 offline = true;
             }
+
+            // color the status circle. change this to sprite later.
             if ( online && offline ) {
                 $("#repostMenu .statusCircle").css('background','#FCA923');
             }
@@ -22,6 +24,7 @@ this.statusBar = function() {
                 $("#repostMenu .statusCircle").css('background','#FC4023');
             }
         }
+
         // create link tree
         for(var i=0; i<links.length; i++) {
             if(links[i].status == "online") {

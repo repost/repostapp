@@ -17,7 +17,6 @@ this.textPostBox = function(sendPostCB) {
         var label; /* temp label */
         var postbutton; /* send that text */
 
-        // Create dialog
         textPostBox = document.createElement('div');
         textPostBox.className = "repostdialog floater textpostbox";
         // Caption
@@ -80,7 +79,7 @@ this.textPostBox = function(sendPostCB) {
             var rpurl = new RegExp("chrome-extension://.*");
             if(rpurl.test(event.currentTarget.baseURI)){
                 t.setLink("");
-            }else{
+            } else {
                 t.setLink(event.currentTarget.baseURI);
             }
             t.setUuid("");
@@ -104,7 +103,7 @@ this.textPostBox = function(sendPostCB) {
         content.value = "";
     };
 
-    this.display = function(x, y){
+    this.display = function(x, y) {
         textPostBox.style.visibility = "visible";
         textPostBox.style.top = y + "px";
         textPostBox.style.left = x + "px";

@@ -138,7 +138,6 @@ function addShortCuts(){
 
 function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
-    setTimeout("checkStatus()", 10000);
 }
 
 
@@ -189,7 +188,7 @@ function main() {
     }
     hw.startRepost();
     hw.getInitialPosts(checkForPost);
-    setTimeout("checkStatus()",10000);
+    setInterval("checkStatus()",10000);
 };
 
 
