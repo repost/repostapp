@@ -10,7 +10,7 @@
 /**
  * Account List Table
  */
-table{
+table {
     border-collapse:collapse;
     margin:15px;
     width:200px;
@@ -55,80 +55,34 @@ div.addAcctPopup {
   padding: 7px 10px 7px 10px;
 }
 
-td.fuckoff {
-    padding:5px;
-    background:#9D98E8;
-    border:1px solid #fff;
-    width:250px;
-    height:150px;
-    border:1px solid #fff;
-}
-td.rockon {
-    padding:5px;
-    background:#A7E7FF;
-    border:1px solid #fff;
-    width:250px;
-    height:150px;
+#navbar-container {
+  -webkit-border-end:1px solid #c6c9ce;
+  background: -webkit-linear-gradient(rgba(234, 238, 243, 0.2), #EAEEF3), -webkit-linear-gradient(left, #EAEEF3, #EAEEF3 97%, #D3D7DB);
+  position: fixed;
+  left: 0px;
+  width: 20%;
+  display:block;
+  left:0px;
+  right:0px;
+  top:0px;
+  bottom:0px;
 }
 
-img.votehand{
-    width:27px;
-    float:right; 
-    margin: 15px 5px 15px 0px;
-    clear:right;
+#navbar-container > ul {
+    list-style-type:none;
 }
 
-img.downhand{
-    width:27px;
-    float:right; 
-    margin: 15px 5px 15px 0px;
-    clear:right;
-    background:#9D98E8;
+.navbar-item {
+    outline:none;
+    padding: 7px 0;
+    text-align: end;
+    text-shadow: white 0 1px 1px;
+    -webkit-padding-end: 24px;
+    cursor:pointer;
+    color:#426DC9;
+    font-size: 105%;
 }
 
-
-img.uphand{
-    width:27px;
-    float:right; 
-    margin: 15px 5px 15px 0px;
-    background:#A7E7FF;
-    clear:right;
-}
-
-
-div.metric{
-    float:right; 
-    clear:right;
-    margin: 0 15px 0 0px;
-    font-family:"Lucida Console", Courier New, monospace;
-}
-
-/**
- * Post styles 
- */
-img.postpreview{
-    max-width:250px;
-    max-height:120px;    
-    position:relative;
-    top:10px;
-    left:10px;
-}
-
-div.postcaption{
-    margin: 13px 0 0 10px;
-    font-family:"Lucida Console", Courier New, monospace;
-}
-
-img.bigpost{
-    width:300px;
-}
-div.zoomer{
-    position: absolute;
-    border-radius:5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    background: white;
-    -moz-box-shadow:1px 1px 5px #000;
-    -webkit-box-shadow:1px 1px 5px #000;
-    box-shadow:1px 1px 5px #000;
+body {
+    font-family: Helvetica, sans-serif;
 }
