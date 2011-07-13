@@ -198,7 +198,6 @@ function delAccount(pos){
 };
 
 function saveAccountList(){
-
     al.save();
     // Update status to let user know options were saved.
     stat.innerHTML = "Shit Saved.";
@@ -208,13 +207,12 @@ function saveAccountList(){
 
 };
 
+function accountDisplay() {
+    opt = document.getElementById("mainview");
 
-var al; // account list
-var stat; // account list status
-var opt;
-function main(){
-    
-    opt = document.getElementById("repostoptions");
+    var h1 = document.createElement("h1");
+    h1.innerText = "Accounts";
+    opt.appendChild(h1);
 
     // Create account list
     al = new acctList();
@@ -265,5 +263,23 @@ function main(){
     for(var i=0, len = accts.length; i<len; i++){
         al.addAcct(accts[i]);
     }
+};
+
+function otherCrapDisplay() {
+    $("#mainview").empty();
+};
+function otherOtherCrapDisplay() {
+    $("#mainview").empty();
+};
+
+
+var al; // account list
+var stat; // account list status
+var opt;
+function main(){
+    $("#accountsPageNav").click(accountDisplay);
+    $("#otherPageNav").click(otherCrapDisplay);
+    $("#otherOtherPageNav").click(otherOtherCrapDisplay);
+    accountDisplay();
 };
 
