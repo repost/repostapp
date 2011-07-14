@@ -1,7 +1,7 @@
 {
-  "name": "repost",
-  "version": "0.1",
-  "description": "experience together",
+  "name": "Repost",
+  "version": "0.3",
+  "description": "Ricky Bobby",
   "app": {
     "launch": {
       "local_path": "bootstrap.html"
@@ -13,7 +13,7 @@
       "all_frames": true,
       "matches": ["http://*/*","https://*/*"],
       "css" : ["css/content.css"],
-      "js": ["js/content.js","js/posttext.js","js/postimage.js"],
+      "js": ["js/textpostbox.js","js/content.js","js/posttext.js","js/postimage.js"],
       "run_at": "document_end"
     }
   ],

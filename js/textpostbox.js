@@ -19,33 +19,33 @@ this.textPostBox = function(sendPostCB) {
 
         // Create dialog
         textPostBox = document.createElement('div');
-        textPostBox.className = "floater textpostbox";
+        textPostBox.className = "repostdialog floater textpostbox";
         // Caption
         label = document.createElement("label");
         label.innerHTML = "Caption:";
-        label.className = "caption";
+        label.className = "repostdialog caption";
         caption = document.createElement("input");
-        caption.className = "captioninput";
+        caption.className = "repostdialog captioninput";
         textPostBox.appendChild(label);
         textPostBox.appendChild(caption);
         // Content
         label = document.createElement("label");
         label.innerHTML = "Content:";
-        label.className = "content";
+        label.className = "repostdialog content";
         content = document.createElement("textarea");
-        content.className = "contentinput";
+        content.className = "repostdialog contentinput";
         textPostBox.appendChild(label);
         textPostBox.appendChild(content);
         // Post button
         postbutton = document.createElement("button");
         postbutton.innerText = "Ahoy Buttercup";
         postbutton.onclick = this.submitPost(this);
-        postbutton.className = "sendtext";
+        postbutton.className = "repostdialog sendtext";
         textPostBox.appendChild(postbutton);
         // 'X'
         close = document.createElement("span");
         close.innerHTML = "x";
-        close.className = "floatclose";
+        close.className = "repostdialog floatclose";
         close.onclick = this.onclickclose(this);
         textPostBox.appendChild(close);
         textPostBox.style.visibility = "hidden";
