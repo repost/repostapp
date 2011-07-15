@@ -19,16 +19,15 @@ this.imagePostBox = function(sendPostCB){
 
         // Create Dialog
         imagePostBox = document.createElement('div');
-        imagePostBox.className = "repostdialog";
+        imagePostBox.className = "repostdialog floater";
         imagePostBox.style.visibility = "hidden";
-        imagePostBox.style.display = "none";
 
         // Caption
         label = document.createElement("label");
         label.innerHTML = "What say you:";
-        label.className = "label";
+        label.className = "repostdialog label";
         caption = document.createElement("input");
-        caption.className = "caption";
+        caption.className = "repostdialog imagecaption";
         caption.addEventListener('keypress', this.submitPost(this), false);
         label.appendChild(caption);
         imagePostBox.appendChild(label);
@@ -36,7 +35,7 @@ this.imagePostBox = function(sendPostCB){
         // 'X'
         close = document.createElement("span");
         close.innerHTML = "x";
-        close.className = "floatclose";
+        close.className = "repostdialog floatclose";
         close.onclick = this.onclickclose(this);
         imagePostBox.appendChild(close);
         // Append
@@ -114,8 +113,7 @@ this.contentClicker = function() {
 
     this.init = function(){
         imagebox = new imagePostBox(this.sendPost());
-        //TODO once we have fixed rss we can uncomment this and text post anywhere
-        //textbox = new textPostBox(this.sendPost());
+        textbox = new textPostBox(this.sendPost());
         document.addEventListener("keydown", this.shortcuts());
     };
 
@@ -125,8 +123,7 @@ this.contentClicker = function() {
                 var code = e.keyCode;
                 var c = String.fromCharCode(code).toLowerCase();
                 if(c == "t"){ // Text Post Box Popup
-                    //TODO once we have fixed rss we can uncomment this and text post anywhere
-                    //textbox.display();
+                    textbox.display();
                 }
             }
         };

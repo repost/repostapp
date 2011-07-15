@@ -58,15 +58,19 @@ this.postText = function(){
         punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
     };
 
-    // Construct image content from its parts
-    // Construct image content from its parts
+    // Construct text content from its parts
     this.getXml = function() {
         var xmlpost; /* generic xml post holder */
         var textpost = document.createElement("div");
         var cap = document.createElement("div");
         var text = document.createElement("div");
         
-        cap.innerHTML = linkify(caption, addBlankPageTarget);
+        if(link){
+            cap.innerHTML = '<a href="' + link + '" title="' + link + '" target="_blank" >' 
+                    + caption + '</a>';
+        }else{
+            cap.innerHTML = linkify(caption, addBlankPageTarget);
+        }
         cap.className = "textpostcaption postcaption";
         text.innerHTML = linkify(cont, addBlankPageTarget);
         text.className = "posttextbody";

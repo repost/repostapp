@@ -133,11 +133,11 @@ this.linkVisual = function() {
         var label; /* temp label */
         // Create dialog
         linkBox = document.createElement('div');
-        linkBox.className = "floater linkbox";
+        linkBox.className = "repostdialog floater linkbox";
         // 'X'
         close = document.createElement("span");
         close.innerHTML = "x";
-        close.className = "floatclose";
+        close.className = "repostdialog floatclose";
         close.onclick = function() {
             linkBox.style.visibility = "hidden";
             var cell = document.getElementById("infovis");
