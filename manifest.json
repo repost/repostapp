@@ -1,7 +1,7 @@
 {
   "name": "Repost",
-  "version": "0.3",
-  "description": "Ricky Bobby",
+  "version": "0.4",
+  "description": "Hank Moody",
   "app": {
     "launch": {
       "local_path": "bootstrap.html"
