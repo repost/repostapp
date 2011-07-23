@@ -189,6 +189,12 @@ function main() {
     hw.startRepost();
     hw.getInitialPosts(checkForPost);
     setInterval("checkStatus()",10000);
+
+    /* set up masonry */
+    $('#repost').masonry({
+        itemSelector: '.postspace',
+        columnWidth: 240
+    });
 };
 
 

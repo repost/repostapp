@@ -55,15 +55,19 @@ div.metric{
  * Post styles 
  */
  .postspace{
+    float: left;
+    width: 220px;
+    margin: 10px;
+	/*
     position:relative;
     height: 100%;
     width: 100%;
-	/*
-    height: 180px;
-    width: 280px;
-	*/
+    //height: 180px;
+    //width: 280px;
 	text-align:center;
+	*/
  }
+ /*
 .post{
     position:absolute;
     left:0px;
@@ -80,14 +84,14 @@ div.imagepost {
     width:100%;
     height:100%;    
 }
-
+*/
 .imagepreview{
     /*position:absolute;
     left:0px;*/
-    top: 0px;
+    /*top: 0px;*/
     max-width:100%;
-    max-height:100%;    
-	vertical-align:middle;
+    /*max-height:100%;    */
+	/*vertical-align:middle;*/
 	/*
 	display: block;
 	margin: auto;
@@ -105,6 +109,7 @@ div.imagepost {
 	top:0%;
 }
 */
+/*
 div.posttextbody{
     position: absolute;
     font-size: 75%;
@@ -122,6 +127,11 @@ div.posttextbody{
 div.postcaption{
     font-family:"Lucida Console", Courier New, monospace;
 }
+*/
+div.textpost {
+    height: 110px;
+}
+
 .imagepostcaption{
     position:absolute;
     top: 140px;
@@ -253,6 +263,7 @@ span.name {
 .contenttext{
 }
 
+/*
 div.divrow {
 	position:absolute;
 	width:100%;
@@ -260,7 +271,6 @@ div.divrow {
 
 div.divcol {
 	position:absolute;
-    /*background:#B4C3FF;*/
     height:100%;
 	text-align:center;
 }
@@ -306,6 +316,7 @@ div.divcol {
     left:70%;
 	width:20%;
 }
+*/
 
 /**
  * MENU BAR CRAP
@@ -351,3 +362,4 @@ div.divcol {
 #repost {
     top: 20px;
 }
+
