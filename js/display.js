@@ -169,7 +169,10 @@ function main() {
     plugin = document.getElementById("plugin");
     hw = plugin.rePoster();
     hw.init();
-    hw.setNewPostCB(checkForPost);
+    // Set UI callbacks
+    var postuiops = plugin.PostUiOps();
+    postuiops.setNewPostCB(checkForPost);
+    hw.setPostUiOps(postuiops);
 
     // setup status bar
     statusBar = new statusBar();
@@ -188,7 +191,7 @@ function main() {
         }
     }
     hw.startRepost();
-    hw.getInitialPosts(checkForPost);
+    hw.getInitialPosts();
     setTimeout("checkStatus()",10000);
 };
 
