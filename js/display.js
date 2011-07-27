@@ -141,6 +141,13 @@ function checkStatus() {
     setTimeout("checkStatus()", 10000);
 }
 
+function statuschanged(){
+    console.log("STATUS CHANGED")
+};
+
+function AccountDisconnected(acct, reason){
+    console.log(reason)
+};
 
 var ptable; // Mainpage table display
 var plugin; // the repost plugin instance
@@ -168,12 +175,15 @@ function main() {
     // init the posttable
     plugin = document.getElementById("plugin");
     hw = plugin.rePoster();
-    hw.init();
     // Set UI callbacks
     var postuiops = plugin.PostUiOps();
-    postuiops.setNewPostCB(checkForPost);
+    postuiops.newpostcb = checkForPost;
     hw.setPostUiOps(postuiops);
-
+    var networkuiops = plugin.NetworkUiOps();
+    networkuiops.statuschangedcb = statuschanged;
+    networkuiops.accountdisconnectcb = AccountDisconnected;
+    hw.setNetworkUiOps(networkuiops);
+    hw.init();
     // setup status bar
     statusBar = new statusBar();
 
