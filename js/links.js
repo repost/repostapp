@@ -219,7 +219,7 @@ this.linkVisual = function() {
                 }
             }
         }
-        return acctree.concat( linktree);
+        return acctree.concat(linktree);
     };
     
     this.getTree = function(){
@@ -328,7 +328,7 @@ this.linkNodeAdder = function(t, n){
 
     this.response = function(rep){
         if(rep != ""){
-            var treeobj = createTreeElement(rep,rep,"buddyobj");
+            var treeobj = createTreeElement(rep,rep,"reposterlink");
             var adj = createAdjacency("");
             tree.graph.addNode(treeobj);
             tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
