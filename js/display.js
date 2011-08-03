@@ -141,8 +141,12 @@ function checkStatus() {
 }
 
 function statuschanged(){
-    console.log("STATUS CHANGED")
+    console.log("STATUS CHANGED");
 };
+
+function postmetricupdate(){
+	console.log("Metric update");
+}
 
 function AccountDisconnected(acct, reason){
     console.log(reason)
@@ -177,6 +181,7 @@ function main() {
     // Set UI callbacks
     var postuiops = plugin.PostUiOps();
     postuiops.newpostcb = checkForPost;
+    postuiops.postmetriccb = postmetricupdate;
     hw.setPostUiOps(postuiops);
     var networkuiops = plugin.NetworkUiOps();
     networkuiops.statuschangedcb = statuschanged;
