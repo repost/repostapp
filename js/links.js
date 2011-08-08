@@ -139,7 +139,7 @@ this.linkVisual = function() {
             .append($('<span>x</span>')
                 .addClass('floatclose')
                 .click( function() {
-                        linkBox.css({visibility:"hidden"}).fadeIn('fast',
+                        linkBox.fadeOut('fast',
                             function() {
                                 $("#infovis").children().nextAll().remove();
                             })
