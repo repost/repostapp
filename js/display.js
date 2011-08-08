@@ -165,49 +165,51 @@ var wel;
 var statusBar;
 
 function main() {
-    // Check we have an account to log into
-    var accounts = loadAccounts();
-    // start repost
-    ptable = new posttable();
-    // Create input windows
-    textbox = new textPostBox(sendPost);
-    repostNotify = new repostNotification();
-    wel = document.getElementById("welcome");
-    // attach repost shortcuts
-    addShortCuts();
-    // init the posttable
-    plugin = document.getElementById("plugin");
-    hw = plugin.rePoster();
-    // Set UI callbacks
-    var postuiops = plugin.PostUiOps();
-    postuiops.newpostcb = checkForPost;
-    postuiops.postmetriccb = postmetricupdate;
-    hw.setPostUiOps(postuiops);
-    var networkuiops = plugin.NetworkUiOps();
-    networkuiops.statuschangedcb = statuschanged;
-    networkuiops.accountdisconnectcb = AccountDisconnected;
-    hw.setNetworkUiOps(networkuiops);
-    hw.init();
+    $('document').ready(function(){
+        // Check we have an account to log into
+        var accounts = loadAccounts();
+        // start repost
+        ptable = new posttable();
+        // Create input windows
+        textbox = new textPostBox(sendPost);
+        repostNotify = new repostNotification();
+        wel = document.getElementById("welcome");
+        // attach repost shortcuts
+        addShortCuts();
+        // init the posttable
+        plugin = document.getElementById("plugin");
+        hw = plugin.rePoster();
+        // Set UI callbacks
+        var postuiops = plugin.PostUiOps();
+        postuiops.newpostcb = checkForPost;
+        postuiops.postmetriccb = postmetricupdate;
+        hw.setPostUiOps(postuiops);
+        var networkuiops = plugin.NetworkUiOps();
+        networkuiops.statuschangedcb = statuschanged;
+        networkuiops.accountdisconnectcb = AccountDisconnected;
+        hw.setNetworkUiOps(networkuiops);
+        hw.init();
 
-    // setup status bar
-    statusBar = new statusBar();
+        // setup status bar
+        statusBar = new statusBar();
 
-    // Create link management window
-    links = new linkVisual();
-    links.init();
-    if(accounts){
-        var acc = plugin.Account();
-        // add saved accounts
-        for(var i=0; i<accounts.length; i++){
-            acc.user = accounts[i].username;
-            acc.pass = accounts[i].password;
-            acc.type = accounts[i].type;
-            hw.addAccount(acc);
+        // Create link management window
+        links = new linkVisual();
+        links.init();
+        if(accounts){
+            var acc = plugin.Account();
+            // add saved accounts
+            for(var i=0; i<accounts.length; i++){
+                acc.user = accounts[i].username;
+                acc.pass = accounts[i].password;
+                acc.type = accounts[i].type;
+                hw.addAccount(acc);
+            }
         }
-    }
-    hw.startRepost();
-    hw.getInitialPosts();
-    setTimeout("checkStatus()",10000);
+        hw.startRepost();
+        hw.getInitialPosts();
+        setTimeout("checkStatus()",10000);
+    })
 };
 
 

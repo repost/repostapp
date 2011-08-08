@@ -132,7 +132,8 @@ this.linkVisual = function() {
     this.init = function(){
         var label; /* temp label */
         // Create dialog
-        linkBox = $('div')
+        linkBox = $("<div>").addClass('HEADASDASDASDASDASDS');
+        /*
             .hide()
             .addClass("repostdialog floater linkbox")
             .append('span')
@@ -147,8 +148,8 @@ this.linkVisual = function() {
             .append('div')
                 .addClass('infovis')
                 .attr('id','infovis')
-        ;
-        $('document.body').append(linkBox);
+        ;*/
+        $(document.body).append(linkBox);
     };
 
     this.createTree = function(links, accts){
@@ -215,7 +216,7 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         var tree = this.createTree(linkarr, acctarr);
-        linkBox.style.visibility = "visible";
+        linkBox.css( {visibility:"visible"} );
         fd = new $jit.ForceDirected(forcegraphset);
         // load JSON data.
         fd.loadJSON(tree);
