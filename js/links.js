@@ -141,14 +141,13 @@ this.linkVisual = function() {
                 .click( function() {
                         linkBox.css({visibility:"hidden"}).fadeIn('fast',
                             function() {
-                                $('infovis').children().nextAll().remove();
+                                $("#infovis").children().nextAll().remove();
                             })
                 }))
             .append($('<div>')
-                .addClass('infovis')
                 .attr('id','infovis'))
         ;
-        $('#repost').append(linkBox);
+        $("#repost").append(linkBox);
     };
 
     this.createTree = function(links, accts){
