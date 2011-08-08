@@ -132,36 +132,23 @@ this.linkVisual = function() {
     this.init = function(){
         var label; /* temp label */
         // Create dialog
-        linkBox = document.createElement('div');
-        linkBox.className = "repostdialog floater linkbox";
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "repostdialog floatclose";
-        close.onclick = function() {
-            linkBox.style.visibility = "hidden";
-            var cell = document.getElementById("infovis");
-            if ( cell.hasChildNodes() )
-            {
-                while ( cell.childNodes.length >= 1 )
-                {
-                    cell.removeChild( cell.firstChild );       
-                } 
-            }
-
-        };
-        linkBox.appendChild(close);
-        // Visualisation
-        vis = document.createElement("div");
-        vis.className = "infovis";
-        vis.id = "infovis";
-        linkBox.appendChild(vis);
-        // Link save button
-        savebutton = document.createElement("button");
-        savebutton.innerText = "Save";
-        savebutton.className = "linkboxsave";
-
-        document.body.appendChild(linkBox);
+        linkBox = $('div')
+            .hide()
+            .addClass("repostdialog floater linkbox")
+            .append('span')
+                .addClass('repostdialog floatclose')
+                .html('x')
+                .click( function() {
+                        linkBox.css({visibility:"hidden"}).fadeIn('fast',
+                            function() {
+                                $('infovis').children().nextAll().remove();
+                            })
+                })
+            .append('div')
+                .addClass('infovis')
+                .attr('id','infovis')
+        ;
+        $('document.body').append(linkBox);
     };
 
     this.createTree = function(links, accts){
