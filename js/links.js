@@ -132,24 +132,23 @@ this.linkVisual = function() {
     this.init = function(){
         var label; /* temp label */
         // Create dialog
-        linkBox = $("<div>").addClass('HEADASDASDASDASDASDS');
-        /*
+        linkBox = $('<div>')
             .hide()
-            .addClass("repostdialog floater linkbox")
-            .append('span')
-                .addClass('repostdialog floatclose')
-                .html('x')
+            .attr('id', 'rpdialog')
+            .addClass("linkbox")
+            .append($('<span>x</span>')
+                .addClass('floatclose')
                 .click( function() {
                         linkBox.css({visibility:"hidden"}).fadeIn('fast',
                             function() {
                                 $('infovis').children().nextAll().remove();
                             })
-                })
-            .append('div')
+                }))
+            .append($('<div>')
                 .addClass('infovis')
-                .attr('id','infovis')
-        ;*/
-        $(document.body).append(linkBox);
+                .attr('id','infovis'))
+        ;
+        $('#repost').append(linkBox);
     };
 
     this.createTree = function(links, accts){
@@ -216,7 +215,7 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         var tree = this.createTree(linkarr, acctarr);
-        linkBox.css( {visibility:"visible"} );
+        linkBox.show();
         fd = new $jit.ForceDirected(forcegraphset);
         // load JSON data.
         fd.loadJSON(tree);

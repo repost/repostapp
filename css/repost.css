@@ -189,6 +189,35 @@ span.name {
 }
 
 /**
+ * Floating Boxes
+ */
+#repost div#rpdialog{
+  opacity:0.95;
+  position: absolute;
+  background:#ececec;
+  box-shadow:2px 2px 5px #000;
+  padding: 7px 10px 7px 10px;
+  z-index:99999999;
+}
+
+#repost #rpdialog label{
+    font-family:"Lucida Console", Courier New, monospace;
+    margin: 0 5px 0 0 ;
+}
+
+#repost #rpdialog span.floatclose {
+    font-size: 150%;
+    color:#000;
+    cursor:pointer;
+    font-weight:bold;
+    font-family:"Lucida Console", Courier New, monospace;
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    z-index:99999999;
+}
+
+/**
  * Links
  */
 /*TOOLTIPS*/
@@ -204,14 +233,14 @@ span.name {
     margin-bottom:2px;
 }
 
-.linkbox{
+#repost .linkbox{
   top: 10%;
   height: 80%;
   left: 10%;
   width: 80%;
  }
 
-.infovis{
+repost infovis{
     opacity:1;
     margin: auto;
     top: 1%;
@@ -220,7 +249,7 @@ span.name {
     width: 98%;
 }
 
-.caption{
+repost caption{
     position: absolute;
     left:10px;
     top:20px;
