@@ -13,7 +13,7 @@
  */
 @font-face { 
     font-family: "Abel"; 
-    src: url('chrome-extension://__MSG_@@extension_id__/css/Abel-Regular.tff');
+    src: url('chrome-extension://__MSG_@@extension_id__/css/Abel-Regular.ttf');
 }
 
 /**
