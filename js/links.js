@@ -21,7 +21,7 @@ this.linkVisual = function() {
                             //Enable panning events only if we're dragging the empty
                             //canvas (and not a node).
                             panning: 'avoid nodes',
-                            zooming: 10 //zoom speed. higher is more sensible
+                            zooming: 20 //zoom speed. higher is more sensible
                         },
             // Change node and edge styles such as
             // color and width.
@@ -41,7 +41,7 @@ this.linkVisual = function() {
                     color: '#000',
                     type: labelType, //Native or HTML
                     size: 12,        
-                    font: "Lucida Console", 
+                    font: "Abel", 
                     style: 'bold'
                    },
            //Add Tips
@@ -115,8 +115,8 @@ this.linkVisual = function() {
                                     });  
                             };
                     },
-                    // Change node styles when DOM labels are placed
-                    // or moved.
+            // Change node styles when DOM labels are placed
+            // or moved.
             onPlaceLabel: function(domElement, node){
                                   var style = domElement.style;
                                   var left = parseInt(style.left);
@@ -130,38 +130,23 @@ this.linkVisual = function() {
     
     // Here we create the box to hold this shit
     this.init = function(){
-        var label; /* temp label */
         // Create dialog
-        linkBox = document.createElement('div');
-        linkBox.className = "repostdialog floater linkbox";
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "repostdialog floatclose";
-        close.onclick = function() {
-            linkBox.style.visibility = "hidden";
-            var cell = document.getElementById("infovis");
-            if ( cell.hasChildNodes() )
-            {
-                while ( cell.childNodes.length >= 1 )
-                {
-                    cell.removeChild( cell.firstChild );       
-                } 
-            }
-
-        };
-        linkBox.appendChild(close);
-        // Visualisation
-        vis = document.createElement("div");
-        vis.className = "infovis";
-        vis.id = "infovis";
-        linkBox.appendChild(vis);
-        // Link save button
-        savebutton = document.createElement("button");
-        savebutton.innerText = "Save";
-        savebutton.className = "linkboxsave";
-
-        document.body.appendChild(linkBox);
+        linkBox = $('<div>')
+            .hide()
+            .attr('id', 'rpdialog')
+            .addClass("linkbox")
+            .append($('<span>x</span>')
+                .addClass('floatclose')
+                .click( function() {
+                        linkBox.fadeOut('fast',
+                            function() {
+                                $("#infovis").children().remove();
+                            })
+                }))
+            .append($('<div>')
+                .attr('id','infovis'))
+        ;
+        $("#repost").append(linkBox);
     };
 
     this.createTree = function(links, accts){
@@ -228,7 +213,7 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         var tree = this.createTree(linkarr, acctarr);
-        linkBox.style.visibility = "visible";
+        linkBox.show();
         fd = new $jit.ForceDirected(forcegraphset);
         // load JSON data.
         fd.loadJSON(tree);
