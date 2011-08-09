@@ -21,7 +21,7 @@ this.linkVisual = function() {
                             //Enable panning events only if we're dragging the empty
                             //canvas (and not a node).
                             panning: 'avoid nodes',
-                            zooming: 10 //zoom speed. higher is more sensible
+                            zooming: 20 //zoom speed. higher is more sensible
                         },
             // Change node and edge styles such as
             // color and width.
@@ -41,7 +41,7 @@ this.linkVisual = function() {
                     color: '#000',
                     type: labelType, //Native or HTML
                     size: 12,        
-                    font: "Lucida Console", 
+                    font: "Abel", 
                     style: 'bold'
                    },
            //Add Tips
@@ -115,8 +115,8 @@ this.linkVisual = function() {
                                     });  
                             };
                     },
-                    // Change node styles when DOM labels are placed
-                    // or moved.
+            // Change node styles when DOM labels are placed
+            // or moved.
             onPlaceLabel: function(domElement, node){
                                   var style = domElement.style;
                                   var left = parseInt(style.left);
@@ -130,7 +130,6 @@ this.linkVisual = function() {
     
     // Here we create the box to hold this shit
     this.init = function(){
-        var label; /* temp label */
         // Create dialog
         linkBox = $('<div>')
             .hide()
