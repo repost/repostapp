@@ -135,7 +135,7 @@ this.linkVisual = function() {
             .hide()
             .attr('id', 'rpdialog')
             .addClass("linkbox")
-            .append($('<span>x</span>')
+            .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
                 .click( function() {
                         linkBox.fadeOut('fast',

@@ -203,18 +203,12 @@ span.name {
   padding: 7px 10px 7px 10px;
   z-index:999;
 }
-
 #repost #rpdialog label{
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     margin: 0 5px 0 0 ;
 }
-
-#repost #rpdialog span.floatclose {
-    font-size: 150%;
-    color:#000;
+#repost #rpdialog img.floatclose {
     cursor:pointer;
-    font-weight:bold;
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
     position: absolute;
     top: 5px;
     right: 7px;
