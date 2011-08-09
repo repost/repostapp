@@ -379,6 +379,21 @@ this.linkNodeRemover = function(t, n){
     
 };
 
+this.repostDialog = function(typeclass, onclose, content){
+
+    return dialog = $('<div>')
+        .hide()
+        .attr('id', 'rpdialog')
+        .addClass(typeclass)
+        .append($('<img src=images/repost_x.gif>')
+            .addClass('floatclose')
+            .click( function() {
+                    linkBox.fadeOut('fast', onclose)
+            }))
+        .append(content)
+    ;
+};
+
 // Simple confirmation popup. 
 // message = message to display
 // divclass = class to call it
@@ -386,34 +401,30 @@ this.linkNodeRemover = function(t, n){
 this.confirmationPopup = function(message, divclass, callback){
     
     var cback = callback;
-    var popup;
+    var dialog;
     var msg;
 
     this.createPopup = function(message, divclass){
         
-        popup = document.createElement("div");
-        popup.className = "floater confirmationPopup "+divclass;
-        
-        // Confirmation message
-        msg = document.createElement("span");
-        msg.className = "message";
-        msg.innerHTML = message;
-        popup.appendChild(msg);
-
-        // Ok and cancel button
-        var ok = document.createElement("button");
-        ok.className = "ok";
-        ok.innerText = "Ok";
-        ok.onclick = this.ok(this);
-        popup.appendChild(ok);
-
-        var cancel = document.createElement("button");
-        cancel.className = "cancel";
-        cancel.innerText = "Cancel";
-        cancel.onclick = this.cancel(this);
-        popup.appendChild(cancel);
-
-        document.body.appendChild(popup);
+        dialog = $('<div>')
+            .hide()
+            .attr('id', 'rpdialog')
+            .addClass("confirmation")
+            .append($('<img src=images/repost_x.gif>')
+                .addClass('floatclose')
+                .click( function() {
+                        dialog.fadeOut('fast', dialog.remove() )
+                }))
+            .append($('<span>' + message +'</span>')
+                        .addClass('message'))
+            .append($('<button>Ok</button>')
+                        .addClass('ok')
+                        .click( this.ok(this) ))
+            .append($('<button>Cancle</button>')
+                                .addClass('cancel')
+                                .click( this.cancel(this) ))
+        ;
+        $("#repost").append(dialog);
     };
     
     this.cb = function(result){
@@ -437,7 +448,7 @@ this.confirmationPopup = function(message, divclass, callback){
     };
 
     this.display = function(){
-        popup.style.visibility = "visible";
+        dialog.show();
     };
 
     this.remove = function(){

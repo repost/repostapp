@@ -141,29 +141,7 @@ div.postcaption{
 /**
  * Repost commons
  */
-/* Confirmation Popup */
-.confirmationPopup{
-  width: 250px;
-  height: 70px;
-}
-.message{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-    position:absolute;
-    left:10px;
-    top:10px;
-}
-.ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
-}
-.cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
-}
+
 span.name {
       cursor: pointer;
 }
@@ -214,7 +192,33 @@ span.name {
     right: 7px;
     z-index:999;
 }
-
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+  width: 250px;
+  height: 70px;
+}
+#repost .confirmation#rpdialog .message{
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    position:absolute;
+    left:10px;
+    top:10px;
+}
+#repost #rpdialog .ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 90px;
+}
+#repost #rpdialog .cancel{
+    position: absolute;
+    top: 50px;
+    left: 140px;
+    width: 90px;
+}
+#repost .confirmation#rpdialog img.floatclose {
+    width:20;
+    height:20px;
+}
 /**
  * Links
  */
