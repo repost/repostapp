@@ -379,21 +379,6 @@ this.linkNodeRemover = function(t, n){
     
 };
 
-this.repostDialog = function(typeclass, onclose, content){
-
-    return dialog = $('<div>')
-        .hide()
-        .attr('id', 'rpdialog')
-        .addClass(typeclass)
-        .append($('<img src=images/repost_x.gif>')
-            .addClass('floatclose')
-            .click( function() {
-                    linkBox.fadeOut('fast', onclose)
-            }))
-        .append(content)
-    ;
-};
-
 // Simple confirmation popup. 
 // message = message to display
 // divclass = class to call it
@@ -420,7 +405,7 @@ this.confirmationPopup = function(message, divclass, callback){
             .append($('<button>Ok</button>')
                         .addClass('ok')
                         .click( this.ok(this) ))
-            .append($('<button>Cancle</button>')
+            .append($('<button>Cancel</button>')
                                 .addClass('cancel')
                                 .click( this.cancel(this) ))
         ;
@@ -452,7 +437,7 @@ this.confirmationPopup = function(message, divclass, callback){
     };
 
     this.remove = function(){
-        document.body.removeChild(popup);
+        dialog.remove();
     };
  
     this.createPopup(message, divclass);
