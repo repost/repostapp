@@ -141,7 +141,7 @@ this.linkVisual = function() {
                 .click( function() {
                         linkBox.fadeOut('fast',
                             function() {
-                                $("#infovis").children().nextAll().remove();
+                                $("#infovis").children().remove();
                             })
                 }))
             .append($('<div>')
