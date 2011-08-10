@@ -382,9 +382,15 @@ div.divcol {
 #repost .toolbar li a {
     text-decoration: none;
     text-transform: uppercase;
+		color: #757575;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
+		font-size: 20px;
 }
 
 #repost {
     top: 20px;
+}
+
+body {
+		background: #ececec
 }
