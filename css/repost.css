@@ -343,10 +343,10 @@ div.divcol {
 }
 
 /**
- * MENU BAR CRAP
+ * Menu Bar
  */
 
-#repostMenu {
+#repost #repostMenu {
     position:fixed;
     top: 0px;
     left: 0px;
@@ -354,7 +354,7 @@ div.divcol {
     height: 20px;
 }
 
-#repostMenu .statusCircle {
+#repost #repostMenu .statusCircle {
     display:inline;
     width: 20px;
     height: 20px;
@@ -368,19 +368,21 @@ div.divcol {
     margin: 0px;
 }
 
-.toolbar {
+#repost .toolbar {
     margin: 0px;
 }
 
-.toolbar li {
+#repost .toolbar li {
     display: inline;
     padding: 0.5em;
     padding: 0.5em;
     float: right;
 }
 
-.toolbar li a {
-    text-decoration:none;
+#repost .toolbar li a {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
 
 #repost {
