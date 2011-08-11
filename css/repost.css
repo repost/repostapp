@@ -268,50 +268,50 @@ span.name {
     height:100%;
 	position:fixed;
 }
-div.divrow {
+#repost #divtable div.divrow {
 	width:100%;
 }
-div.divcol {
+#repost #divtable div.divcol {
 	position:absolute;
     height:20%;
 	text-align:center;
 }
-#divRow0 {
+#repost #divtable #divRow0 {
     top:0%;
     height:20%;
     margin: 0px;
     left:0px;
 }
-#divRow1 {
+#repost #divtable #divRow1 {
     top:25%;
     height:20%;
     margin: 0px;
     left:0px;
 }
-#divRow2 {
+#repost #divtable #divRow2 {
     top:50%;
     height:20%;
     margin: 0px;
     left:0px;
 }
-#divRow3 {
+#repost #divtable #divRow3 {
     top:75%;
     height:20%;
     margin: 0px;
     left:0px;
 }
-.divCol0 {
+#repost #divtable .divCol0 {
 	width:20%;
 }
-.divCol1 {
+#repost #divtable .divCol1 {
     left:30%;
 	width:20%;
 }
-.divCol2 {
+#repost #divtable .divCol2 {
     left:55%;
 	width:20%;
 }
-.divCol3 {
+#repost #divtable .divCol3 {
     left:80%;
 	width:20%;
 }
