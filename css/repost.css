@@ -327,9 +327,8 @@ span.name {
     height: 50px;
 }
 #repost #repostMenu .statusCircle {
-    display:inline;
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
     background: #FC4023;
