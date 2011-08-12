@@ -134,6 +134,11 @@ function addShortCuts(){
         }
     };
     document.addEventListener("keydown",shortFunc);
+    $('#connlink').click(function(){ // Text Post Box Popup
+                var linkarr = hw.getLinks();
+                var acctarr = hw.getAccounts();
+                links.show(linkarr, acctarr);       
+            });
 };
 
 function checkStatus() {

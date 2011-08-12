@@ -261,6 +261,9 @@ span.name {
 .contenttext{
 }
 
+/**
+ * Post table
+ */
 #repost #divtable {
     top:65px;
     left:10%;
@@ -270,35 +273,25 @@ span.name {
 }
 #repost #divtable div.divrow {
 	width:100%;
+    height:25%;
+    margin: 0px;
+    left:0px;
 }
 #repost #divtable div.divcol {
-	position:absolute;
-    height:20%;
+	position:relative;
 	text-align:center;
 }
 #repost #divtable #divRow0 {
     top:0%;
-    height:20%;
-    margin: 0px;
-    left:0px;
 }
 #repost #divtable #divRow1 {
     top:25%;
-    height:20%;
-    margin: 0px;
-    left:0px;
 }
 #repost #divtable #divRow2 {
     top:50%;
-    height:20%;
-    margin: 0px;
-    left:0px;
 }
 #repost #divtable #divRow3 {
     top:75%;
-    height:20%;
-    margin: 0px;
-    left:0px;
 }
 #repost #divtable .divCol0 {
 	width:20%;
