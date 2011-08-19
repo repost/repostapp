@@ -130,23 +130,12 @@ this.linkVisual = function() {
     
     // Here we create the box to hold this shit
     this.init = function(){
-        // Create dialog
-        linkBox = $('<div>')
-            .hide()
-            .attr('id', 'rpdialog')
-            .addClass("linkbox")
-            .append($('<img src=images/repost_x.gif>')
-                .addClass('floatclose')
-                .click( function() {
-                        linkBox.fadeOut('fast',
-                            function() {
-                                $("#infovis").children().remove();
-                            })
-                }))
-            .append($('<div>')
-                .attr('id','infovis'))
-        ;
-        $("#repost").append(linkBox);
+        
+        linkBox = new repostdialog($('<div>')
+                                    .attr('id','infovis'),
+                                   function() {
+                                        $("#infovis").children().remove();
+                                    });
     };
 
     this.createTree = function(links, accts){
@@ -522,5 +511,39 @@ this.singleFieldPopup = function(message, divclass, callback){
     };
  
     this.createPopup(message, divclass);
+
+};
+
+this.repostdialog = function(c, cf){
+    
+    var children = c;
+    var popup = null;
+    var closefunc = cf;
+    var input;
+
+    this.createPopup = function(children, closefunc){
+        // Create dialog
+        popup = $('<div>')
+            .hide()
+            .attr('id', 'rpdialog')
+            .addClass("linkbox")
+            .append($('<img src=images/repost_x.gif>')
+                .addClass('floatclose')
+                .click( function() {
+                        popup.fadeOut('fast',closefunc)
+                }))
+            .append(children);
+        $("#repost").append(popup);
+    };
+    
+    this.show = function(){
+        popup.show();
+    };
+
+    this.remove = function(){
+        popup.fadeOut('fast',closefunc)
+    };
+ 
+    this.createPopup(children, closefunc);
 
 };
