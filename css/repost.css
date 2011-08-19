@@ -120,30 +120,6 @@ div.postcaption{
 span.name {
       cursor: pointer;
 }
-/* Single Field Popup */
-.singleFieldPopup{
-  width: 280px;
-  height: 90px;
-}
-.singleFieldPopup > .ok{
-    position: absolute;
-    top: 70px;
-    left: 120px;
-    width: 70px;
-}
-.singleFieldPopup > .cancel{
-    position: absolute;
-    top: 70px;
-    left: 200px;
-    width: 70px;
-}
-.singleFieldPopup > .inputbox{
-    position:absolute;
-    top: 25px;
-    left: 15px;
-    width: 250px;
-    margin: 15px 5px 15px 0px;
-}
 
 /**
  * Floating Boxes
@@ -169,6 +145,30 @@ span.name {
     height: 20px;
     width: 20px;
 }
+/* Single Field Popup */
+#repost .singlefield#rpdialog{
+  width: 280px;
+  height: 90px;
+}
+#repost .singlefield#rpdialog > .ok{
+    position: absolute;
+    top: 70px;
+    left: 120px;
+    width: 70px;
+}
+#repost .singlefield#rpdialog > .cancel{
+    position: absolute;
+    top: 70px;
+    left: 200px;
+    width: 70px;
+}
+#repost .singlefield#rpdialog > .inputbox{
+    position:absolute;
+    top: 25px;
+    left: 15px;
+    width: 250px;
+    margin: 15px 5px 15px 0px;
+}
 /* Confirmation Popup */
 #repost .confirmation#rpdialog{
   width: 250px;
@@ -180,21 +180,17 @@ span.name {
     left:10px;
     top:10px;
 }
-#repost #rpdialog .ok{
+#repost .confirmation#rpdialog .ok{
     position: absolute;
     top: 50px;
     left: 30px;
     width: 90px;
 }
-#repost #rpdialog .cancel{
+#repost .confirmation#rpdialog .cancel{
     position: absolute;
     top: 50px;
     left: 140px;
     width: 90px;
-}
-#repost .confirmation#rpdialog img.floatclose {
-    width:20;
-    height:20px;
 }
 /**
  * Links

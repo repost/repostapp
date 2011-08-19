@@ -458,7 +458,7 @@ this.singleFieldPopup = function(message, divclass, callback){
                                 .click(this.cancel(this)));
 
         popup = new repostdialog(children, function(){});
-        popup.addClass(divclass);
+        popup.addClass('singlefield');
     };
 
     this.cb = function(result){
