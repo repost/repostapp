@@ -444,12 +444,13 @@ this.singleFieldPopup = function(message, divclass, callback){
     var input;
 
     this.createPopup = function(message, divclass){
-        
+       
+        input = $('<input>')
+                    .addClass('inputbox')
+                    .attr('type','textbox');
         children = $('<div>').append($('<span>'+message+'</span>')
                                         .addClass('message'))
-                    .append($('<input>')
-                                .addClass('inputbox')
-                                .attr('type','textbox'))
+                    .append(input)
                     .append($('<button>Ok</button>')
                                 .addClass('ok')
                                 .click(this.ok(this)))
@@ -468,12 +469,14 @@ this.singleFieldPopup = function(message, divclass, callback){
     this.ok = function(popup){
        return function(e){
            popup.cb(input.value);
+           popup.remove();
        };
     };
     
     this.cancel = function(popup){
        return function(e){
            popup.cb("");
+           popup.remove();
        };
     };
     
@@ -490,7 +493,7 @@ this.singleFieldPopup = function(message, divclass, callback){
     };
  
     this.remove = function(){
-        document.body.removeChild(popup);
+        popup.remove();
     };
  
     this.createPopup(message, divclass);
@@ -512,7 +515,7 @@ this.repostdialog = function(c, cf){
             //.addClass("linkbox")
             .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
-                .click(this.remove()))
+                .click(this.closureRemove(this)))
             .append(children);
         $("#repost").append(popup);
     };
@@ -520,14 +523,18 @@ this.repostdialog = function(c, cf){
     this.show = function(){
         popup.show();
     };
+    
+    this.closureRemove = function(dialog){
+        return function(){
+            dialog.remove();
+        };
+    };
 
     this.remove = function(){
-        return function() {
-            popup.fadeOut('fast', function() {
-                                    popup.remove();
-                                    closefunc();
-                                });
-        };
+        popup.fadeOut('fast', function() {
+                                popup.remove();
+                                closefunc();
+                            });
     };
 
     this.addClass = function(c){
