@@ -128,15 +128,7 @@ this.linkVisual = function() {
                               }
     };
     
-    // Here we create the box to hold this shit
-    this.init = function(){
-        
-        linkBox = new repostdialog($('<div>')
-                                    .attr('id','infovis'),
-                                   function() {
-                                        $("#infovis").children().remove();
-                                    });
-    };
+    this.init = function(){};
 
     this.createTree = function(links, accts){
         var foundhost = false;
@@ -201,6 +193,12 @@ this.linkVisual = function() {
     };
 
     this.show = function(linkarr, acctarr){
+        linkBox = new repostdialog($('<div>')
+                                            .attr('id','infovis'),
+                                           function() {
+                                                $("#infovis").children().remove();
+                                            });
+        linkBox.addClass('linkbox');
         var tree = this.createTree(linkarr, acctarr);
         linkBox.show();
         fd = new $jit.ForceDirected(forcegraphset);
@@ -295,7 +293,7 @@ this.linkNodeAdder = function(t, n){
         var type = node.data.$reposttype;
         if(type == "hostobj"){
             inputPopup = new singleFieldPopup("Enter Link Name:", "", this.response);       
-            inputPopup.display();
+            inputPopup.show();
             inputPopup.textFocus();
         }
     };
@@ -442,42 +440,27 @@ this.singleFieldPopup = function(message, divclass, callback){
     
     var cback = callback;
     var popup;
-    var msg;
+    var children;
     var input;
 
     this.createPopup = function(message, divclass){
         
-        popup = document.createElement("div");
-        popup.className = "floater singleFieldPopup "+divclass;
-        
-        // message
-        msg = document.createElement("span");
-        msg.className = "message";
-        msg.innerHTML = message;
-        popup.appendChild(msg);
-        
-        // input field
-        input = document.createElement("input");
-        input.className = "inputbox";
-        input.type = "textbox";
-        popup.appendChild(input);
+        children = $('<span>'+message+'</span>')
+                    .addClass('message')
+                    .append($('<input>')
+                                .addClass('inputbox')
+                                .attr('type','textbox'))
+                    .append($('<button>Ok</button>')
+                                .addClass('ok')
+                                .click(this.ok(this)))
+                    .append($('<button>Cancel</button>')
+                                .addClass('cancel')
+                                .click(this.cancel(this)));
 
-        // Ok and cancel button
-        var ok = document.createElement("button");
-        ok.className = "ok";
-        ok.innerText = "Ok";
-        ok.onclick = this.ok(this);
-        popup.appendChild(ok);
-
-        var cancel = document.createElement("button");
-        cancel.className = "cancel";
-        cancel.innerText = "Cancel";
-        cancel.onclick = this.cancel(this);
-        popup.appendChild(cancel);
-
-        document.body.appendChild(popup);
+        popup = new repostdialog(children, function(){});
+        popup.addClass(divclass);
     };
-    
+
     this.cb = function(result){
         cback(result);
     };
@@ -498,8 +481,8 @@ this.singleFieldPopup = function(message, divclass, callback){
         msg.innerHTML = message;
     };
 
-    this.display = function(){
-        popup.style.visibility = "visible";
+    this.show = function(){
+        popup.show();
     };
 
     this.textFocus = function(){
@@ -526,12 +509,10 @@ this.repostdialog = function(c, cf){
         popup = $('<div>')
             .hide()
             .attr('id', 'rpdialog')
-            .addClass("linkbox")
+            //.addClass("linkbox")
             .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
-                .click( function() {
-                        popup.fadeOut('fast',closefunc)
-                }))
+                .click(this.remove()))
             .append(children);
         $("#repost").append(popup);
     };
@@ -541,7 +522,16 @@ this.repostdialog = function(c, cf){
     };
 
     this.remove = function(){
-        popup.fadeOut('fast',closefunc)
+        return function() {
+            popup.fadeOut('fast', function() {
+                                    popup.remove();
+                                    closefunc();
+                                });
+        };
+    };
+
+    this.addClass = function(c){
+        popup.addClass(c);
     };
  
     this.createPopup(children, closefunc);
