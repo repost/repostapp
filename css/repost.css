@@ -125,12 +125,13 @@ span.name {
  * Floating Boxes
  */
 #repost div#rpdialog{
-  opacity:0.95;
-  position: absolute;
-  background:#ececec;
-  box-shadow:2px 2px 5px #000;
-  padding: 7px 10px 7px 10px;
-  z-index:999;
+    opacity:0.95;
+    position: absolute;
+    background:#ececec;
+    box-shadow:2px 2px 5px #000;
+    padding: 7px 10px 7px 10px;
+    z-index:999;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
 #repost #rpdialog label{
     font-family: 'Abel', Helvetica, Arial, sans-serif;
@@ -147,22 +148,22 @@ span.name {
 }
 /* Single Field Popup */
 #repost .singlefield#rpdialog{
-  width: 280px;
-  height: 90px;
+    width: 280px;
+    height: 90px;
 }
-#repost .singlefield#rpdialog > .ok{
+#repost .singlefield#rpdialog .ok{
     position: absolute;
     top: 70px;
     left: 120px;
     width: 70px;
 }
-#repost .singlefield#rpdialog > .cancel{
+#repost .singlefield#rpdialog .cancel{
     position: absolute;
     top: 70px;
     left: 200px;
     width: 70px;
 }
-#repost .singlefield#rpdialog > .inputbox{
+#repost .singlefield#rpdialog .inputbox{
     position:absolute;
     top: 25px;
     left: 15px;
@@ -171,11 +172,10 @@ span.name {
 }
 /* Confirmation Popup */
 #repost .confirmation#rpdialog{
-  width: 250px;
-  height: 70px;
+    width: 250px;
+    height: 70px;
 }
 #repost .confirmation#rpdialog .message{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
     position:absolute;
     left:10px;
     top:10px;

@@ -445,8 +445,8 @@ this.singleFieldPopup = function(message, divclass, callback){
 
     this.createPopup = function(message, divclass){
         
-        children = $('<span>'+message+'</span>')
-                    .addClass('message')
+        children = $('<div>').append($('<span>'+message+'</span>')
+                                        .addClass('message'))
                     .append($('<input>')
                                 .addClass('inputbox')
                                 .attr('type','textbox'))
