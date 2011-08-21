@@ -4,6 +4,7 @@
 this.linkVisual = function() {
     
     var linkBox; /* send that text */
+    var displayed; /* Are we being displayed already? */
     var vis;
     var fd;
     var labelType = 'Native';
@@ -128,7 +129,9 @@ this.linkVisual = function() {
                               }
     };
     
-    this.init = function(){};
+    this.init = function(){
+        displayed = false;
+    };
 
     this.createTree = function(links, accts){
         var foundhost = false;
@@ -193,31 +196,38 @@ this.linkVisual = function() {
     };
 
     this.show = function(linkarr, acctarr){
-        linkBox = new repostdialog($('<div>')
-                                            .attr('id','infovis'),
+        if(displayed == false){
+            linkBox = new repostdialog($('<div>')
+                                           .attr('id','infovis'),
                                            function() {
                                                 $("#infovis").children().remove();
+                                                displayed = false;
                                             });
-        linkBox.addClass('linkbox');
-        var tree = this.createTree(linkarr, acctarr);
-        linkBox.show();
-        fd = new $jit.ForceDirected(forcegraphset);
-        // load JSON data.
-        fd.loadJSON(tree);
-        // compute positions incrementally and animate.
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
-            }
-        });
+            linkBox.addClass('linkbox');
+            var tree = this.createTree(linkarr, acctarr);
+            linkBox.show();
+            fd = new $jit.ForceDirected(forcegraphset);
+            // load JSON data.
+            fd.loadJSON(tree);
+            // compute positions incrementally and animate.
+            fd.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    fd.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            displayed = true;
+        }
+    };
 
+    this.remove = function(){
+        linkBox.remove();
     };
 };
 
