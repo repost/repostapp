@@ -19,12 +19,6 @@
 /**
  * Post Table
  */
-table{
-    border-collapse:collapse;
-    margin:1em 0;
-    table-layout: fixed;
-}
-
 .postcell {
     background:#B4C3FF;
     border:1px solid #fff;
@@ -36,23 +30,23 @@ table{
 .rockon {
     background:#A7E7FF;
 }
-.votehand{
+#repost .votehand{
     width:27px;
     position: relative; 
 }
-.downhand{
-    position: absolute;
+#repost .downhand{
+    position:absolute;
     bottom:0%;
     left:80%;
     z-index:1;
 }
-.uphand{
-    position: absolute;
+#repost .uphand{
+    position:absolute;
     top:0%;
     left:80%;
     z-index:1;
 }
-div.metric{
+#repost div.metric{
     top:30px;
     left:240px;
     position: relative; 
@@ -86,29 +80,11 @@ div.imagepost {
 }
 
 .imagepreview{
-    /*position:absolute;
-    left:0px;*/
     top: 0px;
     max-width:100%;
     max-height:100%;    
 	vertical-align:middle;
-	/*
-	display: block;
-	margin: auto;
-	*/
 }
-/*
-.imagepreview:hover{
-    background:#388EA6;
-    box-shadow:2px 2px 5px #000;
-    padding: 7px 10px 7px 10px;
-    max-width:600px;
-    max-height:400px;    
-    z-index:9999;
-	left:0%;
-	top:0%;
-}
-*/
 div.posttextbody{
     position: absolute;
     font-size: 75%;
@@ -141,86 +117,81 @@ div.postcaption{
 /**
  * Repost commons
  */
-/* Confirmation Popup */
-.confirmationPopup{
-  width: 250px;
-  height: 70px;
-}
-.message{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-    position:absolute;
-    left:10px;
-    top:10px;
-}
-.ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
-}
-.cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
-}
 span.name {
       cursor: pointer;
-}
-/* Single Field Popup */
-.singleFieldPopup{
-  width: 280px;
-  height: 90px;
-}
-.singleFieldPopup > .ok{
-    position: absolute;
-    top: 70px;
-    left: 120px;
-    width: 70px;
-}
-.singleFieldPopup > .cancel{
-    position: absolute;
-    top: 70px;
-    left: 200px;
-    width: 70px;
-}
-.singleFieldPopup > .inputbox{
-    position:absolute;
-    top: 25px;
-    left: 15px;
-    width: 250px;
-    margin: 15px 5px 15px 0px;
 }
 
 /**
  * Floating Boxes
  */
 #repost div#rpdialog{
-  opacity:0.95;
-  position: absolute;
-  background:#ececec;
-  box-shadow:2px 2px 5px #000;
-  padding: 7px 10px 7px 10px;
-  z-index:999;
+    opacity:0.95;
+    position: absolute;
+    background:#ececec;
+    box-shadow:2px 2px 5px #000;
+    padding: 7px 10px 7px 10px;
+    z-index:999;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
-
 #repost #rpdialog label{
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     margin: 0 5px 0 0 ;
 }
-
-#repost #rpdialog span.floatclose {
-    font-size: 150%;
-    color:#000;
-    cursor:pointer;
-    font-weight:bold;
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
+#repost #rpdialog img.floatclose {
+    cursor: pointer;
     position: absolute;
     top: 5px;
     right: 7px;
-    z-index:999;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
 }
-
+/* Single Field Popup */
+#repost .singlefield#rpdialog{
+    width: 280px;
+    height: 90px;
+}
+#repost .singlefield#rpdialog .ok{
+    position: absolute;
+    top: 70px;
+    left: 120px;
+    width: 70px;
+}
+#repost .singlefield#rpdialog .cancel{
+    position: absolute;
+    top: 70px;
+    left: 200px;
+    width: 70px;
+}
+#repost .singlefield#rpdialog .inputbox{
+    position:absolute;
+    top: 25px;
+    left: 15px;
+    width: 250px;
+    margin: 15px 5px 15px 0px;
+}
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+    width: 250px;
+    height: 70px;
+}
+#repost .confirmation#rpdialog .message{
+    position:absolute;
+    left:10px;
+    top:10px;
+}
+#repost .confirmation#rpdialog .ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 90px;
+}
+#repost .confirmation#rpdialog .cancel{
+    position: absolute;
+    top: 50px;
+    left: 140px;
+    width: 90px;
+}
 /**
  * Links
  */
@@ -232,7 +203,6 @@ span.name {
     max-width:500px;
     z-index:1000;
 }
-
 #repost .tip-title {
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: 11px;
@@ -240,14 +210,12 @@ span.name {
     margin-bottom:2px;
     z-index:1000;
 }
-
 #repost .linkbox{
   top: 10%;
   height: 80%;
   left: 10%;
   width: 80%;
  }
-
 #repost #infovis{
     opacity:1;
     margin: auto;
@@ -256,7 +224,6 @@ span.name {
     left: 1%;
     width: 98%;
 }
-
 #repost caption{
     position: absolute;
     left:10px;
@@ -290,101 +257,97 @@ span.name {
 .contenttext{
 }
 
-div.divrow {
-	position:absolute;
-	width:100%;
-}
-
-div.divcol {
-	position:absolute;
-    /*background:#B4C3FF;*/
+/**
+ * Post table
+ */
+#repost #divtable {
+    top:65px;
+    left:10%;
+    width:80%;
     height:100%;
+	position:fixed;
+}
+#repost #divtable div.divrow {
+	width:100%;
+    height:25%;
+    margin: 0px;
+    left:0px;
+}
+#repost #divtable div.divcol {
+	position:relative;
 	text-align:center;
 }
-
-#divRow0 {
-    top:3%;
-    height:20%;
-    margin: 0px;
-    left:0px;
+#repost #divtable #divRow0 {
+    top:0%;
 }
-#divRow1 {
-    top:27%;
-    height:20%;
-    margin: 0px;
-    left:0px;
+#repost #divtable #divRow1 {
+    top:25%;
 }
-#divRow2 {
-    top:51%;
-    height:20%;
-    margin: 0px;
-    left:0px;
+#repost #divtable #divRow2 {
+    top:50%;
 }
-#divRow3 {
+#repost #divtable #divRow3 {
     top:75%;
-    height:20%;
-    margin: 0px;
-    left:0px;
 }
-
-.divCol0 {
-    left:10%;
+#repost #divtable .divCol0 {
 	width:20%;
 }
-.divCol1 {
+#repost #divtable .divCol1 {
     left:30%;
 	width:20%;
 }
-.divCol2 {
-    left:50%;
+#repost #divtable .divCol2 {
+    left:55%;
 	width:20%;
 }
-.divCol3 {
-    left:70%;
+#repost #divtable .divCol3 {
+    left:80%;
 	width:20%;
 }
 
 /**
- * MENU BAR CRAP
+ * Menu Bar
  */
-
-#repostMenu {
-    position:fixed;
+#repost #repostMenu {
+    position: fixed;
     top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 20px;
+    left: 10%;
+    width: 80%;
+    height: 50px;
 }
-
-#repostMenu .statusCircle {
-    display:inline;
-    width: 20px;
-    height: 20px;
+#repost #repostMenu .statusCircle {
+    width: 10px;
+    height: 10px;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
     background: #FC4023;
 }
-
-#repostLogo {
+#repost #repostMenu #repostLogo {
     float: left;
     margin: 0px;
 }
-
-.toolbar {
+#repost #repostMenu .toolbar {
     margin: 0px;
 }
-
-.toolbar li {
+#repost #repostMenu .toolbar li {
     display: inline;
     padding: 0.5em;
     padding: 0.5em;
     float: right;
 }
-
-.toolbar li a {
-    text-decoration:none;
+#repost #repostMenu .toolbar li a {
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #757575;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: 20px;
 }
 
+/**
+ * General Settings
+ */
 #repost {
-    top: 20px;
+}
+body {
+		background: #ececec
 }
