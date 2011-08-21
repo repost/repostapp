@@ -516,6 +516,8 @@ this.repostdialog = function(c, cf){
     var popup = null;
     var closefunc = cf;
     var input;
+    var startx;
+    var starty;
 
     this.createPopup = function(children, closefunc){
         // Create dialog
@@ -526,10 +528,65 @@ this.repostdialog = function(c, cf){
             .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
                 .click(this.closureRemove(this)))
-            .append(children);
+            .append(children)
+            .mousedown(this.onmousedown(this))
+            .mouseup(this.onmouseup(this))
+            .mouseleave(this.onmouseleave(this));
+
         $("#repost").append(popup);
     };
     
+    this.onmousedown = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            dialog.startx(e.clientX);
+            dialog.starty(e.clientY);
+            pop.mousemove(dialog.onmousemove(dialog));
+        };
+    };
+
+    this.onmousemove = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            pop.offset({top: e.clientY - dialog.starty(),  left: e.clientX - dialog.startx()});
+        };
+    };
+
+    this.onmouseup = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            pop.unbind('mousemove');
+        };
+    };
+
+    this.onmouseleave = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            pop.unbind('mousemove');
+        };
+    };
+
+    this.starty = function(y){
+        if(y == null){
+            y = starty;
+        }
+        starty = y;
+        return starty;
+    };
+
+    this.startx = function(x){
+        if(x == null){
+            x = startx;
+        }
+        startx = x;
+        return startx;
+    };
+
+
+    this.getpopup = function(){
+        return popup;
+    };
+
     this.show = function(){
         popup.show();
     };
