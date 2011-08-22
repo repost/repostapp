@@ -516,8 +516,10 @@ this.repostdialog = function(c, cf){
     var popup = null;
     var closefunc = cf;
     var input;
-    var startx;
-    var starty;
+    var startX;
+    var startY;
+    var offsetX;
+    var offsetY;
 
     this.createPopup = function(children, closefunc){
         // Create dialog
@@ -539,6 +541,8 @@ this.repostdialog = function(c, cf){
     this.onmousedown = function(dialog){
         return function(e){
             pop = dialog.getpopup();
+            dialog.offsetx(pop.offset().left);
+            dialog.offsety(pop.offset().top);
             dialog.startx(e.clientX);
             dialog.starty(e.clientY);
             pop.mousemove(dialog.onmousemove(dialog));
@@ -548,7 +552,8 @@ this.repostdialog = function(c, cf){
     this.onmousemove = function(dialog){
         return function(e){
             pop = dialog.getpopup();
-            pop.offset({top: e.clientY - dialog.starty(),  left: e.clientX - dialog.startx()});
+            pop.offset({top: dialog.offsety() + e.clientY - dialog.starty(),  
+                        left: dialog.offsetx() + e.clientX - dialog.startx()});
         };
     };
 
@@ -566,20 +571,36 @@ this.repostdialog = function(c, cf){
         };
     };
 
+    this.offsety = function(y){
+        if(y == null){
+            y = offsetY;
+        }
+        offsetY = y;
+        return offsetY;
+    };
+
+    this.offsetx = function(x){
+        if(x == null){
+            x = offsetX;
+        }
+        offsetX = x;
+        return offsetX;
+    };
+
     this.starty = function(y){
         if(y == null){
-            y = starty;
+            y = startY;
         }
-        starty = y;
-        return starty;
+        startY = y;
+        return startY;
     };
 
     this.startx = function(x){
         if(x == null){
-            x = startx;
+            x = startX;
         }
-        startx = x;
-        return startx;
+        startX = x;
+        return startX;
     };
 
 
