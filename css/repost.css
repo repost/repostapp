@@ -126,11 +126,12 @@ span.name {
  */
 #repost div#rpdialog{
     opacity:0.95;
-    position: absolute;
+    position: fixed;
+    margin: auto;
     background:#ececec;
     box-shadow:2px 2px 5px #000;
     padding: 7px 10px 7px 10px;
-    z-index:999;
+    z-index: 8999;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
 #repost #rpdialog label{
@@ -349,5 +350,17 @@ span.name {
 #repost {
 }
 body {
-		background: #ececec
+     -khtml-user-select: none; /* webkit browsers */
+    background: #ececec;
+}
+#mask {
+    position: fixed;
+    display: none;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color:#000;
+    opacity:0.8;
+    z-index:9000;
 }

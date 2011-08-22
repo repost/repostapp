@@ -4,6 +4,7 @@
 this.linkVisual = function() {
     
     var linkBox; /* send that text */
+    var displayed; /* Are we being displayed already? */
     var vis;
     var fd;
     var labelType = 'Native';
@@ -128,7 +129,9 @@ this.linkVisual = function() {
                               }
     };
     
-    this.init = function(){};
+    this.init = function(){
+        displayed = false;
+    };
 
     this.createTree = function(links, accts){
         var foundhost = false;
@@ -193,31 +196,39 @@ this.linkVisual = function() {
     };
 
     this.show = function(linkarr, acctarr){
-        linkBox = new repostdialog($('<div>')
-                                            .attr('id','infovis'),
-                                           function() {
+        if(displayed == false){
+            linkBox = new repostdialog({'modal': true,
+                                        'children': $('<div>')
+                                           .attr('id','infovis'),
+                                           'closefunction': function() {
                                                 $("#infovis").children().remove();
-                                            });
-        linkBox.addClass('linkbox');
-        var tree = this.createTree(linkarr, acctarr);
-        linkBox.show();
-        fd = new $jit.ForceDirected(forcegraphset);
-        // load JSON data.
-        fd.loadJSON(tree);
-        // compute positions incrementally and animate.
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
-            }
-        });
+                                                displayed = false;
+                                            }});
+            linkBox.addClass('linkbox');
+            var tree = this.createTree(linkarr, acctarr);
+            linkBox.show();
+            fd = new $jit.ForceDirected(forcegraphset);
+            // load JSON data.
+            fd.loadJSON(tree);
+            // compute positions incrementally and animate.
+            fd.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    fd.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            displayed = true;
+        }
+    };
 
+    this.remove = function(){
+        linkBox.remove();
     };
 };
 
@@ -322,7 +333,6 @@ this.linkNodeAdder = function(t, n){
             link.host = node.name;
             hw.addLink(link);
         }
-        inputPopup.remove();
     };
     this.init(node);
 };
@@ -359,7 +369,6 @@ this.linkNodeRemover = function(t, n){
             link.name = node.name;
             hw.rmLink(link);
         }
-        confirmPopup.remove();
     };
 
     this.init(node);
@@ -373,30 +382,25 @@ this.linkNodeRemover = function(t, n){
 this.confirmationPopup = function(message, divclass, callback){
     
     var cback = callback;
-    var dialog;
+    var popup;
     var msg;
 
     this.createPopup = function(message, divclass){
-        
-        dialog = $('<div>')
-            .hide()
-            .attr('id', 'rpdialog')
-            .addClass("confirmation")
-            .append($('<img src=images/repost_x.gif>')
-                .addClass('floatclose')
-                .click( function() {
-                        dialog.fadeOut('fast', dialog.remove() )
-                }))
-            .append($('<span>' + message +'</span>')
-                        .addClass('message'))
-            .append($('<button>Ok</button>')
-                        .addClass('ok')
-                        .click( this.ok(this) ))
-            .append($('<button>Cancel</button>')
-                                .addClass('cancel')
-                                .click( this.cancel(this) ))
-        ;
-        $("#repost").append(dialog);
+        children = $('<div>')
+                        .append($('<span>' + message +'</span>')
+                                    .addClass('message'))
+                        .append($('<button>Ok</button>')
+                                    .addClass('ok')
+                                    .click( this.ok(this) ))
+                        .append($('<button>Cancel</button>')
+                                            .addClass('cancel')
+                                            .click( this.cancel(this) ));
+        popup = new repostdialog({'modal': true, 
+                                    'centred': true,
+                                    'children': children,
+                                    'closefunction': function(){}});
+        popup.draggable();
+        popup.addClass('confirmation');
     };
     
     this.cb = function(result){
@@ -406,12 +410,14 @@ this.confirmationPopup = function(message, divclass, callback){
     this.ok = function(popup){
        return function(e){
            popup.cb(true);
+           popup.remove();
        };
     };
     
     this.cancel = function(popup){
        return function(e){
            popup.cb(false);
+           popup.remove();
        };
     };
     
@@ -420,17 +426,16 @@ this.confirmationPopup = function(message, divclass, callback){
     };
 
     this.display = function(){
-        dialog.show();
+        popup.show();
     };
 
     this.remove = function(){
-        dialog.remove();
+        popup.remove();
     };
  
     this.createPopup(message, divclass);
 
 };
-
 
 // Simple single field popup.
 // message = message to display
@@ -458,7 +463,11 @@ this.singleFieldPopup = function(message, divclass, callback){
                                 .addClass('cancel')
                                 .click(this.cancel(this)));
 
-        popup = new repostdialog(children, function(){});
+        popup = new repostdialog({'modal': true, 
+                                    'centred': true,
+                                    'children': children, 
+                                    'closefunction': function(){}});
+        popup.draggable();
         popup.addClass('singlefield');
     };
 
@@ -500,26 +509,134 @@ this.singleFieldPopup = function(message, divclass, callback){
 
 };
 
-this.repostdialog = function(c, cf){
+this.repostdialog = function(options){
     
-    var children = c;
+    var children = options['children'];
+    var modal = options['modal'];
+    var centred = options['centred'];
     var popup = null;
-    var closefunc = cf;
+    var closefunc = options['closefunction'];
     var input;
+    var startX;
+    var startY;
+    var offsetX;
+    var offsetY;
 
-    this.createPopup = function(children, closefunc){
+    this.createPopup = function(children){
+
         // Create dialog
         popup = $('<div>')
             .hide()
             .attr('id', 'rpdialog')
-            //.addClass("linkbox")
             .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
                 .click(this.closureRemove(this)))
             .append(children);
+
+        if(modal == true){
+            // Keep moving indexes outwards
+            var zindex = parseInt($('#mask').css('z-index'));
+            $('#mask').css({'z-index': zindex+3});
+            popup.css({'z-index': zindex+4});
+
+            // Get the screen height and width
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+
+            // Set height and width to mask to fill up the whole screen
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+
+            // transition effect     
+            $('#mask').fadeIn(500);    
+            $('#mask').fadeTo("slow",0.8);  
+            $('#mask').show();
+        }
+
         $("#repost").append(popup);
+
+        if(centred == true){
+            //Get the window height and width
+            var winH = $(window).height();
+            var winW = $(window).width();
+            popup.css({'top': winH/2-popup.height()/2, 'left': winW/2-popup.width()/2})
+        }
     };
     
+    this.draggable = function(){
+        popup.mousedown(this.onmousedown(this))
+            .mouseup(this.onmouseup(this));
+    };
+
+    this.onmousedown = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            dialog.offsetx(pop.offset().left);
+            dialog.offsety(pop.offset().top);
+            dialog.startx(e.clientX);
+            dialog.starty(e.clientY);
+            $(document).mousemove(dialog.onmousemove(dialog));
+        };
+    };
+
+    this.onmousemove = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            pop.offset({top: dialog.offsety() + e.clientY - dialog.starty(),  
+                        left: dialog.offsetx() + e.clientX - dialog.startx()});
+        };
+    };
+
+    this.onmouseup = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            $(document).unbind('mousemove');
+        };
+    };
+
+    this.onmouseleave = function(dialog){
+        return function(e){
+            pop = dialog.getpopup();
+            $('document').unbind('mousemove', dialog.onmousemove);
+        };
+    };
+
+    this.offsety = function(y){
+        if(y == null){
+            y = offsetY;
+        }
+        offsetY = y;
+        return offsetY;
+    };
+
+    this.offsetx = function(x){
+        if(x == null){
+            x = offsetX;
+        }
+        offsetX = x;
+        return offsetX;
+    };
+
+    this.starty = function(y){
+        if(y == null){
+            y = startY;
+        }
+        startY = y;
+        return startY;
+    };
+
+    this.startx = function(x){
+        if(x == null){
+            x = startX;
+        }
+        startX = x;
+        return startX;
+    };
+
+
+    this.getpopup = function(){
+        return popup;
+    };
+
     this.show = function(){
         popup.show();
     };
@@ -535,6 +652,11 @@ this.repostdialog = function(c, cf){
                                 popup.remove();
                                 closefunc();
                             });
+        var zindex = parseInt($('#mask').css('z-index'));
+        $('#mask').css('z-index', zindex-3);
+        if( (zindex-3) <= 9000){
+            $('#mask').hide();
+        }
     };
 
     this.addClass = function(c){

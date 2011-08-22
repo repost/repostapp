@@ -129,7 +129,7 @@ function addShortCuts(){
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
                 var acctarr = hw.getAccounts();
-                links.show(linkarr, acctarr);       
+                linksdisplay.show(linkarr, acctarr);       
             }
         }
     };
@@ -137,7 +137,7 @@ function addShortCuts(){
     $('#connlink').click(function(){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
                 var acctarr = hw.getAccounts();
-                links.show(linkarr, acctarr);       
+                linksdisplay.show(linkarr, acctarr);       
             });
 };
 
@@ -162,7 +162,7 @@ var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
-var links;
+var linksdisplay;
 
 var repostNotify;
 
@@ -199,8 +199,8 @@ function main() {
         statusBar = new statusBar();
 
         // Create link management window
-        links = new linkVisual();
-        links.init();
+        linksdisplay = new linkVisual();
+        linksdisplay.init();
         if(accounts){
             var acc = plugin.Account();
             // add saved accounts
