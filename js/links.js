@@ -383,30 +383,22 @@ this.linkNodeRemover = function(t, n){
 this.confirmationPopup = function(message, divclass, callback){
     
     var cback = callback;
-    var dialog;
+    var popup;
     var msg;
 
     this.createPopup = function(message, divclass){
-        
-        dialog = $('<div>')
-            .hide()
-            .attr('id', 'rpdialog')
-            .addClass("confirmation")
-            .append($('<img src=images/repost_x.gif>')
-                .addClass('floatclose')
-                .click( function() {
-                        dialog.fadeOut('fast', dialog.remove() )
-                }))
-            .append($('<span>' + message +'</span>')
-                        .addClass('message'))
-            .append($('<button>Ok</button>')
-                        .addClass('ok')
-                        .click( this.ok(this) ))
-            .append($('<button>Cancel</button>')
-                                .addClass('cancel')
-                                .click( this.cancel(this) ))
-        ;
-        $("#repost").append(dialog);
+        children = $('<div>')
+                        .append($('<span>' + message +'</span>')
+                                    .addClass('message'))
+                        .append($('<button>Ok</button>')
+                                    .addClass('ok')
+                                    .click( this.ok(this) ))
+                        .append($('<button>Cancel</button>')
+                                            .addClass('cancel')
+                                            .click( this.cancel(this) ));
+        popup = new repostdialog(children, function(){});
+        popup.draggable();
+        popup.addClass('confirmation');
     };
     
     this.cb = function(result){
@@ -416,12 +408,14 @@ this.confirmationPopup = function(message, divclass, callback){
     this.ok = function(popup){
        return function(e){
            popup.cb(true);
+           popup.remove();
        };
     };
     
     this.cancel = function(popup){
        return function(e){
            popup.cb(false);
+           popup.remove();
        };
     };
     
@@ -430,17 +424,16 @@ this.confirmationPopup = function(message, divclass, callback){
     };
 
     this.display = function(){
-        dialog.show();
+        popup.show();
     };
 
     this.remove = function(){
-        dialog.remove();
+        popup.remove();
     };
  
     this.createPopup(message, divclass);
 
 };
-
 
 // Simple single field popup.
 // message = message to display
@@ -469,6 +462,7 @@ this.singleFieldPopup = function(message, divclass, callback){
                                 .click(this.cancel(this)));
 
         popup = new repostdialog(children, function(){});
+        popup.draggable();
         popup.addClass('singlefield');
     };
 
@@ -530,13 +524,16 @@ this.repostdialog = function(c, cf){
             .append($('<img src=images/repost_x.gif>')
                 .addClass('floatclose')
                 .click(this.closureRemove(this)))
-            .append(children)
-            .mousedown(this.onmousedown(this))
-            .mouseup(this.onmouseup(this))
+            .append(children);
 
         $("#repost").append(popup);
     };
     
+    this.draggable = function(){
+        popup.mousedown(this.onmousedown(this))
+            .mouseup(this.onmouseup(this));
+    };
+
     this.onmousedown = function(dialog){
         return function(e){
             pop = dialog.getpopup();
