@@ -197,12 +197,12 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         if(displayed == false){
-            linkBox = new repostdialog($('<div>')
+            linkBox = new repostdialog({'children': $('<div>')
                                            .attr('id','infovis'),
-                                           function() {
+                                           'closefunction': function() {
                                                 $("#infovis").children().remove();
                                                 displayed = false;
-                                            });
+                                            }});
             linkBox.addClass('linkbox');
             var tree = this.createTree(linkarr, acctarr);
             linkBox.show();
@@ -396,7 +396,7 @@ this.confirmationPopup = function(message, divclass, callback){
                         .append($('<button>Cancel</button>')
                                             .addClass('cancel')
                                             .click( this.cancel(this) ));
-        popup = new repostdialog(children, function(){});
+        popup = new repostdialog({'children': children, 'closefunction': function(){}});
         popup.draggable();
         popup.addClass('confirmation');
     };
@@ -461,7 +461,7 @@ this.singleFieldPopup = function(message, divclass, callback){
                                 .addClass('cancel')
                                 .click(this.cancel(this)));
 
-        popup = new repostdialog(children, function(){});
+        popup = new repostdialog({'modal': true, 'children': children, 'closefunction': function(){}});
         popup.draggable();
         popup.addClass('singlefield');
     };
@@ -504,18 +504,19 @@ this.singleFieldPopup = function(message, divclass, callback){
 
 };
 
-this.repostdialog = function(c, cf){
+this.repostdialog = function(options){
     
-    var children = c;
+    var children = options['children'];
+    var modal = options['modal'];
     var popup = null;
-    var closefunc = cf;
+    var closefunc = options['closefunction'];
     var input;
     var startX;
     var startY;
     var offsetX;
     var offsetY;
 
-    this.createPopup = function(children, closefunc){
+    this.createPopup = function(children){
         // Create dialog
         popup = $('<div>')
             .hide()
@@ -525,6 +526,25 @@ this.repostdialog = function(c, cf){
                 .addClass('floatclose')
                 .click(this.closureRemove(this)))
             .append(children);
+
+        if(modal == true){
+            popup.css({'z-index':'9001'});
+            //Get the screen height and width
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+
+            //Set height and width to mask to fill up the whole screen
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+
+            //transition effect     
+            $('#mask').fadeIn(1000);    
+            $('#mask').fadeTo("slow",0.8);  
+
+            //Get the window height and width
+            var winH = $(window).height();
+            var winW = $(window).width();
+            $('#mask').show();
+        }
 
         $("#repost").append(popup);
     };
@@ -619,6 +639,7 @@ this.repostdialog = function(c, cf){
                                 popup.remove();
                                 closefunc();
                             });
+        $('#mask').hide();
     };
 
     this.addClass = function(c){
