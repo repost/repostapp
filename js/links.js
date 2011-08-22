@@ -197,7 +197,8 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         if(displayed == false){
-            linkBox = new repostdialog({'children': $('<div>')
+            linkBox = new repostdialog({'modal': true,
+                                        'children': $('<div>')
                                            .attr('id','infovis'),
                                            'closefunction': function() {
                                                 $("#infovis").children().remove();
@@ -332,7 +333,6 @@ this.linkNodeAdder = function(t, n){
             link.host = node.name;
             hw.addLink(link);
         }
-        inputPopup.remove();
     };
     this.init(node);
 };
@@ -369,7 +369,6 @@ this.linkNodeRemover = function(t, n){
             link.name = node.name;
             hw.rmLink(link);
         }
-        confirmPopup.remove();
     };
 
     this.init(node);
@@ -534,16 +533,20 @@ this.repostdialog = function(options){
                 .click(this.closureRemove(this)))
             .append(children);
 
-       if(modal == true){
-            popup.css({'z-index':'9001'});
-            //Get the screen height and width
+        if(modal == true){
+            // Keep moving indexes outwards
+            var zindex = parseInt($('#mask').css('z-index'));
+            $('#mask').css({'z-index': zindex+3});
+            popup.css({'z-index': zindex+4});
+
+            // Get the screen height and width
             var maskHeight = $(document).height();
             var maskWidth = $(window).width();
 
-            //Set height and width to mask to fill up the whole screen
+            // Set height and width to mask to fill up the whole screen
             $('#mask').css({'width':maskWidth,'height':maskHeight});
 
-            //transition effect     
+            // transition effect     
             $('#mask').fadeIn(500);    
             $('#mask').fadeTo("slow",0.8);  
             $('#mask').show();
@@ -649,7 +652,11 @@ this.repostdialog = function(options){
                                 popup.remove();
                                 closefunc();
                             });
-        $('#mask').hide();
+        var zindex = parseInt($('#mask').css('z-index'));
+        $('#mask').css('z-index', zindex-3);
+        if( (zindex-3) <= 9000){
+            $('#mask').hide();
+        }
     };
 
     this.addClass = function(c){
