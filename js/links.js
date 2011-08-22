@@ -533,7 +533,6 @@ this.repostdialog = function(c, cf){
             .append(children)
             .mousedown(this.onmousedown(this))
             .mouseup(this.onmouseup(this))
-            .mouseleave(this.onmouseleave(this));
 
         $("#repost").append(popup);
     };
@@ -545,7 +544,7 @@ this.repostdialog = function(c, cf){
             dialog.offsety(pop.offset().top);
             dialog.startx(e.clientX);
             dialog.starty(e.clientY);
-            pop.mousemove(dialog.onmousemove(dialog));
+            $(document).mousemove(dialog.onmousemove(dialog));
         };
     };
 
@@ -560,14 +559,14 @@ this.repostdialog = function(c, cf){
     this.onmouseup = function(dialog){
         return function(e){
             pop = dialog.getpopup();
-            pop.unbind('mousemove');
+            $(document).unbind('mousemove');
         };
     };
 
     this.onmouseleave = function(dialog){
         return function(e){
             pop = dialog.getpopup();
-            pop.unbind('mousemove');
+            $('document').unbind('mousemove', dialog.onmousemove);
         };
     };
 
