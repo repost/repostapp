@@ -131,6 +131,15 @@ this.linkVisual = function() {
     
     this.init = function(){
         displayed = false;
+        var test = $('<div>').append($('<span>'+'</span>')
+                                        .addClass('message'))
+                    .append($('<button>Ok</button>')
+                                .addClass('ok'))
+                    .append($('<button>Cancel</button>')
+                                .addClass('cancel'))
+                    .repostDialog();
+        $("#repost").append(test);
+                    test.show();
     };
 
     this.createTree = function(links, accts){
@@ -508,10 +517,97 @@ this.singleFieldPopup = function(message, divclass, callback){
     this.createPopup(message, divclass);
 
 };
+
 (function(window, $, undefined){
 
     $.fn.repostDialog = function(options) {
         var opts = $.extend({}, $.fn.repostDialog.defaults, options);
+
+        $.Dialog = function( options, element ){
+            this.element = $( element );
+            this._create( options );
+        };
+
+        $.Dialog.prototype = {
+
+            // sets up widget
+            _create : function( options ) {
+                var dialog = this;
+                this.element
+                        .hide()
+                        .attr('id', 'rpdialog')
+                        .append($('<img src=images/repost_x.gif>')
+                            .addClass('floatclose')
+                            .click(function(){dialog.remove()}));
+                if(opts.draggable == true){
+                     this.element.mousedown(function(e){dialog.mdown(e)})
+                                .mouseup(function(e){dialog.mup(e)});
+                }
+                if(opts.centred == true){
+                    //Get the window height and width
+                    var winH = $(window).height();
+                    var winW = $(window).width();
+                    this.element.css({'top': winH/2-this.element.height()/2, 
+                                        'left': winW/2-this.element.width()/2})
+                }
+            },
+
+            mdown : function(e){
+                var dialog = this;
+                this.offsetx = dialog.element.offset().left;
+                this.offsety = dialog.element.offset().top;
+                this.startx = e.clientX;
+                this.starty = e.clientY;
+                $(document).mousemove(function(e){dialog.mmove(e)});
+            },
+
+            mmove : function(e){
+                var dialog = this;
+                dialog.element.offset({top: this.offsety + e.clientY - this.starty,  
+                            left: this.offsetx + e.clientX - this.startx});
+            },
+
+            mup : function(e){
+                $(document).unbind('mousemove');
+            },
+
+            show : function(){
+                if($.fn.repostDialog.modal == true){
+                    // Keep moving indexes outwards
+                    var zindex = parseInt($('#mask').css('z-index'));
+                    $('#mask').css({'z-index': zindex+3});
+                    popup.css({'z-index': zindex+4});
+
+                    // Get the screen height and width
+                    var maskHeight = $(document).height();
+                    var maskWidth = $(window).width();
+
+                    // Set height and width to mask to fill up the whole screen
+                    $('#mask').css({'width':maskWidth,'height':maskHeight});
+
+                    // transition effect     
+                    $('#mask').fadeIn(500);    
+                    $('#mask').fadeTo("slow",0.8);  
+                    $('#mask').show();
+                }
+                this.show();
+            },
+            
+            remove : function(){
+                this.element.fadeOut('fast', function() {
+                                        //$.fn.repostDialog.closefunc();
+                                        });
+                if($.fn.repostDialog.modal == true){
+                    var zindex = parseInt($('#mask').css('z-index'));
+                    $('#mask').css('z-index', zindex-3);
+                    if( (zindex-3) <= 9000){
+                        $('#mask').hide();
+                    }
+                }
+            },
+
+        };
+ 
         return this.each(function(){
             var instance = $.data(this, 'rpdialog');
             if(instance){
@@ -519,10 +615,14 @@ this.singleFieldPopup = function(message, divclass, callback){
                 $.data(this, 'rpdialog', new $.Dialog(options, this));
             }
         });
-    }
-    var defaults = {
     };
-}(window, $);
+    
+    $.fn.repostDialog.defaults = {
+        modal: false,
+        centred: true,
+        draggable: true
+    };
+})(window, $);
 
 this.repostdialog = function(options){
     
