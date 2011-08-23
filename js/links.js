@@ -139,7 +139,7 @@ this.linkVisual = function() {
                                 .addClass('cancel'))
                     .repostDialog();
         $("#repost").append(test);
-                    test.show();
+                    test.repostDialog('show');
     };
 
     this.createTree = function(links, accts){
@@ -572,11 +572,12 @@ this.singleFieldPopup = function(message, divclass, callback){
             },
 
             show : function(){
-                if($.fn.repostDialog.modal == true){
+                if(opts.modal == true){
+                    var dialog = this;
                     // Keep moving indexes outwards
                     var zindex = parseInt($('#mask').css('z-index'));
                     $('#mask').css({'z-index': zindex+3});
-                    popup.css({'z-index': zindex+4});
+                    dialog.element.css({'z-index': zindex+4});
 
                     // Get the screen height and width
                     var maskHeight = $(document).height();
@@ -590,14 +591,14 @@ this.singleFieldPopup = function(message, divclass, callback){
                     $('#mask').fadeTo("slow",0.8);  
                     $('#mask').show();
                 }
-                this.show();
+                this.element.show();
             },
             
             remove : function(){
                 this.element.fadeOut('fast', function() {
                                         //$.fn.repostDialog.closefunc();
                                         });
-                if($.fn.repostDialog.modal == true){
+                if(opts.modal == true){
                     var zindex = parseInt($('#mask').css('z-index'));
                     $('#mask').css('z-index', zindex-3);
                     if( (zindex-3) <= 9000){
@@ -609,16 +610,38 @@ this.singleFieldPopup = function(message, divclass, callback){
         };
  
         return this.each(function(){
-            var instance = $.data(this, 'rpdialog');
-            if(instance){
-            }else{
-                $.data(this, 'rpdialog', new $.Dialog(options, this));
-            }
+            if ( typeof options === 'string' ) {
+                  // call method
+                  var args = Array.prototype.slice.call( arguments, 1 );
+
+                    var instance = $.data( this, 'rpdialog' );
+                    if ( !instance ) {
+                      logError( "cannot call methods on repostDialog prior to initialization; " +
+                        "attempted to call method '" + options + "'" );
+                      return;
+                    }
+                    if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                      logError( "no such method '" + options + "' for repostDialog instance" );
+                      return;
+                    }
+                    // apply method
+                    instance[ options ].apply( instance, args );
+                } else {
+                    var instance = $.data( this, 'rpdialog' );
+                    if ( instance ) {
+                      // apply options & init
+                      instance.option( options || {} );
+                      instance._init();
+                    } else {
+                      // initialize new instance
+                      $.data( this, 'rpdialog', new $.Dialog( options, this ) );
+                    }
+                }
         });
     };
     
     $.fn.repostDialog.defaults = {
-        modal: false,
+        modal: true,
         centred: true,
         draggable: true
     };
