@@ -199,14 +199,16 @@ this.linkVisual = function() {
 
     this.show = function(linkarr, acctarr){
         if(displayed == false){
-            linkBox = new repostdialog({'modal': true,
-                                        'children': $('<div>')
-                                           .attr('id','infovis'),
-                                           'closefunction': function() {
-                                                $("#infovis").children().remove();
-                                                displayed = false;
-                                            }});
-            linkBox.addClass('linkbox');
+            linkBox = $('<div>').addClass('linkbox')
+                                .repostDialog({'modal': true,
+                                                'centred': false,
+                                                'draggable': false,
+                                                'closefunc': function() {
+                                                                $("#infovis").children().remove();
+                                                                displayed = false;
+                                                            }})
+                                .append($('<div>').attr('id','infovis'));
+            $('#repost').append(linkBox);
             var tree = this.createTree(linkarr, acctarr);
             linkBox.show();
             fd = new $jit.ForceDirected(forcegraphset);
@@ -544,8 +546,10 @@ this.linkNodeRemover = function(t, n){
             },
             
             remove : function(){
+                var el = this.element;
                 this.element.fadeOut('fast', function() {
                                         //$.fn.repostDialog.closefunc();
+                                        el.remove();
                                         });
                 if(opts.modal == true){
                     var zindex = parseInt($('#mask').css('z-index'));
