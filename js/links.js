@@ -508,6 +508,21 @@ this.singleFieldPopup = function(message, divclass, callback){
     this.createPopup(message, divclass);
 
 };
+(function(window, $, undefined){
+
+    $.fn.repostDialog = function(options) {
+        var opts = $.extend({}, $.fn.repostDialog.defaults, options);
+        return this.each(function(){
+            var instance = $.data(this, 'rpdialog');
+            if(instance){
+            }else{
+                $.data(this, 'rpdialog', new $.Dialog(options, this));
+            }
+        });
+    }
+    var defaults = {
+    };
+}(window, $);
 
 this.repostdialog = function(options){
     
@@ -631,7 +646,6 @@ this.repostdialog = function(options){
         startX = x;
         return startX;
     };
-
 
     this.getpopup = function(){
         return popup;
