@@ -131,8 +131,6 @@ this.linkVisual = function() {
     
     this.init = function(){
         displayed = false;
-            var inputPopup = $('<div>').singleFieldDialog({title: "Enter Link Name:", field:"", response: this.response});       
-            var inputPopup = $('<div>').confirmDialog({title: "Enter Link Name:", field:"", response: this.response});       
     };
 
     this.createTree = function(links, accts){
@@ -307,9 +305,7 @@ this.linkNodeAdder = function(t, n){
     this.init = function(node){
         var type = node.data.$reposttype;
         if(type == "hostobj"){
-            inputPopup = $('<div>'). singleFieldPopup({title: "Enter Link Name:", field:"", response: this.response});       
-            inputPopup.show();
-            inputPopup.textFocus();
+            inputPopup = $('<div>'). singleFieldDialog({title: "Enter Link Name:", field:"", response: this.response});       
         }
     };
 
@@ -351,7 +347,8 @@ this.linkNodeRemover = function(t, n){
         var type = node.data.$reposttype;
         if(type == "buddyobj"){
             // Trying to delete
-            confirmPopup = $('<div>').confirmatDialog();
+            confirmPopup = $('<div>').confirmDialog({title: "Delete Link " + node.name + "?" , 
+                                                        response: this.response});
         }
     };
 
@@ -548,7 +545,7 @@ this.linkNodeRemover = function(t, n){
             remove : function(){
                 var el = this.element;
                 this.element.fadeOut('fast', function() {
-                                        //$.fn.repostDialog.closefunc();
+                                        opts.closefunc();
                                         el.remove();
                                         });
                 if(opts.modal == true){
@@ -596,6 +593,7 @@ this.linkNodeRemover = function(t, n){
     $.fn.repostDialog.defaults = {
         modal: true,
         centred: true,
-        draggable: true
+        draggable: true,
+        closefunc: function(){}
     };
 })(window, $);
