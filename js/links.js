@@ -131,6 +131,7 @@ this.linkVisual = function() {
     
     this.init = function(){
         displayed = false;
+            var inputPopup = $('<div>').singleFieldDialog({title: "Enter Link Name:", field:"", response: this.response});       
         var test = $('<div>').append($('<span>'+'</span>')
                                         .addClass('message'))
                     .append($('<button>Ok</button>')
@@ -140,6 +141,7 @@ this.linkVisual = function() {
                     .repostDialog();
         $("#repost").append(test);
                     test.repostDialog('show');
+                    test.repostDialog('remove');
     };
 
     this.createTree = function(links, accts){
@@ -312,7 +314,7 @@ this.linkNodeAdder = function(t, n){
     this.init = function(node){
         var type = node.data.$reposttype;
         if(type == "hostobj"){
-            inputPopup = new singleFieldPopup("Enter Link Name:", "", this.response);       
+            inputPopup = $('<div>'). singleFieldPopup({title: "Enter Link Name:", field:"", response: this.response});       
             inputPopup.show();
             inputPopup.textFocus();
         }
@@ -450,73 +452,51 @@ this.confirmationPopup = function(message, divclass, callback){
 // message = message to display
 // divclass = class to call it
 // callback = cb to call when user clicks. Should take string user input
-this.singleFieldPopup = function(message, divclass, callback){
-    
-    var cback = callback;
-    var popup;
-    var children;
-    var input;
+(function(window, $, undefined){
 
-    this.createPopup = function(message, divclass){
-       
-        input = $('<input>')
-                    .addClass('inputbox')
-                    .attr('type','textbox');
-        children = $('<div>').append($('<span>'+message+'</span>')
-                                        .addClass('message'))
-                    .append(input)
-                    .append($('<button>Ok</button>')
-                                .addClass('ok')
-                                .click(this.ok(this)))
-                    .append($('<button>Cancel</button>')
-                                .addClass('cancel')
-                                .click(this.cancel(this)));
+    $.fn.singleFieldDialog = function(options) {
+        var opts = $.extend({}, $.fn.singleFieldDialog.defaults, options);
+        
+        var ok = function(sf){
+            opts.response(sf.input.value);
+            sf.dialog.repostDialog('remove');
+        };
 
-        popup = new repostdialog({'modal': true, 
-                                    'centred': true,
-                                    'children': children, 
-                                    'closefunction': function(){}});
-        popup.draggable();
-        popup.addClass('singlefield');
-    };
+        var cancel = function(sf){
+            opts.response();
+            sf.dialog.repostDialog('remove');
+        };
 
-    this.cb = function(result){
-        cback(result);
-    };
-
-    this.ok = function(popup){
-       return function(e){
-           popup.cb(input.value);
-           popup.remove();
-       };
+        return this.each(function(){
+            var sf = this;  
+            this.input = $('<input>')
+                        .addClass('inputbox')
+                        .attr('type','textbox');
+            this.dialog = $('<div>').addClass('singlefield')
+                        .append($('<span>'+opts.title+'</span>')
+                                            .addClass('message'))
+                        .append(this.input)
+                        .append($('<button>Ok</button>')
+                                    .addClass('ok')
+                                    .click(function(){ok(sf)}))
+                        .append($('<button>Cancel</button>')
+                                    .addClass('cancel')
+                                    .click(function(){cancel(sf)}))
+                        .repostDialog({'modal': true, 
+                                        'centred': true});
+            $('#repost').append(this.dialog);
+            this.input.focus();
+            this.dialog.repostDialog('show');
+        });
     };
     
-    this.cancel = function(popup){
-       return function(e){
-           popup.cb("");
-           popup.remove();
-       };
-    };
-    
-    this.updateMessage = function(message){
-        msg.innerHTML = message;
+    $.fn.singleFieldDialog.defaults = {
+        title: "title",
+        field: "",
+        response: function(){}
     };
 
-    this.show = function(){
-        popup.show();
-    };
-
-    this.textFocus = function(){
-        input.focus();
-    };
- 
-    this.remove = function(){
-        popup.remove();
-    };
- 
-    this.createPopup(message, divclass);
-
-};
+})(window, $);   
 
 (function(window, $, undefined){
 
@@ -646,160 +626,3 @@ this.singleFieldPopup = function(message, divclass, callback){
         draggable: true
     };
 })(window, $);
-
-this.repostdialog = function(options){
-    
-    var children = options['children'];
-    var modal = options['modal'];
-    var centred = options['centred'];
-    var popup = null;
-    var closefunc = options['closefunction'];
-    var input;
-    var startX;
-    var startY;
-    var offsetX;
-    var offsetY;
-
-    this.createPopup = function(children){
-
-        // Create dialog
-        popup = $('<div>')
-            .hide()
-            .attr('id', 'rpdialog')
-            .append($('<img src=images/repost_x.gif>')
-                .addClass('floatclose')
-                .click(this.closureRemove(this)))
-            .append(children);
-
-        if(modal == true){
-            // Keep moving indexes outwards
-            var zindex = parseInt($('#mask').css('z-index'));
-            $('#mask').css({'z-index': zindex+3});
-            popup.css({'z-index': zindex+4});
-
-            // Get the screen height and width
-            var maskHeight = $(document).height();
-            var maskWidth = $(window).width();
-
-            // Set height and width to mask to fill up the whole screen
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-            // transition effect     
-            $('#mask').fadeIn(500);    
-            $('#mask').fadeTo("slow",0.8);  
-            $('#mask').show();
-        }
-
-        $("#repost").append(popup);
-
-        if(centred == true){
-            //Get the window height and width
-            var winH = $(window).height();
-            var winW = $(window).width();
-            popup.css({'top': winH/2-popup.height()/2, 'left': winW/2-popup.width()/2})
-        }
-    };
-    
-    this.draggable = function(){
-        popup.mousedown(this.onmousedown(this))
-            .mouseup(this.onmouseup(this));
-    };
-
-    this.onmousedown = function(dialog){
-        return function(e){
-            pop = dialog.getpopup();
-            dialog.offsetx(pop.offset().left);
-            dialog.offsety(pop.offset().top);
-            dialog.startx(e.clientX);
-            dialog.starty(e.clientY);
-            $(document).mousemove(dialog.onmousemove(dialog));
-        };
-    };
-
-    this.onmousemove = function(dialog){
-        return function(e){
-            pop = dialog.getpopup();
-            pop.offset({top: dialog.offsety() + e.clientY - dialog.starty(),  
-                        left: dialog.offsetx() + e.clientX - dialog.startx()});
-        };
-    };
-
-    this.onmouseup = function(dialog){
-        return function(e){
-            pop = dialog.getpopup();
-            $(document).unbind('mousemove');
-        };
-    };
-
-    this.onmouseleave = function(dialog){
-        return function(e){
-            pop = dialog.getpopup();
-            $('document').unbind('mousemove', dialog.onmousemove);
-        };
-    };
-
-    this.offsety = function(y){
-        if(y == null){
-            y = offsetY;
-        }
-        offsetY = y;
-        return offsetY;
-    };
-
-    this.offsetx = function(x){
-        if(x == null){
-            x = offsetX;
-        }
-        offsetX = x;
-        return offsetX;
-    };
-
-    this.starty = function(y){
-        if(y == null){
-            y = startY;
-        }
-        startY = y;
-        return startY;
-    };
-
-    this.startx = function(x){
-        if(x == null){
-            x = startX;
-        }
-        startX = x;
-        return startX;
-    };
-
-    this.getpopup = function(){
-        return popup;
-    };
-
-    this.show = function(){
-        popup.show();
-    };
-    
-    this.closureRemove = function(dialog){
-        return function(){
-            dialog.remove();
-        };
-    };
-
-    this.remove = function(){
-        popup.fadeOut('fast', function() {
-                                popup.remove();
-                                closefunc();
-                            });
-        var zindex = parseInt($('#mask').css('z-index'));
-        $('#mask').css('z-index', zindex-3);
-        if( (zindex-3) <= 9000){
-            $('#mask').hide();
-        }
-    };
-
-    this.addClass = function(c){
-        popup.addClass(c);
-    };
- 
-    this.createPopup(children, closefunc);
-
-};
