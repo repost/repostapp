@@ -208,7 +208,7 @@ this.linkVisual = function() {
                                 .append($('<div>').attr('id','infovis'));
             $('#repost').append(linkBox);
             var tree = this.createTree(linkarr, acctarr);
-            linkBox.show();
+            linkBox.repostDialog('show');
             fd = new $jit.ForceDirected(forcegraphset);
             // load JSON data.
             fd.loadJSON(tree);
