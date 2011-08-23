@@ -132,16 +132,7 @@ this.linkVisual = function() {
     this.init = function(){
         displayed = false;
             var inputPopup = $('<div>').singleFieldDialog({title: "Enter Link Name:", field:"", response: this.response});       
-        var test = $('<div>').append($('<span>'+'</span>')
-                                        .addClass('message'))
-                    .append($('<button>Ok</button>')
-                                .addClass('ok'))
-                    .append($('<button>Cancel</button>')
-                                .addClass('cancel'))
-                    .repostDialog();
-        $("#repost").append(test);
-                    test.repostDialog('show');
-                    test.repostDialog('remove');
+            var inputPopup = $('<div>').confirmDialog({title: "Enter Link Name:", field:"", response: this.response});       
     };
 
     this.createTree = function(links, accts){
@@ -358,8 +349,7 @@ this.linkNodeRemover = function(t, n){
         var type = node.data.$reposttype;
         if(type == "buddyobj"){
             // Trying to delete
-            confirmPopup = new confirmationPopup("Delete Link " + node.name + "?" ,"", this.response);
-            confirmPopup.display();
+            confirmPopup = $('<div>').confirmatDialog();
         }
     };
 
@@ -386,67 +376,46 @@ this.linkNodeRemover = function(t, n){
     
 };
 
-// Simple confirmation popup. 
-// message = message to display
-// divclass = class to call it
-// callback = cb to call when user clicks. Should take bool option
-this.confirmationPopup = function(message, divclass, callback){
-    
-    var cback = callback;
-    var popup;
-    var msg;
+(function(window, $, undefined){
 
-    this.createPopup = function(message, divclass){
-        children = $('<div>')
-                        .append($('<span>' + message +'</span>')
-                                    .addClass('message'))
+    $.fn.confirmDialog = function(options) {
+        var opts = $.extend({}, $.fn.confirmDialog.defaults, options);
+        
+        var ok = function(sf){
+            opts.response(true);
+            sf.dialog.repostDialog('remove');
+        };
+
+        var cancel = function(sf){
+            opts.response(false);
+            sf.dialog.repostDialog('remove');
+        };
+
+        return this.each(function(){
+            var sf = this;  
+            this.dialog = $('<div>').addClass('confirmation')
+                        .append($('<span>'+opts.title+'</span>')
+                                            .addClass('message'))
                         .append($('<button>Ok</button>')
                                     .addClass('ok')
-                                    .click( this.ok(this) ))
+                                    .click(function(){ok(sf)}))
                         .append($('<button>Cancel</button>')
-                                            .addClass('cancel')
-                                            .click( this.cancel(this) ));
-        popup = new repostdialog({'modal': true, 
-                                    'centred': true,
-                                    'children': children,
-                                    'closefunction': function(){}});
-        popup.draggable();
-        popup.addClass('confirmation');
+                                    .addClass('cancel')
+                                    .click(function(){cancel(sf)}))
+                        .repostDialog({'modal': true, 
+                                        'centred': true});
+            $('#repost').append(this.dialog);
+            this.dialog.repostDialog('show');
+        });
     };
     
-    this.cb = function(result){
-        cback(result);
+    $.fn.confirmDialog.defaults = {
+        title: "title",
+        field: "",
+        response: function(){}
     };
 
-    this.ok = function(popup){
-       return function(e){
-           popup.cb(true);
-           popup.remove();
-       };
-    };
-    
-    this.cancel = function(popup){
-       return function(e){
-           popup.cb(false);
-           popup.remove();
-       };
-    };
-    
-    this.updateMessage = function(message){
-        msg.innerHTML = message;
-    };
-
-    this.display = function(){
-        popup.show();
-    };
-
-    this.remove = function(){
-        popup.remove();
-    };
- 
-    this.createPopup(message, divclass);
-
-};
+})(window, $);   
 
 // Simple single field popup.
 // message = message to display
