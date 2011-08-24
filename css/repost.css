@@ -273,10 +273,12 @@ span.name {
     height:25%;
     margin: 0px;
     left:0px;
+    position:absolute;
 }
 #repost #divtable div.divcol {
-	position:relative;
+	position:absolute;
 	text-align:center;
+    height: 100%;
 }
 #repost #divtable #divRow0 {
     top:0%;
