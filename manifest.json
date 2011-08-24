@@ -7,7 +7,6 @@
       "local_path": "bootstrap.html"
     }
   },
-  "options_page": "options.html",
   "content_scripts": [
     {
       "all_frames": true,

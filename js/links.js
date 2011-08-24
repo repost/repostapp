@@ -147,16 +147,17 @@ this.linkVisual = function() {
         // create account tree
         for(var i=0; i<acctlen; i++) {
             var treeobj;
+            var user = accts[i].user.replace(/\/.*$/g,"")
             if(accts[i].status == "online")
             {
-                treeobj = createTreeElement(accts[i].user, accts[i].user, "onlineacct");
+                treeobj = createTreeElement(user, user, "onlineacct");
             }
             else
             {
-                treeobj = createTreeElement(accts[i].user, accts[i].user, "offlineacct");
+                treeobj = createTreeElement(user, user, "offlineacct");
             }
             acctree.push(treeobj);
-            var adjobj = createAdjacency(accts[i].user);
+            var adjobj = createAdjacency(user);
             you.adjacencies.push(adjobj);
         }
         // create link tree
@@ -305,11 +306,41 @@ this.linkNodeAdder = function(t, n){
     this.init = function(node){
         var type = node.data.$reposttype;
         if(type == "hostobj"){
-            inputPopup = $('<div>'). singleFieldDialog({title: "Enter Link Name:", field:"", response: this.response});       
+            if(node.id == "you"){ /* special account add case */
+                new addAccountDialog();
+            }else{
+                inputPopup = $('<div>'). singleFieldDialog({title: "Enter Link Name:", field:"", response: this.addlink});       
+            }
         }
     };
 
-    this.response = function(rep){
+    this.addaccount = function(rep){
+        if(rep != ""){
+            var treeobj = createTreeElement(rep,rep,"reposterlink");
+            var adj = createAdjacency("");
+            tree.graph.addNode(treeobj);
+            tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
+            tree.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    tree.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            /* TODO error checking etc...*/
+            link = plugin.Link();
+            link.name = rep;
+            link.host = node.name;
+            hw.addLink(link);
+        }
+    };
+
+    this.addlink = function(rep){
         if(rep != ""){
             var treeobj = createTreeElement(rep,rep,"reposterlink");
             var adj = createAdjacency("");
@@ -347,8 +378,10 @@ this.linkNodeRemover = function(t, n){
         var type = node.data.$reposttype;
         if(type == "buddyobj"){
             // Trying to delete
-            confirmPopup = $('<div>').confirmDialog({title: "Delete Link " + node.name + "?" , 
-                                                        response: this.response});
+            confirmPopup = $('<div>').append($('<span>'+"Delete Link "
+                                                + node.name + "?" +'</span>')
+                            .addClass('message'))
+                            .confirmDialog({response: this.response});
         }
     };
 
@@ -375,6 +408,43 @@ this.linkNodeRemover = function(t, n){
     
 };
 
+this.addAccountDialog = function(){
+        
+    var username;
+    var password;
+    var type;
+    var dialog;
+
+    this.init = function(){
+        username = $('<input>').addClass('username')
+                                    .attr('type','textbox');
+        password = $('<input>').addClass('password')
+                                    .attr('type','password');
+        type = $('<select>').addClass('accounttype')
+                        .append('<option value=XMPP>XMPP</option>')
+                        .append('<option value=Gtalk>Gtalk</option>');
+        dialog = $('<div>').addClass('accountaddbox')
+                            .append(username)
+                            .append(password)
+                            .append(type)
+                            .append($('<button>Ok</button>')
+                                    .addClass('ok')
+                                    .click(function(){ok(sf)}))
+                            .append($('<button>Cancel</button>')
+                                    .addClass('cancel')
+                                    .click(function(){cancel(sf)}))
+                            .confirmDialog({response: this.response});
+        username.focus();
+    };
+    
+    this.response = function(){
+    };
+
+    this.init();
+};
+    
+
+
 (function(window, $, undefined){
 
     $.fn.confirmDialog = function(options) {
@@ -382,35 +452,31 @@ this.linkNodeRemover = function(t, n){
         
         var ok = function(sf){
             opts.response(true);
-            sf.dialog.repostDialog('remove');
+            $(sf).repostDialog('remove');
         };
 
         var cancel = function(sf){
             opts.response(false);
-            sf.dialog.repostDialog('remove');
+            $(sf).repostDialog('remove');
         };
 
         return this.each(function(){
             var sf = this;  
-            this.dialog = $('<div>').addClass('confirmation')
-                        .append($('<span>'+opts.title+'</span>')
-                                            .addClass('message'))
-                        .append($('<button>Ok</button>')
-                                    .addClass('ok')
-                                    .click(function(){ok(sf)}))
-                        .append($('<button>Cancel</button>')
-                                    .addClass('cancel')
-                                    .click(function(){cancel(sf)}))
-                        .repostDialog({'modal': true, 
-                                        'centred': true});
-            $('#repost').append(this.dialog);
-            this.dialog.repostDialog('show');
+            $(this).addClass("confirmation")
+                .append($('<button>Ok</button>')
+                            .addClass('ok')
+                            .click(function(){ok(sf)}))
+                .append($('<button>Cancel</button>')
+                            .addClass('cancel')
+                            .click(function(){cancel(sf)}))
+                .repostDialog({'modal': true, 
+                                'centred': true});
+            $('#repost').append(this);
+            $(this).repostDialog('show');
         });
     };
     
     $.fn.confirmDialog.defaults = {
-        title: "title",
-        field: "",
         response: function(){}
     };
 
