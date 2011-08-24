@@ -431,7 +431,7 @@ this.linkNodeRemover = function(t, n){
         };
 
         var cancel = function(sf){
-            opts.response();
+            opts.response("");
             sf.dialog.repostDialog('remove');
         };
 
