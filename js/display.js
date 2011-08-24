@@ -171,9 +171,7 @@ var statusBar;
 
 function main() {
     $('document').ready(function(){
-        // Check we have an account to log into
-        var accounts = loadAccounts();
-        // start repost
+        // Initialise UI
         ptable = new posttable();
         // Create input windows
         textbox = new textPostBox(sendPost);
@@ -181,7 +179,13 @@ function main() {
         wel = document.getElementById("welcome");
         // attach repost shortcuts
         addShortCuts();
-        // init the posttable
+        // setup status bar
+        statusBar = new statusBar();
+			  // Create link management window
+        linksdisplay = new linkVisual();
+        linksdisplay.init();
+				
+				// Create instance of plugin
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         // Set UI callbacks
@@ -194,23 +198,8 @@ function main() {
         networkuiops.accountdisconnectcb = AccountDisconnected;
         hw.setNetworkUiOps(networkuiops);
         hw.init();
-
-        // setup status bar
-        statusBar = new statusBar();
-
-        // Create link management window
-        linksdisplay = new linkVisual();
-        linksdisplay.init();
-        if(accounts){
-            var acc = plugin.Account();
-            // add saved accounts
-            for(var i=0; i<accounts.length; i++){
-                acc.user = accounts[i].username;
-                acc.pass = accounts[i].password;
-                acc.type = accounts[i].type;
-                hw.addAccount(acc);
-            }
-        }
+       
+				// Get repost rolling
         hw.startRepost();
         hw.getInitialPosts();
         setTimeout("checkStatus()",10000);
