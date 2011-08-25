@@ -147,6 +147,28 @@ span.name {
     height: 20px;
     width: 20px;
 }
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+    width: 250px;
+    height: 70px;
+}
+#repost .confirmation#rpdialog .message{
+    position:absolute;
+    left:10px;
+    top:10px;
+}
+#repost .confirmation#rpdialog .ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 90px;
+}
+#repost .confirmation#rpdialog .cancel{
+    position: absolute;
+    top: 50px;
+    left: 140px;
+    width: 90px;
+}
 /* Single Field Popup */
 #repost .singlefield#rpdialog{
     width: 280px;
@@ -170,28 +192,6 @@ span.name {
     left: 15px;
     width: 250px;
     margin: 15px 5px 15px 0px;
-}
-/* Confirmation Popup */
-#repost .confirmation#rpdialog{
-    width: 250px;
-    height: 70px;
-}
-#repost .confirmation#rpdialog .message{
-    position:absolute;
-    left:10px;
-    top:10px;
-}
-#repost .confirmation#rpdialog .ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
-}
-#repost .confirmation#rpdialog .cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
 }
 /**
  * Links

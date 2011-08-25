@@ -5,6 +5,9 @@ this.linkVisual = function() {
     
     var linkBox; /* send that text */
     var displayed; /* Are we being displayed already? */
+    var linktree;
+    var accttree;
+    var instance = this;
     var vis;
     var fd;
     var labelType = 'Native';
@@ -12,136 +15,140 @@ this.linkVisual = function() {
     var useGradients = true;
     var animate = true;
     var forcegraphset = 
-        {
-            //id of the visualization container
-            injectInto: 'infovis',
-            //Enable zooming and panning
-            //by scrolling and DnD
-            Navigation: {
-                            enable: true,
-                            //Enable panning events only if we're dragging the empty
-                            //canvas (and not a node).
-                            panning: 'avoid nodes',
-                            zooming: 20 //zoom speed. higher is more sensible
-                        },
-            // Change node and edge styles such as
-            // color and width.
-            // These properties are also set per node
-            // with dollar prefixed data-properties in the
-            // JSON structure.
-            Node: {
-                    overridable: true
-                   },
-            Edge: {
-                    overridable: true,
-                    color: '#23A4FF',
-                    lineWidth: 1.4
-                  },
-            //Native canvas text styling
-            Label: {
-                    color: '#000',
-                    type: labelType, //Native or HTML
-                    size: 12,        
-                    font: "Abel", 
-                    style: 'bold'
-                   },
-           //Add Tips
-            Tips: {
-                    enable: true,
-                    onShow: function(tip, node) {
-                            //count connections
-                            var count = 0;
-                            node.eachAdjacency(function() { count++; });
-                            //display node info in tooltip
-                            tip.innerHTML = "<div class=\"tip-title\">" + node.name + "</div>"
-                                + "<div class=\"tip-text\"><b>connections:</b> " + count + "</div>";
-                            }
-                  },
-            // Add node events
-            Events: {
+    {
+        //id of the visualization container
+        injectInto: 'infovis',
+        //Enable zooming and panning
+        //by scrolling and DnD
+        Navigation: {
                         enable: true,
-                        //Change cursor style when hovering a node
-                        onMouseEnter: function() {
-                            fd.canvas.getElement().style.cursor = 'move';
-                        },
-                        onMouseLeave: function() {
-                                  fd.canvas.getElement().style.cursor = '';
-                        },
-                        //Update node positions when dragged
-                        onDragMove: function(node, eventInfo, e) {
-                                var pos = eventInfo.getPos();
-                                node.pos.setc(pos.x, pos.y);
-                                fd.plot();
-                        },
-                        //Implement the same handler for touchscreens
-                        onTouchMove: function(node, eventInfo, e) {
-                                 $jit.util.event.stop(e); //stop default touchmove event
-                                 this.onDragMove(node, eventInfo, e);
-                        },
-                        //Add also a click handler to nodes
-                        onClick: function(node) {
-                                     if(!node) return;
-                                     // Run Node handler
-                                     linkNodeRemover(fd,node);
-                                     linkNodeAdder(fd,node);
-                                 }
-            },
-            //Number of iterations for the FD algorithm
-            iterations: 200,
-            //Edge length
-            levelDistance: 130,
-            // Add text to the labels. This method is only triggered
-            // on label creation and only for DOM labels (not native canvas ones).
-            onCreateLabel: function(domElement, node){
-                            var nameContainer = document.createElement('span');
-                            nameContainer.className = 'name';  
-                            nameContainer.innerHTML = node.name; 
-                            var style = domElement.style;
-                            style.fontSize = "0.8em";
-                            style.color = "#ddd";
-                            var closeButton = document.createElement('span')
-                            closeButton.className = 'close';  
-                            closeButton.innerHTML = 'x';  
-                            domElement.appendChild(nameContainer);  
-                            domElement.appendChild(closeButton);  
-                            //Fade the node and its connections when  
-                            //clicking the close button  
-                            closeButton.onclick = function() {  
-                                    node.setData('alpha', 0, 'end');  
-                                    node.eachAdjacency(function(adj) {  
-                                        adj.setData('alpha', 0, 'end');  
-                                    });  
-                                    fd.fx.animate({  
-                                          modes: ['node-property:alpha','edge-property:alpha'], duration: 500 
-                                    });  
-                            };
+                        //Enable panning events only if we're dragging the empty
+                        //canvas (and not a node).
+                        panning: 'avoid nodes',
+                        zooming: 20 //zoom speed. higher is more sensible
                     },
-            // Change node styles when DOM labels are placed
-            // or moved.
-            onPlaceLabel: function(domElement, node){
-                                  var style = domElement.style;
-                                  var left = parseInt(style.left);
-                                  var top = parseInt(style.top);
-                                  var w = domElement.offsetWidth;
-                                  style.left = (left - w / 2) + 'px';
-                                  style.top = (top + 10) + 'px';
-                                  style.display = '';
-                              }
+        // Change node and edge styles such as
+        // color and width.
+        // These properties are also set per node
+        // with dollar prefixed data-properties in the
+        // JSON structure.
+        Node: {
+                overridable: true
+               },
+        Edge: {
+                overridable: true,
+                color: '#23A4FF',
+                lineWidth: 1.4
+              },
+        //Native canvas text styling
+        Label: {
+                color: '#000',
+                type: labelType, //Native or HTML
+                size: 12,        
+                font: "Abel", 
+                style: 'bold'
+               },
+       //Add Tips
+        Tips: {
+                enable: true,
+                onShow: function(tip, node) {
+                        //count connections
+                        var count = 0;
+                        node.eachAdjacency(function() { count++; });
+                        //display node info in tooltip
+                        tip.innerHTML = "<div class=\"tip-title\">" + node.name + "</div>"
+                            + "<div class=\"tip-text\"><b>connections:</b> " + count + "</div>";
+                        }
+              },
+        // Add node events
+        Events: {
+                    enable: true,
+                    //Change cursor style when hovering a node
+                    onMouseEnter: function() {
+                        fd.canvas.getElement().style.cursor = 'move';
+                    },
+                    onMouseLeave: function() {
+                              fd.canvas.getElement().style.cursor = '';
+                    },
+                    //Update node positions when dragged
+                    onDragMove: function(node, eventInfo, e) {
+                            var pos = eventInfo.getPos();
+                            node.pos.setc(pos.x, pos.y);
+                            fd.plot();
+                    },
+                    //Implement the same handler for touchscreens
+                    onTouchMove: function(node, eventInfo, e) {
+                             $jit.util.event.stop(e); //stop default touchmove event
+                             this.onDragMove(node, eventInfo, e);
+                    },
+                    //Add also a click handler to nodes
+                    onClick: function(node) {
+                                 if(!node) return;
+                                 // Run Node handler
+                                 if(node.name == "you") {
+                                     accountAdder(instance);
+                                 } else {
+                                     linkRemover(instance, node.name);
+                                     linkAdder(instance, node.name);
+                                 }
+                             }
+        },
+        //Number of iterations for the FD algorithm
+        iterations: 200,
+        //Edge length
+        levelDistance: 130,
+        // Add text to the labels. This method is only triggered
+        // on label creation and only for DOM labels (not native canvas ones).
+        onCreateLabel: function(domElement, node){
+                        var nameContainer = document.createElement('span');
+                        nameContainer.className = 'name';  
+                        nameContainer.innerHTML = node.name; 
+                        var style = domElement.style;
+                        style.fontSize = "0.8em";
+                        style.color = "#ddd";
+                        var closeButton = document.createElement('span')
+                        closeButton.className = 'close';  
+                        closeButton.innerHTML = 'x';  
+                        domElement.appendChild(nameContainer);  
+                        domElement.appendChild(closeButton);  
+                        //Fade the node and its connections when  
+                        //clicking the close button  
+                        closeButton.onclick = function() {  
+                                node.setData('alpha', 0, 'end');  
+                                node.eachAdjacency(function(adj) {  
+                                    adj.setData('alpha', 0, 'end');  
+                                });  
+                                fd.fx.animate({  
+                                      modes: ['node-property:alpha','edge-property:alpha'], duration: 500 
+                                });  
+                        };
+                },
+        // Change node styles when DOM labels are placed
+        // or moved.
+        onPlaceLabel: function(domElement, node){
+                              var style = domElement.style;
+                              var left = parseInt(style.left);
+                              var top = parseInt(style.top);
+                              var w = domElement.offsetWidth;
+                              style.left = (left - w / 2) + 'px';
+                              style.top = (top + 10) + 'px';
+                              style.display = '';
+                          }
     };
     
-    this.init = function(){
+    this.init = function() {
         displayed = false;
     };
 
-    this.createTree = function(links, accts){
+    this.createTree = function(links, accts) {
         var foundhost = false;
         var linklen = links.length;
         var acctlen = accts.length;
-        var linktree = new Array();
-        var acctree = new Array();
+        linktree = new Array();
+        acctree = new Array();
         
         // create you at the center
-        var you = createTreeElement("you", "you", "you");
+        var you = this.createTreeElement("you", "you", "you");
         acctree.push(you);
 
         // create account tree
@@ -150,14 +157,14 @@ this.linkVisual = function() {
             var user = accts[i].user.replace(/\/.*$/g,"")
             if(accts[i].status == "online")
             {
-                treeobj = createTreeElement(user, user, "onlineacct");
+                treeobj = this.createTreeElement(user, user, "onlineacct");
             }
             else
             {
-                treeobj = createTreeElement(user, user, "offlineacct");
+                treeobj = this.createTreeElement(user, user, "offlineacct");
             }
             acctree.push(treeobj);
-            var adjobj = createAdjacency(user);
+            var adjobj = this.createAdjacency(user);
             you.adjacencies.push(adjobj);
         }
         // create link tree
@@ -166,14 +173,16 @@ this.linkVisual = function() {
                 if(acctree[x].name == links[i].host) {
                     var treeobj; 
                     if(links[i].status == "online") {
-                        treeobj = createTreeElement(links[i].name, links[i].name, "onlinelink");
+                        treeobj = this.createTreeElement(links[i].name,
+                                            links[i].name, "onlinelink");
                     }else if(links[i].status == "reposter") {
-                        treeobj = createTreeElement(links[i].name, links[i].name, "reposterlink");
+                        treeobj = this.createTreeElement(links[i].name, 
+                                            links[i].name, "reposterlink");
                     }else{
-                        treeobj = createTreeElement(links[i].name, links[i].name, "offlinelink");
+                        treeobj = this.createTreeElement(links[i].name,
+                                            links[i].name, "offlinelink");
                     }
-
-                    var adjobj = createAdjacency(links[i].name);
+                    var adjobj = this.createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
                 }
@@ -192,26 +201,22 @@ this.linkVisual = function() {
         return acctree.concat(linktree);
     };
     
-    this.getTree = function(){
-        return fd;
-    };
-
-    this.show = function(linkarr, acctarr){
-        if(displayed == false){
+    this.show = function(linkarr, acctarr) {
+        if(displayed == false) {
+            // Create linkbox dialog
             linkBox = $('<div>').addClass('linkbox')
                                 .repostDialog({'modal': true,
                                                 'centred': false,
                                                 'draggable': false,
                                                 'closefunc': function() {
-                                                                $("#infovis").children().remove();
                                                                 displayed = false;
                                                             }})
                                 .append($('<div>').attr('id','infovis'));
             $('#repost').append(linkBox);
-            var tree = this.createTree(linkarr, acctarr);
             linkBox.repostDialog('show');
+            // Create tree and load
+            var tree = this.createTree(linkarr, acctarr);
             fd = new $jit.ForceDirected(forcegraphset);
-            // load JSON data.
             fd.loadJSON(tree);
             // compute positions incrementally and animate.
             fd.computeIncremental({
@@ -230,192 +235,207 @@ this.linkVisual = function() {
         }
     };
 
+    this.createTreeElement = function(name, id, type){
+        if(type == "onlinelink"){
+            var obj = {
+                $reposttype: "buddyobj",
+                $color:  "#C74243",
+                $type:  "circle",
+                $dim:  15
+            };
+        }else if(type == "reposterlink"){
+            var obj = {
+                $reposttype: "buddyobj",
+                $color:  "#00BB3F",
+                $type:  "circle",
+                $dim:  15
+            };
+        }else if(type == "offlinelink"){
+            var obj = {
+                $reposttype: "buddyobj",
+                $color:  "#777777",
+                $type:  "circle",
+                $dim:  15
+            };
+        }else if(type == "onlineacct"){
+            var obj = {
+                $reposttype: "hostobj",
+                $color:  "#EBB056",
+                $type:  "circle",
+                $dim:  25
+            };
+        }else if(type == "offlineacct"){
+            var obj = {
+                $reposttype: "buddyobj",
+                $color:  "#777777",
+                $type:  "circle",
+                $dim:  15
+            };
+        }else if(type == "you"){
+            var obj = {
+                $reposttype: "hostobj",
+                $color:  "#EBB056",
+                $type:  "circle",
+                $dim:  30
+            };
+        }else{
+            return;
+        }
+
+        return {
+                name: name,
+                id: id,
+                data: obj,
+                adjacencies: new Array()
+            };
+    };
+    
+    this.addLink = function(user, account) {
+        if(user != "" && account != "") {
+            var treeobj = this.createTreeElement(user, user,"reposterlink");
+            var adj = this.createAdjacency(account);
+            fd.graph.addNode(treeobj);
+            fd.graph.addAdjacence(fd.graph.getNode(account),
+                            fd.graph.getNode(user),adj.data);
+            fd.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    fd.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+        }
+    };
+
+    this.addAccount = function(account) {
+        if(account != "") {
+            var treeobj = this.createTreeElement(account, account,"offlineacct");
+            var adj = this.createAdjacency(account);
+            fd.graph.addNode(treeobj);
+            fd.graph.addAdjacence(fd.graph.getNode("you"),
+                            fd.graph.getNode(account),adj.data);
+            fd.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    fd.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+        }
+    };
+
+    this.removeLink = function(user) {
+        if(user != "") {
+            var node = fd.graph.getNode(user);
+            node.setData('alpha', 0, 'end');  
+            node.eachAdjacency(function(adj) {  
+                    adj.setData('alpha', 0, 'end');  
+                    });  
+            fd.fx.animate({  
+                            modes: ['node-property:alpha',  
+                            'edge-property:alpha'],  
+                            duration: 500  
+                        });  
+            fd.graph.removeNode(node.id);
+        }
+    };
+
+    this.createAdjacency = function(nodeto){
+        return {
+           data: { color: "#909291"},
+           nodeTo: nodeto
+        };
+    };
+
     this.remove = function(){
         linkBox.remove();
     };
 };
 
-this.createAdjacency = function(nodeto){
-    return {
-       data: { color: "#909291"},
-       nodeTo: nodeto
-    };
-};
+this.linkAdder = function(display, acct){
 
-this.createTreeElement = function(name, id, type){
-    if(type == "onlinelink"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#C74243",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "reposterlink"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#00BB3F",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "offlinelink"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#777777",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "onlineacct"){
-        var obj = {
-            $reposttype: "hostobj",
-            $color:  "#EBB056",
-            $type:  "circle",
-            $dim:  25
-        };
-    }else if(type == "offlineacct"){
-        var obj = {
-            $reposttype: "buddyobj",
-            $color:  "#777777",
-            $type:  "circle",
-            $dim:  15
-        };
-    }else if(type == "you"){
-        var obj = {
-            $reposttype: "hostobj",
-            $color:  "#EBB056",
-            $type:  "circle",
-            $dim:  30
-        };
-    }else{
-        return;
-    }
+    var dialog;
+    var input;
+    var account = acct;
+    var cbdisplay = display;
+    var instance = this;
 
-    return {
-            name: name,
-            id: id,
-            data: obj,
-            adjacencies: new Array()
-        };
-};
-
-this.linkNodeAdder = function(t, n){
-
-    var tree = t;
-    var node = n;
-    var inputPopup;
-
-    this.init = function(node){
-        var type = node.data.$reposttype;
-        if(type == "hostobj"){
-            if(node.id == "you"){ /* special account add case */
-                new addAccountDialog();
-            }else{
-                inputPopup = $('<div>'). singleFieldDialog({title: "Enter Link Name:", field:"", response: this.addlink});       
-            }
-        }
-    };
-
-    this.addaccount = function(rep){
-        if(rep != ""){
-            var treeobj = createTreeElement(rep,rep,"reposterlink");
-            var adj = createAdjacency("");
-            tree.graph.addNode(treeobj);
-            tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
-            tree.computeIncremental({
-                iter: 40,
-                property: 'end',
-                onStep:  function(perc){},
-                onComplete: function(){
-                    tree.animate({
-                        modes: ['linear'],
-                        transition: $jit.Trans.Elastic.easeOut,
-                        duration: 2500
-                    });
-                }
-            });
-            /* TODO error checking etc...*/
-            link = plugin.Link();
-            link.name = rep;
-            link.host = node.name;
-            hw.addLink(link);
-        }
-    };
-
-    this.addlink = function(rep){
-        if(rep != ""){
-            var treeobj = createTreeElement(rep,rep,"reposterlink");
-            var adj = createAdjacency("");
-            tree.graph.addNode(treeobj);
-            tree.graph.addAdjacence(node,tree.graph.getNode(rep),adj.data);
-            tree.computeIncremental({
-                iter: 40,
-                property: 'end',
-                onStep:  function(perc){},
-                onComplete: function(){
-                    tree.animate({
-                        modes: ['linear'],
-                        transition: $jit.Trans.Elastic.easeOut,
-                        duration: 2500
-                    });
-                }
-            });
-            /* TODO error checking etc...*/
-            link = plugin.Link();
-            link.name = rep;
-            link.host = node.name;
-            hw.addLink(link);
-        }
-    };
-    this.init(node);
-};
-
-this.linkNodeRemover = function(t, n){
-    
-    var tree = t;
-    var node = n;
-    var confirmPopup;
-    
-    this.init = function(node){
-        var type = node.data.$reposttype;
-        if(type == "buddyobj"){
-            // Trying to delete
-            confirmPopup = $('<div>').append($('<span>'+"Delete Link "
-                                                + node.name + "?" +'</span>')
-                            .addClass('message'))
-                            .confirmDialog({response: this.response});
-        }
+    this.init = function(){
+        var la = this;
+        input = $('<input>')
+                    .addClass('inputbox')
+                    .attr('type','textbox');
+        dialog = $('<div>').addClass('singlefield')
+                    .append($('<span>Enter Link Name:</span>')
+                                        .addClass('message'))
+                    .append(input)
+                    .confirmDialog({response:$.proxy(la.response, la)});
     };
 
     this.response = function(rep){
-        if(rep == true){
-            // delete buddy node here
-            node.setData('alpha', 0, 'end');  
-            node.eachAdjacency(function(adj) {  
-                    adj.setData('alpha', 0, 'end');  
-                    });  
-            tree.fx.animate({  
-                            modes: ['node-property:alpha',  
-                            'edge-property:alpha'],  
-                            duration: 500  
-                        });  
-            tree.graph.removeNode(node.id);
-            link = plugin.Link();
-            link.name = node.name;
+        if(rep) {
+            // Add new link
+            var link = plugin.Link();
+            link.name = input.val();
+            link.host = account;
+            hw.addLink(link);
+            // Display new link
+            cbdisplay.addLink(input.val(), account);
+        }
+    };
+    this.init();
+};
+
+this.linkRemover = function(display, user){
+    
+    var cbdisplay = display;
+    var dluser = user;
+    var dialog;
+    
+    this.init = function() {
+        var lr = this;
+        // Trying to delete
+        confirmPopup = $('<div>').append($('<span>'+"Delete Link "
+                                            + dluser + "?" +'</span>')
+                        .addClass('message'))
+                        .confirmDialog({response: $.proxy(lr.response, lr)});
+    };
+
+    this.response = function(rep) {
+        if(rep == true) {
+            // Remove link from plugin
+            var link = plugin.Link();
+            link.name = dluser;
             hw.rmLink(link);
+            // Remove from display
+            cbdisplay.removeLink(dluser);
         }
     };
 
-    this.init(node);
+    this.init();
     
 };
 
-this.addAccountDialog = function(){
+this.accountAdder = function(display){
         
     var username;
     var password;
     var type;
     var dialog;
+    var cbdisplay;
 
     this.init = function(){
+        var aa = this;
         username = $('<input>').addClass('username')
                                     .attr('type','textbox');
         password = $('<input>').addClass('password')
@@ -427,22 +447,54 @@ this.addAccountDialog = function(){
                             .append(username)
                             .append(password)
                             .append(type)
-                            .append($('<button>Ok</button>')
-                                    .addClass('ok')
-                                    .click(function(){ok(sf)}))
-                            .append($('<button>Cancel</button>')
-                                    .addClass('cancel')
-                                    .click(function(){cancel(sf)}))
-                            .confirmDialog({response: this.response});
+                            .confirmDialog({response: $.proxy(aa.response, aa)});
         username.focus();
     };
     
-    this.response = function(){
+    this.response = function(rep){
+        if(rep && username.val() && password.val() && type.val()){
+            // Add Account to plugin
+            var acc = plugin.Account();
+            acc.user = username.val();
+            acc.pass = password.val();
+            acc.type = type.val();
+            hw.addAccount(acc);
+            // Add to display
+            display.addAccount(username.val());
+        }
     };
-
     this.init();
 };
     
+this.accountRemover = function(display, account){
+    
+    var cbdisplay = display;
+    var dlaccount = account;
+    var dialog;
+    
+    this.init = function() {
+        var ar = this;
+        // Trying to delete
+        confirmPopup = $('<div>').append($('<span>'+"Delete Link "
+                                            + dluser + "?" +'</span>')
+                        .addClass('message'))
+                        .confirmDialog({response: $.proxy(ar.response, ar)});
+    };
+
+    this.response = function(rep) {
+        if(rep == true) {
+            // Remove link from plugin
+            var acc = plugin.Account();
+            acc.user = dlaccount;
+            hw.rmAccount(acc);
+            // Remove from display
+            cbdisplay.removeLink(dlaccount);
+        }
+    };
+
+    this.init();
+    
+};
 
 
 (function(window, $, undefined){
@@ -477,56 +529,6 @@ this.addAccountDialog = function(){
     };
     
     $.fn.confirmDialog.defaults = {
-        response: function(){}
-    };
-
-})(window, $);   
-
-// Simple single field popup.
-// message = message to display
-// divclass = class to call it
-// callback = cb to call when user clicks. Should take string user input
-(function(window, $, undefined){
-
-    $.fn.singleFieldDialog = function(options) {
-        var opts = $.extend({}, $.fn.singleFieldDialog.defaults, options);
-        
-        var ok = function(sf){
-            opts.response(sf.input.value);
-            sf.dialog.repostDialog('remove');
-        };
-
-        var cancel = function(sf){
-            opts.response("");
-            sf.dialog.repostDialog('remove');
-        };
-
-        return this.each(function(){
-            var sf = this;  
-            this.input = $('<input>')
-                        .addClass('inputbox')
-                        .attr('type','textbox');
-            this.dialog = $('<div>').addClass('singlefield')
-                        .append($('<span>'+opts.title+'</span>')
-                                            .addClass('message'))
-                        .append(this.input)
-                        .append($('<button>Ok</button>')
-                                    .addClass('ok')
-                                    .click(function(){ok(sf)}))
-                        .append($('<button>Cancel</button>')
-                                    .addClass('cancel')
-                                    .click(function(){cancel(sf)}))
-                        .repostDialog({'modal': true, 
-                                        'centred': true});
-            $('#repost').append(this.dialog);
-            this.input.focus();
-            this.dialog.repostDialog('show');
-        });
-    };
-    
-    $.fn.singleFieldDialog.defaults = {
-        title: "title",
-        field: "",
         response: function(){}
     };
 
