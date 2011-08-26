@@ -193,6 +193,22 @@ span.name {
     width: 250px;
     margin: 15px 5px 15px 0px;
 }
+/* Add Account Dialog */
+#repost .confirmation.accountaddbox#rpdialog {
+    width: 250px;
+    height: 205px;
+}
+#repost .confirmation.accountaddbox#rpdialog .title{
+    font-size: x-large;
+}
+#repost .confirmation.accountaddbox#rpdialog .ok{
+    top: 180px;
+    left: 10px;
+}
+#repost .confirmation.accountaddbox#rpdialog .cancel{
+    top: 180px;
+    left: 110px;
+}
 /**
  * Links
  */

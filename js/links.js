@@ -444,8 +444,16 @@ this.accountAdder = function(display){
                         .append('<option value=XMPP>XMPP</option>')
                         .append('<option value=Gtalk>Gtalk</option>');
         dialog = $('<div>').addClass('accountaddbox')
+                            .append($('<div>New Account</div>')
+                                    .addClass('title'))
+                            .append($('<div>Username:</div>')
+                                    .addClass('username'))
                             .append(username)
+			                      .append($('<div>Password:</div>')
+                                    .addClass('password'))
                             .append(password)
+                            .append($('<div>Account Type:</div>')
+                                    .addClass('accounttype'))
                             .append(type)
                             .confirmDialog({response: $.proxy(aa.response, aa)});
         username.focus();
