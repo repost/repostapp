@@ -571,13 +571,6 @@ this.accountRemover = function(display, account){
                      this.element.mousedown(function(e){dialog.mdown(e)})
                                 .mouseup(function(e){dialog.mup(e)});
                 }
-                if(opts.centred == true){
-                    //Get the window height and width
-                    var winH = $(window).height();
-                    var winW = $(window).width();
-                    this.element.css({'top': winH/2-this.element.height()/2, 
-                                        'left': winW/2-this.element.width()/2})
-                }
             },
 
             mdown : function(e){
@@ -618,6 +611,13 @@ this.accountRemover = function(display, account){
                     $('#mask').fadeIn(500);    
                     $('#mask').fadeTo("slow",0.8);  
                     $('#mask').show();
+                }
+                if(opts.centred == true){
+                    //Get the window height and width
+                    var winH = $(window).height();
+                    var winW = $(window).width();
+                    this.element.css({'top': winH/2-this.element.height()/2, 
+                                        'left': winW/2-this.element.width()/2})
                 }
                 this.element.show();
             },
