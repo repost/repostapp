@@ -373,10 +373,12 @@ this.linkAdder = function(display, acct){
     this.init = function(){
         var la = this;
         input = $('<input>')
-                    .addClass('inputbox')
+                    .addClass('linkinput')
                     .attr('type','textbox');
-        dialog = $('<div>').addClass('singlefield')
-                    .append($('<span>Enter Link Name:</span>')
+        dialog = $('<div>').addClass('linkaddbox')
+                    .append($('<div>New Link</div>')
+                                        .addClass('title'))
+                    .append($('<div>Enter Link Name:</div>')
                                         .addClass('message'))
                     .append(input)
                     .confirmDialog({response:$.proxy(la.response, la)});
@@ -405,9 +407,11 @@ this.linkRemover = function(display, user){
     this.init = function() {
         var lr = this;
         // Trying to delete
-        confirmPopup = $('<div>').append($('<span>'+"Delete Link "
-                                            + dluser + "?" +'</span>')
-                        .addClass('message'))
+        confirmPopup = $('<div>').addClass('linkremover')
+                             .append($('<div>Delete Link</div>')
+                                        .addClass('title'))
+                             .append($('<div>' + dluser + "?" +'</div>')
+                                        .addClass('user'))
                         .confirmDialog({response: $.proxy(lr.response, lr)});
     };
 
