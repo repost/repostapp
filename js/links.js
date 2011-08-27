@@ -5,8 +5,8 @@ this.linkVisual = function() {
     
     var linkBox; /* send that text */
     var displayed; /* Are we being displayed already? */
-    var linktree;
-    var accttree;
+    var linkarr;
+    var acctarr;
     var instance = this;
     var vis;
     var fd;
@@ -14,6 +14,7 @@ this.linkVisual = function() {
     var nativeTextSupport = true;
     var useGradients = true;
     var animate = true;
+    var created = false;
     var forcegraphset = 
     {
         //id of the visualization container
@@ -100,29 +101,7 @@ this.linkVisual = function() {
         // Add text to the labels. This method is only triggered
         // on label creation and only for DOM labels (not native canvas ones).
         onCreateLabel: function(domElement, node){
-                        var nameContainer = document.createElement('span');
-                        nameContainer.className = 'name';  
-                        nameContainer.innerHTML = node.name; 
-                        var style = domElement.style;
-                        style.fontSize = "0.8em";
-                        style.color = "#ddd";
-                        var closeButton = document.createElement('span')
-                        closeButton.className = 'close';  
-                        closeButton.innerHTML = 'x';  
-                        domElement.appendChild(nameContainer);  
-                        domElement.appendChild(closeButton);  
-                        //Fade the node and its connections when  
-                        //clicking the close button  
-                        closeButton.onclick = function() {  
-                                node.setData('alpha', 0, 'end');  
-                                node.eachAdjacency(function(adj) {  
-                                    adj.setData('alpha', 0, 'end');  
-                                });  
-                                fd.fx.animate({  
-                                      modes: ['node-property:alpha','edge-property:alpha'], duration: 500 
-                                });  
-                        };
-                },
+                    },
         // Change node styles when DOM labels are placed
         // or moved.
         onPlaceLabel: function(domElement, node){
@@ -136,16 +115,51 @@ this.linkVisual = function() {
                           }
     };
     
-    this.init = function() {
-        displayed = false;
+    this.init = function(aa, la) {
+        acctarr = aa;
+        linkarr = la;
+        // Create linkbox dialog
+        linkBox = $('<div>').addClass('linkbox')
+                            .repostDialog({'modal': true,
+                                        'centred': false,
+                                        'draggable': false,
+                                        'closefunc': function() {
+                                                        displayed = false;
+                                                    }})
+                            .append($('<div>').attr('id','infovis'));
+        $('#repost').append(linkBox);
+       displayed = false;
+    };
+    
+    this.create = function(){
+        if( created == false) {
+            // Create tree and load
+            var tree = this.createTree(linkarr, acctarr);
+            fd = new $jit.ForceDirected(forcegraphset);
+            fd.loadJSON(tree);
+            // compute positions incrementally and animate.
+            fd.computeIncremental({
+                iter: 40,
+                property: 'end',
+                onStep:  function(perc){},
+                onComplete: function(){
+                    fd.animate({
+                        modes: ['linear'],
+                        transition: $jit.Trans.Elastic.easeOut,
+                        duration: 2500
+                    });
+                }
+            });
+            created = true;
+        }
     };
 
     this.createTree = function(links, accts) {
         var foundhost = false;
         var linklen = links.length;
         var acctlen = accts.length;
-        linktree = new Array();
-        acctree = new Array();
+        var linktree = new Array();
+        var acctree = new Array();
         
         // create you at the center
         var you = this.createTreeElement("you", "you", "you");
@@ -154,7 +168,7 @@ this.linkVisual = function() {
         // create account tree
         for(var i=0; i<acctlen; i++) {
             var treeobj;
-            var user = accts[i].user.replace(/\/.*$/g,"")
+            var user = stripResource(accts[i].user);
             if(accts[i].status == "online")
             {
                 treeobj = this.createTreeElement(user, user, "onlineacct");
@@ -201,36 +215,10 @@ this.linkVisual = function() {
         return acctree.concat(linktree);
     };
     
-    this.show = function(linkarr, acctarr) {
+    this.show = function() {
         if(displayed == false) {
-            // Create linkbox dialog
-            linkBox = $('<div>').addClass('linkbox')
-                                .repostDialog({'modal': true,
-                                                'centred': false,
-                                                'draggable': false,
-                                                'closefunc': function() {
-                                                                displayed = false;
-                                                            }})
-                                .append($('<div>').attr('id','infovis'));
-            $('#repost').append(linkBox);
             linkBox.repostDialog('show');
-            // Create tree and load
-            var tree = this.createTree(linkarr, acctarr);
-            fd = new $jit.ForceDirected(forcegraphset);
-            fd.loadJSON(tree);
-            // compute positions incrementally and animate.
-            fd.computeIncremental({
-                iter: 40,
-                property: 'end',
-                onStep:  function(perc){},
-                onComplete: function(){
-                    fd.animate({
-                        modes: ['linear'],
-                        transition: $jit.Trans.Elastic.easeOut,
-                        duration: 2500
-                    });
-                }
-            });
+            this.create();
             displayed = true;
         }
     };
@@ -350,6 +338,15 @@ this.linkVisual = function() {
         }
     };
 
+    this.statusChanged = function(account) {
+        console.log("HELLO " + account.user);
+    };
+
+    this.accountDisconnected = function(account, reason) {
+        //var node = fd.graph.getNode(stripResource(account.user));
+        console.log("disconnected " + account.user);
+    };
+
     this.createAdjacency = function(nodeto){
         return {
            data: { color: "#909291"},
@@ -360,6 +357,10 @@ this.linkVisual = function() {
     this.remove = function(){
         linkBox.remove();
     };
+};
+
+function stripResource(account){
+    return account.replace(/\/.*$/g,"");
 };
 
 this.linkAdder = function(display, acct){
@@ -625,8 +626,7 @@ this.accountRemover = function(display, account){
             remove : function(){
                 var el = this.element;
                 this.element.fadeOut('fast', function() {
-                                        opts.closefunc();
-                                        el.remove();
+                                        opts.closefunc(el);
                                         });
                 if(opts.modal == true){
                     var zindex = parseInt($('#mask').css('z-index'));
@@ -674,6 +674,6 @@ this.accountRemover = function(display, account){
         modal: true,
         centred: true,
         draggable: true,
-        closefunc: function(){}
+        closefunc: function(el){el.remove();}
     };
 })(window, $);

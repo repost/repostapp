@@ -135,9 +135,7 @@ function addShortCuts(){
     };
     document.addEventListener("keydown",shortFunc);
     $('#connlink').click(function(){ // Text Post Box Popup
-                var linkarr = hw.getLinks();
-                var acctarr = hw.getAccounts();
-                linksdisplay.show(linkarr, acctarr);       
+                linksdisplay.show();       
             });
 };
 
@@ -145,17 +143,9 @@ function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
 
-function statuschanged(){
-    console.log("STATUS CHANGED");
-};
-
 function postmetricupdate(){
 	console.log("Metric update");
 }
-
-function AccountDisconnected(acct, reason){
-    console.log(reason)
-};
 
 var ptable; // Mainpage table display
 var plugin; // the repost plugin instance
@@ -171,6 +161,20 @@ var statusBar;
 
 function main() {
     $('document').ready(function(){
+        // Create instance of plugin
+        plugin = document.getElementById("plugin");
+        hw = plugin.rePoster();
+        // Set UI callbacks
+        linksdisplay = new linkVisual();
+        var postuiops = plugin.PostUiOps();
+        postuiops.newpostcb = checkForPost;
+        postuiops.postmetriccb = postmetricupdate;
+        hw.setPostUiOps(postuiops);
+        var networkuiops = plugin.NetworkUiOps();
+        networkuiops.statuschangedcb = $.proxy(linksdisplay.statusChanged, linksdisplay);
+        networkuiops.accountdisconnectcb = $.proxy(linksdisplay.accountDisconnected, linksdisplay);
+        hw.setNetworkUiOps(networkuiops);
+        hw.init();
         // Initialise UI
         ptable = new posttable();
         // Create input windows
@@ -181,24 +185,11 @@ function main() {
         addShortCuts();
         // setup status bar
         statusBar = new statusBar();
-			  // Create link management window
-        linksdisplay = new linkVisual();
-        linksdisplay.init();
-				
-				// Create instance of plugin
-        plugin = document.getElementById("plugin");
-        hw = plugin.rePoster();
-        // Set UI callbacks
-        var postuiops = plugin.PostUiOps();
-        postuiops.newpostcb = checkForPost;
-        postuiops.postmetriccb = postmetricupdate;
-        hw.setPostUiOps(postuiops);
-        var networkuiops = plugin.NetworkUiOps();
-        networkuiops.statuschangedcb = statuschanged;
-        networkuiops.accountdisconnectcb = AccountDisconnected;
-        hw.setNetworkUiOps(networkuiops);
-        hw.init();
-       
+        // Create link management window
+        var linkarr = hw.getLinks();
+        var acctarr = hw.getAccounts();
+        linksdisplay.init(acctarr, linkarr);
+		
         // Get repost rolling
         hw.startRepost();
         hw.getInitialPosts();
