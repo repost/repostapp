@@ -128,9 +128,17 @@ this.linkVisual = function() {
                                                     }})
                             .append($('<div>').attr('id','infovis'));
         $('#repost').append(linkBox);
-       displayed = false;
+        displayed = false;
     };
     
+    this.show = function() {
+        if(displayed == false) {
+            linkBox.repostDialog('show');
+            this.create();
+            displayed = true;
+        }
+    };
+ 
     this.create = function(){
         if( created == false) {
             // Create tree and load
@@ -214,15 +222,7 @@ this.linkVisual = function() {
         }
         return acctree.concat(linktree);
     };
-    
-    this.show = function() {
-        if(displayed == false) {
-            linkBox.repostDialog('show');
-            this.create();
-            displayed = true;
-        }
-    };
-
+   
     this.createTreeElement = function(name, id, type){
         if(type == "onlinelink"){
             var obj = {
