@@ -95,9 +95,11 @@ this.linkVisual = function() {
                                  // Run Node handler
                                  if(node.name == "you") {
                                      accountAdder(instance);
+                                 } else if (instance.isAccount(node)) {
+                                     accountOptions(instance, node.name);
+                                     //linkAdder(instance, node.name);
                                  } else {
                                      linkRemover(instance, node.name);
-                                     linkAdder(instance, node.name);
                                  }
                              }
         },
@@ -374,6 +376,41 @@ function stripResource(account){
     return account.replace(/\/.*$/g,"");
 };
 
+this.accountOptions = function(display, acct){
+
+    var dialog;
+    var input;
+    var account = acct;
+    var cbdisplay = display;
+    var instance = this;
+
+    this.init = function(){
+        var la = this;
+        dialog = $('<div>').addClass('accountoptions')
+                    .append($('<div>Add Link</div>')
+                                        .addClass('menuopt')
+                                        .click($.proxy(la.addLink, la)))
+                    .append($('<div>Remove Account</div>')
+                                        .addClass('menuopt')
+                                        .click($.proxy(la.removeAccount, la)))
+                    .repostDialog({modal: false, centred: false});
+       $('#repost').append(dialog);
+       dialog.repostDialog('show');
+    };
+
+    this.removeAccount = function(){
+        accountRemover(display, acct);
+        dialog.remove();
+    };
+
+    this.addLink = function(){
+        linkAdder(display, acct);
+        dialog.remove();
+    };
+
+    this.init();
+};
+
 this.linkAdder = function(display, acct){
 
     var dialog;
@@ -499,9 +536,11 @@ this.accountRemover = function(display, account){
     this.init = function() {
         var ar = this;
         // Trying to delete
-        confirmPopup = $('<div>').append($('<span>'+"Delete Link "
-                                            + dluser + "?" +'</span>')
-                        .addClass('message'))
+        confirmPopup = $('<div>').addClass('linkremover')
+                             .append($('<div>Delete Account</div>')
+                                        .addClass('title'))
+                             .append($('<div>' + account + "?" +'</div>')
+                                        .addClass('user'))
                         .confirmDialog({response: $.proxy(ar.response, ar)});
     };
 
@@ -605,13 +644,13 @@ this.accountRemover = function(display, account){
             },
 
             show : function(){
-                if(opts.modal == true){
-                    var dialog = this;
-                    // Keep moving indexes outwards
-                    var zindex = parseInt($('#mask').css('z-index'));
-                    $('#mask').css({'z-index': zindex+3});
-                    dialog.element.css({'z-index': zindex+4});
+                var dialog = this;
+                // Keep moving indexes outwards
+                var zindex = parseInt($('#mask').css('z-index'));
+                dialog.element.css({'z-index': zindex+4});
 
+                if(opts.modal == true){
+                    $('#mask').css({'z-index': zindex+3});
                     // Get the screen height and width
                     var maskHeight = $(document).height();
                     var maskWidth = $(window).width();
