@@ -161,11 +161,11 @@ var statusBar;
 
 function main() {
     $('document').ready(function(){
+        linksdisplay = new linkVisual();
         // Create instance of plugin
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         // Set UI callbacks
-        linksdisplay = new linkVisual();
         var postuiops = plugin.PostUiOps();
         postuiops.newpostcb = checkForPost;
         postuiops.postmetriccb = postmetricupdate;
@@ -175,6 +175,7 @@ function main() {
         networkuiops.accountdisconnectcb = $.proxy(linksdisplay.accountDisconnected, linksdisplay);
         hw.setNetworkUiOps(networkuiops);
         hw.init();
+        hw.startRepost();
         // Initialise UI
         ptable = new posttable();
         // Create input windows
@@ -191,7 +192,6 @@ function main() {
         linksdisplay.init(acctarr, linkarr);
 		
         // Get repost rolling
-        hw.startRepost();
         hw.getInitialPosts();
         setTimeout("checkStatus()",10000);
     })

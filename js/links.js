@@ -5,16 +5,14 @@ this.linkVisual = function() {
     
     var linkBox; /* send that text */
     var displayed; /* Are we being displayed already? */
-    var linkarr;
-    var acctarr;
+    var linkarr; /* Array of link */
+    var acctarr; /* Array of accounts */
     var instance = this;
-    var vis;
     var fd;
     var labelType = 'Native';
     var nativeTextSupport = true;
     var useGradients = true;
     var animate = true;
-    var created = false;
     var forcegraphset = 
     {
         //id of the visualization container
@@ -56,9 +54,18 @@ this.linkVisual = function() {
                         //count connections
                         var count = 0;
                         node.eachAdjacency(function() { count++; });
+                        // Find account error string
+                        var errorstr = "";
+                        if(instance.isAccount(node)) {
+                            for(count = 0; count < acctarr.length; count++) {
+                                if(stripResource(acctarr[count].user) == node.name) {
+                                    errorstr = acctarr[count].error;
+                                }
+                            }
+                        }
                         //display node info in tooltip
                         tip.innerHTML = "<div class=\"tip-title\">" + node.name + "</div>"
-                            + "<div class=\"tip-text\"><b>connections:</b> " + count + "</div>";
+                            + "<div class=\"tip-text\"><b>connections:</b> " + errorstr + "</div>";
                         }
               },
         // Add node events
@@ -115,37 +122,34 @@ this.linkVisual = function() {
                           }
     };
     
+    this.isAccount = function(node) {
+        return (node.data.$reposttype == "hostobj");
+    };
+
     this.init = function(aa, la) {
         acctarr = aa;
         linkarr = la;
-        // Create linkbox dialog
-        linkBox = $('<div>').addClass('linkbox')
-                            .repostDialog({'modal': true,
-                                        'centred': false,
-                                        'draggable': false,
-                                        'closefunc': function() {
-                                                        displayed = false;
-                                                    }})
-                            .append($('<div>').attr('id','infovis'));
-        $('#repost').append(linkBox);
         displayed = false;
     };
     
     this.show = function() {
         if(displayed == false) {
+            // Create linkbox dialog
+            linkBox = $('<div>').addClass('linkbox')
+                                .repostDialog({'modal': true,
+                                            'centred': false,
+                                            'draggable': false,
+                                            'closefunc': function() {
+                                                            linkBox.remove();
+                                                            displayed = false;
+                                                        }})
+                                .append($('<div>').attr('id','infovis'));
+            $('#repost').append(linkBox);
             linkBox.repostDialog('show');
-            this.create();
-            displayed = true;
-        }
-    };
- 
-    this.create = function(){
-        if( created == false) {
-            // Create tree and load
+            // compute positions incrementally and animate.
             var tree = this.createTree(linkarr, acctarr);
             fd = new $jit.ForceDirected(forcegraphset);
             fd.loadJSON(tree);
-            // compute positions incrementally and animate.
             fd.computeIncremental({
                 iter: 40,
                 property: 'end',
@@ -158,10 +162,10 @@ this.linkVisual = function() {
                     });
                 }
             });
-            created = true;
+            displayed = true;
         }
     };
-
+ 
     this.createTree = function(links, accts) {
         var foundhost = false;
         var linklen = links.length;
@@ -254,7 +258,7 @@ this.linkVisual = function() {
             };
         }else if(type == "offlineacct"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "hostobj",
                 $color:  "#777777",
                 $type:  "circle",
                 $dim:  15
@@ -343,8 +347,15 @@ this.linkVisual = function() {
     };
 
     this.accountDisconnected = function(account, reason) {
-        //var node = fd.graph.getNode(stripResource(account.user));
-        console.log("disconnected " + account.user);
+        var i;
+        if(acctarr) {
+            for(i = 0; i < acctarr.length; i++) {
+                if(acctarr[i].user == account.user) {
+                    acctarr[i].error = reason;
+                    console.log("disconnected " + account.user);
+                }
+            }
+        }
     };
 
     this.createAdjacency = function(nodeto){
