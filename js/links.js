@@ -96,7 +96,7 @@ this.linkVisual = function() {
                                  if(node.name == "you") {
                                      accountAdder(instance);
                                  } else if (instance.isAccount(node)) {
-                                     accountOptions(instance, node.name);
+                                     accountOptions(instance, node.id);
                                      //linkAdder(instance, node.name);
                                  } else {
                                      linkRemover(instance, node.name);
@@ -185,14 +185,14 @@ this.linkVisual = function() {
             var user = stripResource(accts[i].user);
             if(accts[i].status == "online")
             {
-                treeobj = this.createTreeElement(user, user, "onlineacct");
+                treeobj = this.createTreeElement(user, accts[i].user, "onlineacct");
             }
             else
             {
-                treeobj = this.createTreeElement(user, user, "offlineacct");
+                treeobj = this.createTreeElement(user, accts[i].user, "offlineacct");
             }
             acctree.push(treeobj);
-            var adjobj = this.createAdjacency(user);
+            var adjobj = this.createAdjacency(accts[i].user);
             you.adjacencies.push(adjobj);
         }
         // create link tree
@@ -342,6 +342,18 @@ this.linkVisual = function() {
                         });  
             fd.graph.removeNode(node.id);
         }
+    };
+
+    this.removeAccount = function(user) {
+        if(user != "") {
+					var i = 0;
+					for( i = 0; i < acctarr.length; i++) {
+							if( acctarr[i].id = user ) {
+									acctarr.splice(i,1);
+							}
+					}
+					this.removeLink(stripResource(user));
+				}
     };
 
     this.statusChanged = function(account) {
@@ -539,7 +551,7 @@ this.accountRemover = function(display, account){
         confirmPopup = $('<div>').addClass('linkremover')
                              .append($('<div>Delete Account</div>')
                                         .addClass('title'))
-                             .append($('<div>' + account + "?" +'</div>')
+                             .append($('<div>' + stripResource(dlaccount) + "?" +'</div>')
                                         .addClass('user'))
                         .confirmDialog({response: $.proxy(ar.response, ar)});
     };
@@ -549,9 +561,10 @@ this.accountRemover = function(display, account){
             // Remove link from plugin
             var acc = plugin.Account();
             acc.user = dlaccount;
+						acc.type = "XMPP";
             hw.rmAccount(acc);
             // Remove from display
-            cbdisplay.removeLink(dlaccount);
+            cbdisplay.removeAccount(dlaccount);
         }
     };
 
