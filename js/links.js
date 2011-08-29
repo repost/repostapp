@@ -138,14 +138,14 @@ this.linkVisual = function() {
         if(displayed == false) {
             // Create linkbox dialog
             linkBox = $('<div>').addClass('linkbox')
-                                .repostDialog({'modal': true,
-                                            'centred': false,
-                                            'draggable': false,
-                                            'closefunc': function() {
-                                                            linkBox.remove();
-                                                            displayed = false;
-                                                        }})
                                 .append($('<div>').attr('id','infovis'));
+            linkBox.repostDialog({'modal': true,
+                                'centred': false,
+                                'draggable': false,
+                                'closefunc': function() {
+                                                linkBox.remove();
+                                                displayed = false;
+                                            }});
             $('#repost').append(linkBox);
             linkBox.repostDialog('show');
             // compute positions incrementally and animate.
@@ -352,7 +352,7 @@ this.linkVisual = function() {
 									acctarr.splice(i,1);
 							}
 					}
-					this.removeLink(stripResource(user));
+					this.removeLink(user);
 				}
     };
 
@@ -407,7 +407,7 @@ this.accountOptions = function(display, acct){
                                         .click($.proxy(la.removeAccount, la)))
                     .repostDialog({modal: false, centred: false});
        $('#repost').append(dialog);
-       dialog.repostDialog('show');
+       dialog.repostDialog('show','0px', '100px');
     };
 
     this.removeAccount = function(){
@@ -612,125 +612,129 @@ this.accountRemover = function(display, account){
 
 (function(window, $, undefined){
 
-    $.fn.repostDialog = function(options) {
-        var opts = $.extend({}, $.fn.repostDialog.defaults, options);
+    $.Dialog = function( options, element ){
+        this.opts = $.extend({}, $.fn.repostDialog.defaults, options);
+        this.element = $( element );
+        this._create( options );
+    };
 
-        $.Dialog = function( options, element ){
-            this.element = $( element );
-            this._create( options );
-        };
+    $.Dialog.prototype = {
 
-        $.Dialog.prototype = {
+        // sets up widget
+        _create : function( options ) {
+            var dialog = this;
+            this.element
+                    .hide()
+                    .attr('id', 'rpdialog')
+                    .append($('<img src=images/repost_x.gif>')
+                        .addClass('floatclose')
+                        .click(function(){dialog.remove()}));
+            if(this.opts.draggable == true){
+                 this.element.mousedown(function(e){dialog.mdown(e)})
+                            .mouseup(function(e){dialog.mup(e)});
+            }
+        },
 
-            // sets up widget
-            _create : function( options ) {
-                var dialog = this;
-                this.element
-                        .hide()
-                        .attr('id', 'rpdialog')
-                        .append($('<img src=images/repost_x.gif>')
-                            .addClass('floatclose')
-                            .click(function(){dialog.remove()}));
-                if(opts.draggable == true){
-                     this.element.mousedown(function(e){dialog.mdown(e)})
-                                .mouseup(function(e){dialog.mup(e)});
-                }
-            },
+        mdown : function(e){
+            var dialog = this;
+            this.offsetx = dialog.element.offset().left;
+            this.offsety = dialog.element.offset().top;
+            this.startx = e.clientX;
+            this.starty = e.clientY;
+            $(document).mousemove(function(e){dialog.mmove(e)});
+        },
 
-            mdown : function(e){
-                var dialog = this;
-                this.offsetx = dialog.element.offset().left;
-                this.offsety = dialog.element.offset().top;
-                this.startx = e.clientX;
-                this.starty = e.clientY;
-                $(document).mousemove(function(e){dialog.mmove(e)});
-            },
+        mmove : function(e){
+            var dialog = this;
+            dialog.element.offset({top: this.offsety + e.clientY - this.starty,  
+                        left: this.offsetx + e.clientX - this.startx});
+        },
 
-            mmove : function(e){
-                var dialog = this;
-                dialog.element.offset({top: this.offsety + e.clientY - this.starty,  
-                            left: this.offsetx + e.clientX - this.startx});
-            },
+        mup : function(e){
+            $(document).unbind('mousemove');
+        },
 
-            mup : function(e){
-                $(document).unbind('mousemove');
-            },
+        show : function(x, y){
+            var dialog = this;
+            // Keep moving indexes outwards
+            var zindex = parseInt($('#mask').css('z-index'));
+            dialog.element.css({'z-index': zindex+4});
 
-            show : function(){
-                var dialog = this;
-                // Keep moving indexes outwards
+            if(this.opts.modal == true){
+                $('#mask').css({'z-index': zindex+3});
+                // Get the screen height and width
+                var maskHeight = $(document).height();
+                var maskWidth = $(window).width();
+
+                // Set height and width to mask to fill up the whole screen
+                $('#mask').css({'width':maskWidth,'height':maskHeight});
+
+                // transition effect     
+                $('#mask').fadeIn(500);    
+                $('#mask').fadeTo("slow",0.8);  
+                $('#mask').show();
+            }
+            if(this.opts.centred == true){
+                //Get the window height and width
+                var winH = $(window).height();
+                var winW = $(window).width();
+                this.element.css({'top': winH/2-this.element.height()/2, 
+                                    'left': winW/2-this.element.width()/2})
+            } else if( x && y) {
+                this.element.css({'top': y,
+                                    'left': x});
+            }
+            this.element.show();
+        },
+        
+        remove : function(){
+            var kthis = this;
+            this.element.fadeOut('fast', function() {
+                                    kthis.opts.closefunc(kthis.element);
+                                    });
+            if(this.opts.modal == true){
                 var zindex = parseInt($('#mask').css('z-index'));
-                dialog.element.css({'z-index': zindex+4});
-
-                if(opts.modal == true){
-                    $('#mask').css({'z-index': zindex+3});
-                    // Get the screen height and width
-                    var maskHeight = $(document).height();
-                    var maskWidth = $(window).width();
-
-                    // Set height and width to mask to fill up the whole screen
-                    $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-                    // transition effect     
-                    $('#mask').fadeIn(500);    
-                    $('#mask').fadeTo("slow",0.8);  
-                    $('#mask').show();
+                $('#mask').css('z-index', zindex-3);
+                if( (zindex-3) <= 9000){
+                    $('#mask').hide();
                 }
-                if(opts.centred == true){
-                    //Get the window height and width
-                    var winH = $(window).height();
-                    var winW = $(window).width();
-                    this.element.css({'top': winH/2-this.element.height()/2, 
-                                        'left': winW/2-this.element.width()/2})
-                }
-                this.element.show();
-            },
-            
-            remove : function(){
-                var el = this.element;
-                this.element.fadeOut('fast', function() {
-                                        opts.closefunc(el);
-                                        });
-                if(opts.modal == true){
-                    var zindex = parseInt($('#mask').css('z-index'));
-                    $('#mask').css('z-index', zindex-3);
-                    if( (zindex-3) <= 9000){
-                        $('#mask').hide();
-                    }
-                }
-            },
+            }
+        },
 
-        };
- 
-        return this.each(function(){
-            if ( typeof options === 'string' ) {
-                  // call method
-                  var args = Array.prototype.slice.call( arguments, 1 );
+    };
 
-                    var instance = $.data( this, 'rpdialog' );
-                    if ( !instance ) {
-                      logError( "cannot call methods on repostDialog prior to initialization; " +
-                        "attempted to call method '" + options + "'" );
-                      return;
-                    }
-                    if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
-                      logError( "no such method '" + options + "' for repostDialog instance" );
-                      return;
-                    }
-                    // apply method
-                    instance[ options ].apply( instance, args );
+    $.fn.repostDialog = function(options) {
+        if ( typeof options === 'string' ) {
+            // call method
+            var args = Array.prototype.slice.call( arguments, 1 );
+            this.each(function(){
+                var instance = $.data( this, 'rpdialog' );
+                if ( !instance ) {
+                  logError( "cannot call methods on repostDialog prior to initialization; " +
+                    "attempted to call method '" + options + "'" );
+                  return;
+                }
+                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                  logError( "no such method '" + options + "' for repostDialog instance" );
+                  return;
+                }
+                // apply method
+                instance[ options ].apply( instance, args );
+            });
+        } else {
+            this.each(function(){
+                var instance = $.data( this, 'rpdialog' );
+                if ( instance ) {
+                  // apply options & init
+                  instance.option( options || {} );
+                  instance._init();
                 } else {
-                    var instance = $.data( this, 'rpdialog' );
-                    if ( instance ) {
-                      // apply options & init
-                      instance.option( options || {} );
-                      instance._init();
-                    } else {
-                      // initialize new instance
-                      $.data( this, 'rpdialog', new $.Dialog( options, this ) );
-                    }
+                  // initialize new instance
+                  $.data( this, 'rpdialog', new $.Dialog( options, this ) );
                 }
-        });
+            });
+        }
+        return this;
     };
     
     $.fn.repostDialog.defaults = {
