@@ -172,6 +172,7 @@ function main() {
         hw.setPostUiOps(postuiops);
         var networkuiops = plugin.NetworkUiOps();
         networkuiops.statuschangedcb = $.proxy(linksdisplay.statusChanged, linksdisplay);
+        networkuiops.linkstatuschangedcb = $.proxy(linksdisplay.linkStatusChanged, linksdisplay);
         networkuiops.accountdisconnectcb = $.proxy(linksdisplay.accountDisconnected, linksdisplay);
         hw.setNetworkUiOps(networkuiops);
         hw.init();

@@ -130,8 +130,17 @@ this.linkVisual = function() {
     };
 
     this.init = function(aa, la) {
-        acctarr = aa;
-        linkarr = la;
+        if(aa) {
+            acctarr = aa;
+        } else {
+            acctarr = new Array();   
+        }
+
+        if(la) {
+            linkarr = la;
+        } else {
+            linkarr = new Array();   
+        }
         displayed = false;
     };
     
@@ -199,7 +208,7 @@ this.linkVisual = function() {
         // create link tree
         for(var i=0; i<linklen; i++) {
             for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].name == links[i].host) {
+                if(acctree[x].id == links[i].host) {
                     var treeobj; 
                     if(links[i].status == "online") {
                         treeobj = this.createTreeElement(links[i].name,
@@ -285,26 +294,25 @@ this.linkVisual = function() {
             };
     };
     
-    this.addLink = function(user, account) {
-        if(user != "" && account != "") {
-            var treeobj = this.createTreeElement(user, user,"reposterlink");
-            var adj = this.createAdjacency(account);
-            fd.graph.addNode(treeobj);
-            fd.graph.addAdjacence(fd.graph.getNode(account),
-                            fd.graph.getNode(user),adj.data);
-            fd.computeIncremental({
-                iter: 40,
-                property: 'end',
-                onStep:  function(perc){},
-                onComplete: function(){
-                    fd.animate({
-                        modes: ['linear'],
-                        transition: $jit.Trans.Elastic.easeOut,
-                        duration: 2500
-                    });
-                }
-            });
-        }
+    this.addLink = function(link) {
+        linkarr.push(link);
+        var treeobj = this.createTreeElement(link.name, link.name, "reposterlink");
+        var adj = this.createAdjacency(stripResource(link.host));
+        fd.graph.addNode(treeobj);
+        fd.graph.addAdjacence(fd.graph.getNode(stripResource(link.host)),
+                        fd.graph.getNode(link.name),adj.data);
+        fd.computeIncremental({
+            iter: 40,
+            property: 'end',
+            onStep:  function(perc){},
+            onComplete: function(){
+                fd.animate({
+                    modes: ['linear'],
+                    transition: $jit.Trans.Elastic.easeOut,
+                    duration: 2500
+                });
+            }
+        });
     };
 
     this.addAccount = function(account) {
@@ -335,7 +343,7 @@ this.linkVisual = function() {
             node.eachAdjacency(function(adj) {  
                     adj.setData('alpha', 0, 'end');  
                     });  
-            fd.fx.animate({  
+            fd.animate({  
                             modes: ['node-property:alpha',  
                             'edge-property:alpha'],  
                             duration: 500  
@@ -355,6 +363,7 @@ this.linkVisual = function() {
     };
 
     this.statusChanged = function(account) {
+        var i;
         for(i = 0; i < acctarr.length; i++) {
             if(stripResource(acctarr[i].user) == stripResource(account.user)) {
                 acctarr[i] = account;
@@ -362,12 +371,36 @@ this.linkVisual = function() {
                 if(node) {
                     node.setData('color', '#EBB056', 'end');  
                     console.log("status changed " + account.status);
-                    fd.fx.animate({  
+                    fd.animate({  
                                     modes: ['node-property:color'],
                                     duration: 500  
                                 });
                 }
             }
+        }
+    };
+
+    this.linkStatusChanged = function(link) {
+        var i;
+        var found = false;
+        console.log("link status changed " + link.name);
+        for(i = 0; i < linkarr.length; i++) {
+            if(linkarr[i].name == link.name) {
+                linkarr[i] = link;
+                var node = fd.graph.getNode(link.name);
+                if(node) {
+                    node.setData('color', '#EBB056', 'end');  
+                    console.log("link status changed " + link.status);
+                    fd.fx.animate({  
+                                    modes: ['node-property:color'],
+                                    duration: 500  
+                                });
+                }
+                found = true;
+            }
+        }
+        if( !found ) {
+            this.addLink(link);
         }
     };
 
@@ -460,9 +493,10 @@ this.linkAdder = function(display, acct){
             var link = plugin.Link();
             link.name = input.val();
             link.host = account;
-            hw.addLink(link);
             // Display new link
-            cbdisplay.addLink(input.val(), account);
+            cbdisplay.addLink(link);
+            // Add to plugin
+            hw.addLink(link);
         }
     };
     this.init();
