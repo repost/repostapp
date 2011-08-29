@@ -147,6 +147,23 @@ span.name {
     height: 20px;
     width: 20px;
 }
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+    width: 250px;
+    height: 70px;
+}
+#repost .confirmation#rpdialog .ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 90px;
+}
+#repost .confirmation#rpdialog .cancel{
+    position: absolute;
+    top: 50px;
+    left: 140px;
+    width: 90px;
+}
 /* Single Field Popup */
 #repost .singlefield#rpdialog{
     width: 280px;
@@ -171,27 +188,65 @@ span.name {
     width: 250px;
     margin: 15px 5px 15px 0px;
 }
-/* Confirmation Popup */
-#repost .confirmation#rpdialog{
-    width: 250px;
-    height: 70px;
+/* Add Account Dialog */
+#repost .confirmation.accountaddbox#rpdialog {
+    width: 210px;
+    height: 205px;
 }
-#repost .confirmation#rpdialog .message{
-    position:absolute;
-    left:10px;
-    top:10px;
+#repost .confirmation.accountaddbox#rpdialog .title{
+    font-size: x-large;
 }
-#repost .confirmation#rpdialog .ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
+#repost .confirmation.accountaddbox#rpdialog .ok{
+    top: 180px;
+    left: 10px;
 }
-#repost .confirmation#rpdialog .cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
+#repost .confirmation.accountaddbox#rpdialog .cancel{
+    top: 180px;
+    left: 110px;
+}
+#repost .confirmation.accountaddbox#rpdialog input.username{
+    width: 200px;
+}
+#repost .confirmation.accountaddbox#rpdialog input.password{
+    width: 200px;
+}
+/* Add Link Dialog */
+#repost .confirmation.linkaddbox#rpdialog {
+    width: 210px;
+    height: 110px;
+}
+#repost .confirmation.linkaddbox#rpdialog .title{
+    font-size: x-large;
+}
+#repost .confirmation.linkaddbox#rpdialog .ok{
+    top: 90px;
+    left: 10px;
+}
+#repost .confirmation.linkaddbox#rpdialog .cancel{
+    top: 90px;
+    left: 110px;
+}
+#repost .confirmation.linkaddbox#rpdialog input.linkinput{
+    width: 200px;
+}
+/* Remove Link Dialog */
+#repost .confirmation.linkremover#rpdialog {
+    width: 210px;
+    height: 90px;
+}
+#repost .confirmation.linkremover#rpdialog .title{
+    font-size: x-large;
+}
+#repost .confirmation.linkremover#rpdialog .ok{
+    top: 70px;
+    left: 10px;
+}
+#repost .confirmation.linkremover#rpdialog .cancel{
+    top: 70px;
+    left: 110px;
+}
+#repost .confirmation.linkremover#rpdialog input.linkinput{
+    width: 200px;
 }
 /**
  * Links
