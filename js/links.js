@@ -90,18 +90,19 @@ this.linkVisual = function() {
                              this.onDragMove(node, eventInfo, e);
                     },
                     //Add also a click handler to nodes
-                    onClick: function(node) {
-                                 if(!node) return;
-                                 // Run Node handler
-                                 if(node.name == "you") {
-                                     accountAdder(instance);
-                                 } else if (instance.isAccount(node)) {
-                                     accountOptions(instance, node.id);
-                                     //linkAdder(instance, node.name);
-                                 } else {
-                                     linkRemover(instance, node.name);
-                                 }
+                    onClick: function(node, eventInfo, e) {
+                             var pos = { x: e.clientX, y: e.clientY};
+                             if(!node) return;
+                             // Run Node handler
+                             if(node.name == "you") {
+                                 accountAdder(instance);
+                             } else if (instance.isAccount(node)) {
+                                 accountOptions(instance, node.id, pos);
+                                 //linkAdder(instance, node.name);
+                             } else {
+                                 linkRemover(instance, node.name);
                              }
+                         }
         },
         //Number of iterations for the FD algorithm
         iterations: 200,
@@ -307,25 +308,24 @@ this.linkVisual = function() {
     };
 
     this.addAccount = function(account) {
-        if(account != "") {
-            var treeobj = this.createTreeElement(account, account,"offlineacct");
-            var adj = this.createAdjacency(account);
-            fd.graph.addNode(treeobj);
-            fd.graph.addAdjacence(fd.graph.getNode("you"),
-                            fd.graph.getNode(account),adj.data);
-            fd.computeIncremental({
-                iter: 40,
-                property: 'end',
-                onStep:  function(perc){},
-                onComplete: function(){
-                    fd.animate({
-                        modes: ['linear'],
-                        transition: $jit.Trans.Elastic.easeOut,
-                        duration: 2500
-                    });
-                }
-            });
-        }
+        acctarr.push(account);
+        var treeobj = this.createTreeElement(stripResource(account.user), account.user, "offlineacct");
+        var adj = this.createAdjacency(account.user);
+        fd.graph.addNode(treeobj);
+        fd.graph.addAdjacence(fd.graph.getNode("you"),
+                        fd.graph.getNode(account.user), adj.data);
+        fd.computeIncremental({
+            iter: 40,
+            property: 'end',
+            onStep:  function(perc){},
+            onComplete: function(){
+                fd.animate({
+                    modes: ['linear'],
+                    transition: $jit.Trans.Elastic.easeOut,
+                    duration: 2500
+                });
+            }
+        });
     };
 
     this.removeLink = function(user) {
@@ -345,29 +345,38 @@ this.linkVisual = function() {
     };
 
     this.removeAccount = function(user) {
-        if(user != "") {
-					var i = 0;
-					for( i = 0; i < acctarr.length; i++) {
-							if( acctarr[i].id = user ) {
-									acctarr.splice(i,1);
-							}
-					}
-					this.removeLink(user);
-				}
+        var i = 0;
+        for( i = 0; i < acctarr.length; i++) {
+                if( stripResource(acctarr[i].user) == stripResource(user) ) {
+                        acctarr.splice(i,1);
+                }
+        }
+        this.removeLink(user);
     };
 
     this.statusChanged = function(account) {
-        console.log("HELLO " + account.user);
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                acctarr[i] = account;
+                var node = fd.graph.getNode(stripResource(account.user));
+                if(node) {
+                    node.setData('color', '#EBB056', 'end');  
+                    console.log("status changed " + account.status);
+                    fd.fx.animate({  
+                                    modes: ['node-property:color'],
+                                    duration: 500  
+                                });
+                }
+            }
+        }
     };
 
     this.accountDisconnected = function(account, reason) {
         var i;
-        if(acctarr) {
-            for(i = 0; i < acctarr.length; i++) {
-                if(acctarr[i].user == account.user) {
-                    acctarr[i].error = reason;
-                    console.log("disconnected " + account.user);
-                }
+        console.log(reason);
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                acctarr[i].error = reason;
             }
         }
     };
@@ -388,7 +397,7 @@ function stripResource(account){
     return account.replace(/\/.*$/g,"");
 };
 
-this.accountOptions = function(display, acct){
+this.accountOptions = function(display, acct, coords){
 
     var dialog;
     var input;
@@ -407,7 +416,7 @@ this.accountOptions = function(display, acct){
                                         .click($.proxy(la.removeAccount, la)))
                     .repostDialog({modal: false, centred: false});
        $('#repost').append(dialog);
-       dialog.repostDialog('show','0px', '100px');
+       dialog.repostDialog('show', coords.x, coords.y);
     };
 
     this.removeAccount = function(){
@@ -526,14 +535,15 @@ this.accountAdder = function(display){
     
     this.response = function(rep){
         if(rep && username.val() && password.val() && type.val()){
-            // Add Account to plugin
             var acc = plugin.Account();
             acc.user = username.val();
             acc.pass = password.val();
             acc.type = type.val();
+            // Add to display. Needs to be first as plugin is too fast with
+            // status updates.
+            display.addAccount(acc);
+            // Add Account to plugin
             hw.addAccount(acc);
-            // Add to display
-            display.addAccount(username.val());
         }
     };
     this.init();
@@ -558,13 +568,13 @@ this.accountRemover = function(display, account){
 
     this.response = function(rep) {
         if(rep == true) {
+            // Remove from display
+            cbdisplay.removeAccount(dlaccount);
             // Remove link from plugin
             var acc = plugin.Account();
             acc.user = dlaccount;
 						acc.type = "XMPP";
             hw.rmAccount(acc);
-            // Remove from display
-            cbdisplay.removeAccount(dlaccount);
         }
     };
 
