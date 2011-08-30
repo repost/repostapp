@@ -5,8 +5,8 @@ this.linkVisual = function() {
     
     var linkBox; /* send that text */
     var displayed; /* Are we being displayed already? */
-    var linkarr; /* Array of link */
-    var acctarr; /* Array of accounts */
+    var linkarr = new Array(); /* Array of link */
+    var acctarr = new Array(); /* Array of accounts */
     var instance = this;
     var fd;
     var labelType = 'Native';
@@ -126,21 +126,10 @@ this.linkVisual = function() {
     };
     
     this.isAccount = function(node) {
-        return (node.data.$reposttype == "hostobj");
+        return (node.data.$reposttype == "account");
     };
 
-    this.init = function(aa, la) {
-        if(aa) {
-            acctarr = aa;
-        } else {
-            acctarr = new Array();   
-        }
-
-        if(la) {
-            linkarr = la;
-        } else {
-            linkarr = new Array();   
-        }
+    this.init = function() {
         displayed = false;
     };
     
@@ -186,40 +175,22 @@ this.linkVisual = function() {
         var acctree = new Array();
         
         // create you at the center
-        var you = this.createTreeElement("you", "you", "you");
+        var acctyou = {user: "you", host: "you", status: "you"};
+        var you = this.createAcctElement(acctyou);
         acctree.push(you);
 
         // create account tree
         for(var i=0; i<acctlen; i++) {
-            var treeobj;
-            var user = stripResource(accts[i].user);
-            if(accts[i].status == "online")
-            {
-                treeobj = this.createTreeElement(user, accts[i].user, "onlineacct");
-            }
-            else
-            {
-                treeobj = this.createTreeElement(user, accts[i].user, "offlineacct");
-            }
+            var treeobj = this.createAcctElement(accts[i]);
             acctree.push(treeobj);
-            var adjobj = this.createAdjacency(accts[i].user);
+            var adjobj = this.createAdjacency(stripResource(accts[i].user));
             you.adjacencies.push(adjobj);
         }
         // create link tree
         for(var i=0; i<linklen; i++) {
             for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].id == links[i].host) {
-                    var treeobj; 
-                    if(links[i].status == "online") {
-                        treeobj = this.createTreeElement(links[i].name,
-                                            links[i].name, "onlinelink");
-                    }else if(links[i].status == "reposter") {
-                        treeobj = this.createTreeElement(links[i].name, 
-                                            links[i].name, "reposterlink");
-                    }else{
-                        treeobj = this.createTreeElement(links[i].name,
-                                            links[i].name, "offlinelink");
-                    }
+                if(acctree[x].id == stripResource(links[i].host)) {
+                    var treeobj = this.createLinkElement(links[i]);
                     var adjobj = this.createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
@@ -239,101 +210,129 @@ this.linkVisual = function() {
         return acctree.concat(linktree);
     };
    
-    this.createTreeElement = function(name, id, type){
-        if(type == "onlinelink"){
+    this.createLinkElement = function(link) {
+        if(link.status == "online"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#C74243",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "reposterlink"){
+        }else if(link.status == "reposter"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#00BB3F",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "offlinelink"){
+        }else if(link.status == "offline"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#777777",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "onlineacct"){
+        }
+
+        return {
+                name: link.name,
+                id: link.name,
+                data: obj,
+                adjacencies: new Array()
+            };
+    };
+
+    this.createAcctElement = function(account) {
+        if(account.status == "online"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#EBB056",
                 $type:  "circle",
                 $dim:  25
             };
-        }else if(type == "offlineacct"){
+        }else if(account.status == "offline"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#777777",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "you"){
+        }else if(account.status == "you"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#EBB056",
                 $type:  "circle",
                 $dim:  30
             };
-        }else{
-            return;
         }
 
         return {
-                name: name,
-                id: id,
+                name: stripResource(account.user),
+                id: stripResource(account.user),
                 data: obj,
                 adjacencies: new Array()
             };
     };
     
     this.addLink = function(link) {
-        linkarr.push(link);
-        var treeobj = this.createTreeElement(link.name, link.name, "reposterlink");
-        var adj = this.createAdjacency(stripResource(link.host));
-        fd.graph.addNode(treeobj);
-        fd.graph.addAdjacence(fd.graph.getNode(stripResource(link.host)),
-                        fd.graph.getNode(link.name),adj.data);
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
+        // Does link already exist in array
+        var i;
+        var found = false;
+        for(i = 0; i < linkarr.length; i++) {
+            if(linkarr[i].name == link.name) {
+                found = true;
+            }
+        }
+        if(!found) {
+            linkarr.push(link);
+            // Do we need to display
+            if(displayed) {
+                var treeobj = this.createLinkElement(link);
+                var adj = this.createAdjacency(stripResource(link.host));
+                fd.graph.addNode(treeobj);
+                fd.graph.addAdjacence(fd.graph.getNode(stripResource(link.host)),
+                                fd.graph.getNode(link.name), adj.data);
+                fd.computeIncremental({
+                    iter: 40,
+                    property: 'end',
+                    onStep:  function(perc){},
+                    onComplete: function(){
+                        fd.animate({
+                            modes: ['linear'],
+                            transition: $jit.Trans.Elastic.easeOut,
+                            duration: 2500
+                        });
+                    }
                 });
             }
-        });
+        }
     };
 
-    this.addAccount = function(account) {
-        acctarr.push(account);
-        var treeobj = this.createTreeElement(stripResource(account.user), account.user, "offlineacct");
-        var adj = this.createAdjacency(account.user);
-        fd.graph.addNode(treeobj);
-        fd.graph.addAdjacence(fd.graph.getNode("you"),
-                        fd.graph.getNode(account.user), adj.data);
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
+    this.linkStatusChanged = function(link) {
+        var i;
+        var found = false;
+        console.log("Link " + link.name + " status " + link.status);
+        for(i = 0; i < linkarr.length; i++) {
+            if(linkarr[i].name == link.name) {
+                linkarr[i].status = link.status;
+                // If we are displayed we need to update
+                if( displayed ) {
+                    var node = fd.graph.getNode(link.name);
+                    var newnode = this.createLinkElement(link);
+                    if(node) {
+                        node.setData('color', newnode.$color, 'end');  
+                        fd.fx.animate({  
+                            modes: ['node-property:color'],
+                            duration: 500  
+                        });
+                    }
+                    found = true;
+                }
             }
-        });
+        }
+        if( !found ) {
+            this.addLink(link);
+        }
     };
 
     this.removeLink = function(user) {
@@ -342,71 +341,105 @@ this.linkVisual = function() {
             node.setData('alpha', 0, 'end');  
             node.eachAdjacency(function(adj) {  
                     adj.setData('alpha', 0, 'end');  
-                    });  
+                });  
             fd.animate({  
-                            modes: ['node-property:alpha',  
-                            'edge-property:alpha'],  
-                            duration: 500  
-                        });  
+                    modes: ['node-property:alpha',  
+                    'edge-property:alpha'],  
+                    duration: 500  
+                });  
             fd.graph.removeNode(node.id);
+        }
+    };
+
+    this.addAccount = function(account) {
+        // Does link already exist in array
+        var i;
+        var found = false;
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                found = true;
+            }
+        }
+        if(!found) {
+            acctarr.push(account);
+            if(displayed) {
+                var treeobj = this.createAcctElement(account);
+                var adj = this.createAdjacency(stripResource(account.user));
+                fd.graph.addNode(treeobj);
+                fd.graph.addAdjacence(fd.graph.getNode("you"),
+                                fd.graph.getNode(account.user), adj.data);
+                fd.computeIncremental({
+                    iter: 40,
+                    property: ['end' ],
+                    onStep:  function(perc){},
+                    onComplete: function(){
+                        fd.fx.animate({
+                            modes: ['linear'],
+                            transition: $jit.Trans.Elastic.easeOut,
+                            duration: 2500
+                        });
+                        fd.plot();
+                    }
+                });
+            }
+        }
+    };
+
+    this.statusChanged = function(account) {
+        var i;
+        var found = false;
+        console.log("Account " + account.user + " status " + account.status);
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                acctarr[i].status = account.status;
+                if(displayed) {
+                    var node = fd.graph.getNode(stripResource(account.user));
+                    var newnode = this.createAcctElement(account);
+                    if(node) {
+                        node.setData('color', newnode.$color, 'end');  
+                        //node.setData('dim', newnode.$dim, 'end');  
+                        fd.computeIncremental({
+                                iter: 40,
+                                property: 'end',
+                                onStep:  function(perc){},
+                                onComplete: function(){
+                                    fd.fx.animate({  
+                                        modes: ['node-property:color', 'node-property:dim'],
+                                        duration: 500  
+                                    });
+                                }
+                        });
+                    }
+                }
+                found = true;
+            }
+        }
+        if(!found) {
+            this.addAccount(account);
         }
     };
 
     this.removeAccount = function(user) {
         var i = 0;
+        // Remove account from array
         for( i = 0; i < acctarr.length; i++) {
                 if( stripResource(acctarr[i].user) == stripResource(user) ) {
                         acctarr.splice(i,1);
                 }
         }
+        // Remove links from array
+        for( i = linkarr.length - 1;  i >= 0; i--) {
+                if( stripResource(linkarr[i].host) == stripResource(user) ) {
+                        this.removeLink(linkarr[i].name);
+                        linkarr.splice(i,1);
+                }
+        }
         this.removeLink(user);
-    };
-
-    this.statusChanged = function(account) {
-        var i;
-        for(i = 0; i < acctarr.length; i++) {
-            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
-                acctarr[i] = account;
-                var node = fd.graph.getNode(stripResource(account.user));
-                if(node) {
-                    node.setData('color', '#EBB056', 'end');  
-                    console.log("status changed " + account.status);
-                    fd.animate({  
-                                    modes: ['node-property:color'],
-                                    duration: 500  
-                                });
-                }
-            }
-        }
-    };
-
-    this.linkStatusChanged = function(link) {
-        var i;
-        var found = false;
-        console.log("link status changed " + link.name);
-        for(i = 0; i < linkarr.length; i++) {
-            if(linkarr[i].name == link.name) {
-                linkarr[i] = link;
-                var node = fd.graph.getNode(link.name);
-                if(node) {
-                    node.setData('color', '#EBB056', 'end');  
-                    console.log("link status changed " + link.status);
-                    fd.fx.animate({  
-                                    modes: ['node-property:color'],
-                                    duration: 500  
-                                });
-                }
-                found = true;
-            }
-        }
-        if( !found ) {
-            this.addLink(link);
-        }
     };
 
     this.accountDisconnected = function(account, reason) {
         var i;
-        console.log(reason);
+        console.log("Account " + account.user + " " + reason);
         for(i = 0; i < acctarr.length; i++) {
             if(stripResource(acctarr[i].user) == stripResource(account.user)) {
                 acctarr[i].error = reason;
@@ -573,6 +606,7 @@ this.accountAdder = function(display){
             acc.user = username.val();
             acc.pass = password.val();
             acc.type = type.val();
+            acc.status = "offline";
             // Add to display. Needs to be first as plugin is too fast with
             // status updates.
             display.addAccount(acc);
