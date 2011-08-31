@@ -227,31 +227,31 @@
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-.captioninput{
+#repost .captioninput{
     position: absolute;
     left:100px;
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-.content{
+#repost .content{
     position:absolute;
     left:10px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.contentinput{
+#repost .contentinput{
     position:absolute;
     left:100px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.sendtext{
+#repost .sendtext{
     position:absolute;
     left:150px;
     top:110px;
     width:130px;
 }
-.contenttext{
+#repost .contenttext{
 }
 
 /**
