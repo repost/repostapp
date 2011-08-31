@@ -57,7 +57,7 @@
             this.element
                     .hide()
                     .attr('id', 'rpdialog')
-                    .append($('<img src=images/repost_x.gif>')
+                    .append($('<img src=' + chrome.extension.getURL('images/repost_x.gif>'))
                         .addClass('floatclose')
                         .click(function(){dialog.remove()}));
             if(this.opts.draggable == true){
