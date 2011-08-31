@@ -1,4 +1,73 @@
 /**
+ * Floating Boxes
+ */
+#repost div#rpdialog{
+    opacity:0.95;
+    position: fixed;
+    margin: auto;
+    background:#ececec;
+    box-shadow:2px 2px 5px #000;
+    padding: 7px 10px 7px 10px;
+    z-index: 8999;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+}
+#repost #rpdialog label{
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    margin: 0 5px 0 0 ;
+}
+#repost #rpdialog img.floatclose {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
+}
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+    width: 250px;
+    height: 70px;
+}
+#repost .confirmation#rpdialog .ok{
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 90px;
+}
+#repost .confirmation#rpdialog .cancel{
+    position: absolute;
+    top: 50px;
+    left: 140px;
+    width: 90px;
+}
+/* ItemPostBox */
+#repost .confirmation.itempostbox#rpdialog {
+    width: 320px;
+    height: 70px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.itempostbox#rpdialog div.label {
+}
+#repost .confirmation.itempostbox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    top: 35px;
+    position: absolute;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.itempostbox#rpdialog button.ok {
+    top: 35px;
+    left: 280px;
+    height: 30px;
+    width: 50px;
+}
+#repost .confirmation.itempostbox#rpdialog button.cancel {
+    display: none;
+}
+/**
  * Generic floating box
  */
 div.repostdialog.floater{

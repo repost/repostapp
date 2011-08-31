@@ -2,6 +2,7 @@ this.itemPostBox = function(sendPostCB){
 
     // Dialog
     var itemPostBox;
+    var displayed = false;
 
     // Content
     var ipb = this;
@@ -24,7 +25,12 @@ this.itemPostBox = function(sendPostCB){
 
         // Create Dialog
         caption = $('<input>').addClass('caption')
-                            .click(ipb.submitPost);
+                            .keypress(function(e) {
+                                        if(e.which == 13) {
+                                            ipb.submitPost(true);
+                                            itemPostBox.confirmDialog('remove');
+                                        }
+                            });
         itemPostBox = $('<div>').addClass('itempostbox')
                                 .append($('<div>Comment:</div>')
                                             .addClass('label'))
@@ -43,10 +49,11 @@ this.itemPostBox = function(sendPostCB){
             curpost.setCaption(caption.val());
             spCB(curpost);
         }
+        displayed = false;
     };
 
     this.imgClickListener = function(e) {
-        if(e.altKey) {
+        if(e.altKey && !displayed) {
             curpost = new postImage();
             curpost.setImage(e.currentTarget.src);
             image = e.currentTarget.src;

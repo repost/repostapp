@@ -26,6 +26,10 @@
             dialog.element.repostDialog('show');
         },
 
+        remove: function() {
+            this.element.repostDialog('remove');
+        },
+
         ok : function(sf) {
             this.opts.response(true);
             this.element.repostDialog('remove');
