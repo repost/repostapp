@@ -67,4 +67,30 @@
 #repost .confirmation.itempostbox#rpdialog button.cancel {
     display: none;
 }
+/* TextPostBox */
+#repost .confirmation.textpostbox#rpdialog {
+    width: 320px;
+    height: 70px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.textpostbox#rpdialog div.label {
+}
+#repost .confirmation.textpostbox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    top: 35px;
+    position: absolute;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.textpostbox#rpdialog button.ok {
+    top: 35px;
+    left: 280px;
+    height: 30px;
+    width: 50px;
+}
+#repost .confirmation.textpostbox#rpdialog button.cancel {
+    display: none;
+}
 
