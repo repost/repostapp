@@ -129,7 +129,14 @@ this.linkVisual = function() {
         return (node.data.$reposttype == "account");
     };
 
-    this.init = function() {
+    this.init = function(accts, links) {
+	      var i;
+				for(i=0; i < accts.length; i++) {
+					this.addAccount(accts[i]);
+				}
+				for(i=0; i < links.length; i++) {
+					this.addLink(links[i]);
+				}
         displayed = false;
     };
     
@@ -335,7 +342,19 @@ this.linkVisual = function() {
         }
     };
 
-    this.removeLink = function(user) {
+		this.removeLink = function(user) {
+        if(user != "") {
+					var i;
+					for( i=0; i < linkarr.length; i++) {
+						if(linkarr[i].name == user) {
+							linkarr.splice(i,1);
+						}
+					}
+					this.removeId(user);
+        }
+    };
+
+    this.removeId = function(user) {
         if(user != "") {
             var node = fd.graph.getNode(user);
             node.setData('alpha', 0, 'end');  
@@ -370,7 +389,7 @@ this.linkVisual = function() {
                                 fd.graph.getNode(account.user), adj.data);
                 fd.computeIncremental({
                     iter: 40,
-                    property: ['end' ],
+                    property: ['end', 'start', 'current'],
                     onStep:  function(perc){},
                     onComplete: function(){
                         fd.fx.animate({
@@ -378,7 +397,6 @@ this.linkVisual = function() {
                             transition: $jit.Trans.Elastic.easeOut,
                             duration: 2500
                         });
-                        fd.plot();
                     }
                 });
             }
@@ -434,7 +452,7 @@ this.linkVisual = function() {
                         linkarr.splice(i,1);
                 }
         }
-        this.removeLink(user);
+        this.removeId(user);
     };
 
     this.accountDisconnected = function(account, reason) {
@@ -526,6 +544,7 @@ this.linkAdder = function(display, acct){
             var link = plugin.Link();
             link.name = input.val();
             link.host = account;
+						link.status = "offline";
             // Display new link
             cbdisplay.addLink(link);
             // Add to plugin

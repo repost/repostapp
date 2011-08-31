@@ -190,7 +190,7 @@ function main() {
         // Create link management window
         var linkarr = hw.getLinks();
         var acctarr = hw.getAccounts();
-        linksdisplay.init();
+        linksdisplay.init(acctarr, linkarr);
 		
         // Get repost rolling
         hw.getInitialPosts();

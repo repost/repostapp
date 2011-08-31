@@ -248,6 +248,13 @@ span.name {
 #repost .confirmation.linkremover#rpdialog input.linkinput{
     width: 200px;
 }
+/* rpdialog submenu */
+#repost #rpdialog div.menuopt{
+		cursor: pointer;
+}
+#repost #rpdialog div.menuopt:hover{
+    background:#777777;
+};
 /**
  * Links
  */
