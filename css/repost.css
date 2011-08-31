@@ -254,7 +254,33 @@ span.name {
 }
 #repost #rpdialog div.menuopt:hover{
     background:#777777;
-};
+}
+/* ItemPostBox */
+#repost .confirmation.itempostbox#rpdialog {
+    width: 320px;
+    height: 70px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.itempostbox#rpdialog div.label {
+}
+#repost .confirmation.itempostbox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    top: 35px;
+    position: absolute;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.itempostbox#rpdialog button.ok {
+    top: 35px;
+    left: 280px;
+    height: 30px;
+    width: 50px;
+}
+#repost .confirmation.itempostbox#rpdialog button.cancel {
+    display: none;
+}
 /**
  * Links
  */
@@ -417,7 +443,7 @@ body {
      -khtml-user-select: none; /* webkit browsers */
     background: #ececec;
 }
-#mask {
+#repost #mask {
     position: fixed;
     display: none;
     top: 0px;

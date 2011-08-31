@@ -14,10 +14,10 @@
         _create: function(options) {
             var dialog = this;
             dialog.element.addClass("confirmation")
-                .append($('<button>Ok</button>')
+                .append($('<button>'+dialog.opts.oktext+'</button>')
                             .addClass('ok')
                             .click(function(){dialog.ok()}))
-                .append($('<button>Cancel</button>')
+                .append($('<button>'+dialog.opts.canceltext+'</button>')
                             .addClass('cancel')
                             .click(function(){dialog.cancel()}))
                 .repostDialog({'modal': true, 
@@ -72,7 +72,9 @@
     };
        
     $.fn.confirmDialog.defaults = {
-        response: function(){}
+        response: function(){},
+        oktext: "Ok",
+        canceltext: "Cancel"
     };
 
 })(window, $);   

@@ -25,28 +25,28 @@ this.itemPostBox = function(sendPostCB){
         // Create Dialog
         caption = $('<input>').addClass('caption')
                             .click(ipb.submitPost);
-        itemPostBox = $('<div>').addClass('imagepostbox')
+        itemPostBox = $('<div>').addClass('itempostbox')
                                 .append($('<div>Comment:</div>')
                                             .addClass('label'))
-                                .repostDialog();
-        $('#repost').append(itemPostBox);
-        itemPostBox.repostDialog('show');
+                                .append(caption)
+                                .confirmDialog({response: $.proxy(ipb.submitPost, ipb)});
+        caption.focus();
     };
 
-    this.clear = function(){
+    this.clear = function() {
         caption.val('');
         image = "";
     };
 
-    this.submitPost = function(response){
-        if(response){
+    this.submitPost = function(response) {
+        if(response) {
             curpost.setCaption(caption.val());
             spCB(curpost);
         }
     };
 
-    this.imgClickListener = function(e){
-        if(e.altKey){
+    this.imgClickListener = function(e) {
+        if(e.altKey) {
             curpost = new postImage();
             curpost.setImage(e.currentTarget.src);
             image = e.currentTarget.src;
