@@ -2,35 +2,75 @@
 // Repost dialog with the permanent addition of an ok and cancel
 (function(window, $, undefined){
 
-    $.fn.confirmDialog = function(options) {
-        var opts = $.extend({}, $.fn.confirmDialog.defaults, options);
-        
-        var ok = function(sf){
-            opts.response(true);
-            $(sf).repostDialog('remove');
-        };
+    $.ConfirmDialog = function( options, element ){
+        this.opts = $.extend({}, $.fn.confirmDialog.defaults, options);
+        this.element = $( element );
+        this._create( options );
 
-        var cancel = function(sf){
-            opts.response(false);
-            $(sf).repostDialog('remove');
-        };
-
-        return this.each(function(){
-            var sf = this;  
-            $(this).addClass("confirmation")
-                .append($('<button>Ok</button>')
-                            .addClass('ok')
-                            .click(function(){ok(sf)}))
-                .append($('<button>Cancel</button>')
-                            .addClass('cancel')
-                            .click(function(){cancel(sf)}))
-                .repostDialog({'modal': true, 
-                                'centred': true});
-            $('#repost').append(this);
-            $(this).repostDialog('show');
-        });
     };
     
+    $.ConfirmDialog.prototype = {
+        
+        _create: function(options) {
+            var dialog = this;
+            dialog.element.addClass("confirmation")
+                .append($('<button>Ok</button>')
+                            .addClass('ok')
+                            .click(function(){dialog.ok()}))
+                .append($('<button>Cancel</button>')
+                            .addClass('cancel')
+                            .click(function(){dialog.cancel()}))
+                .repostDialog({'modal': true, 
+                                'centred': true});
+            $('#repost').append(dialog.element);
+            dialog.element.repostDialog('show');
+        },
+
+        ok : function(sf) {
+            this.opts.response(true);
+            this.element.repostDialog('remove');
+        },
+
+        cancel : function(sf) {
+            this.opts.response(false);
+            this.element.repostDialog('remove');
+        }
+    };
+
+    $.fn.confirmDialog = function(options) {
+         if ( typeof options === 'string' ) {
+            // call method
+            var args = Array.prototype.slice.call( arguments, 1 );
+            this.each(function(){
+                var instance = $.data( this, 'confirmation' );
+                if ( !instance ) {
+                  logError( "cannot call methods on repostDialog prior to initialization; " +
+                    "attempted to call method '" + options + "'" );
+                  return;
+                }
+                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                  logError( "no such method '" + options + "' for repostDialog instance" );
+                  return;
+                }
+                // apply method
+                instance[ options ].apply( instance, args );
+            });
+        } else {
+            this.each(function(){
+                var instance = $.data( this, 'confirmation' );
+                if ( instance ) {
+                  // apply options & init
+                  instance.option( options || {} );
+                  instance._init();
+                } else {
+                  // initialize new instance
+                  $.data( this, 'confirmation', new $.ConfirmDialog( options, this ) );
+                }
+            });
+        }
+        return this;
+    };
+       
     $.fn.confirmDialog.defaults = {
         response: function(){}
     };
