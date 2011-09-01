@@ -1,116 +1,115 @@
+(function(window, $, undefined){
 
-// Post Image class. Image content class.
-this.postImage = function(){
-
-    // image post specific
-    var image;
-    var caption;
-    var context;
-    
-    // holders for uuid and metric
-    var uuid;
-    var metric;
-
-    this.setUuid = function(u){
-        uuid = u;
+    $.ImagePost = function( options, element ){
+        this.opts = $.extend({}, $.fn.imagepost.defaults, options);
+        this.element = $( element );
+        this.loadFromJSON(this.opts.json);
+        this._create( options );
     };
 
-    this.setMetric = function(m){
-        metric = m;
-    };
+    $.ImagePost.prototype = {
 
-    this.setCaption = function(cap){
-        caption = cap;
-    };
+        // sets up widget
+        _create : function( options ) {
+            this.element.addClass('imagepost');
 
-    this.setContext = function(con){
-        context = con;
-    };
+            this.ipost = $('<a>').attr('href', this.context)
+                .append($('<image>').addClass('imagepreview')
+                                .attr('src', this.image)
+                                .attr('alt', this.caption)
+                                .attr('title', this.caption));
 
-    this.setImage = function(i){
-        image = i;
-    };
+            // only use lightbox for pics
+            patt=/(jpg|png|gif|bmp)/;
+            if ( this.context.match (patt))
+            {
+                this.ipost.addClass('lightbox');
+            }
+            else
+            {
+                this.ipost.attr('target', '_blank');
+            }
+            
+            this.element.append(this.ipost);
+            this.element.post({uuid: this.uuid, metric: this.metric, masktext: this.caption});
+        },
 
-    this.getUuid = function(u){
-        return uuid;
-    };
+        // Load from json packed up in content
+        loadFromJSON : function(content){
+            this.image = content["image"];
+            this.context = content["context"];
+            this.caption = content["caption"];
+        },
 
-    this.getMetric = function(m){
-        return metric;
-    };
-
-    this.getCaption = function(cap){
-        return caption;
-    };
-
-    this.getContext = function(con){
-        return context;
-    };
-
-    this.getImage = function(i){
-        return image;
-    };
-
-    // Construct image content from its parts
-    this.getXml = function() {
-        var imagepost = document.createElement("div");
-        imagepost.className = "imagepost"
-
-        var previewimage = document.createElement("img");
-        previewimage.className = "imagepreview";
-        previewimage.src = image;
-        previewimage.alt = caption;
-        previewimage.title = caption;
-
-        var contextlink = document.createElement('a');
-        contextlink.href = context;
-        // only use lightbox for pics
-        patt=/(jpg|png|gif|bmp)/;
-        if ( context.match (patt))
-        {
-            contextlink.className = "lightbox";
+        toJSON : function() {
+            var j = {
+                "cname" : "postImage",
+                "image" : this.image,
+                "context" : this.context,
+                "caption" : this.caption
+            };
+            return j;
         }
-        else
-        {
-            contextlink.target = "_blank";
-        }
-        contextlink.appendChild(previewimage);
-        imagepost.appendChild(contextlink);
+       
+    };
 
-        /*
-        var previewcaption = document.createElement("div");
-        previewcaption.className = "imagepostcaption postcaption";
-        previewcaption.innerHTML = caption;
-        imagepost.appendChild(previewcaption);
-        */
-        var xmlpost = xmlPost(uuid, metric);
-        xmlpost.appendChild(imagepost);
-        return xmlpost;
+    $.fn.imagepost = function(options) {
+        if ( typeof options === 'string' ) {
+            // call method
+            var args = Array.prototype.slice.call( arguments, 1 );
+            this.each(function(){
+                var instance = $.data( this, 'imagepost' );
+                if ( !instance ) {
+                  logError( "cannot call methods on imagepost prior to initialization; " +
+                    "attempted to call method '" + options + "'" );
+                  return;
+                }
+                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                  logError( "no such method '" + options + "' for imagepost instance" );
+                  return;
+                }
+                // apply method
+                instance[ options ].apply( instance, args );
+            });
+        } else {
+            this.each(function(){
+                var instance = $.data( this, 'imagepost' );
+                if ( instance ) {
+                  // apply options & init
+                  instance.option( options || {} );
+                  instance._init();
+                } else {
+                  // initialize new instance
+                  $.data( this, 'imagepost', new $.ImagePost( options, this ) );
+                }
+            });
+        }
+        return this;
     };
     
-    // Load from json packed up in content
-    this.loadFromJSON = function(content){
-        image = content["image"];
-        context = content["context"];
-        caption = content["caption"];
+    $.fn.imagepost.defaults = {
+        masktext: '',
+        width: ''
     };
 
-    this.toJSON = function() {
-        var j = {
-            "cname" : "postImage",
-            "image" : image,
-            "context" : context,
-            "caption" : caption
-        };
-        return j;
-    };
+})(window, $);
+
+
+$.fn.textWidth = function(){
+      var sensor = $('<div />').css({margin: 0, padding: 0});
+        $(this).append(sensor);
+          var width = sensor.width();
+            sensor.remove();
+              return width;
 };
 
 (function(window, $, undefined){
 
     $.Post = function( options, element ){
-        this.opts = $.extend({}, $.fn.repostDialog.defaults, options);
+        this.opts = $.extend({}, $.fn.post.defaults, options);
         this.element = $( element );
+        this.metric = this.opts.metric;
+        this.uuid = this.opts.uuid;
         this._create( options );
     };
 
@@ -123,17 +122,15 @@ this.postImage = function(){
             post.element.addClass('post')
                     .mouseover($.proxy(post.mover, post))
                     .mouseout($.proxy(post.mout, post));
-            var mouseover = $('<div>').addClass('postmask')
+            var mouseover = $('<div>'+this.opts.masktext+'</div>').addClass('postmask')
                                 .append($('<image>')
-                                        .attr('src','/images/hpu.png')
-                                        .addClass('uphand')
-                                        .addClass('votehand')
+                                        .attr('src','/images/repost_r.gif')
+                                        .addClass('upvote')
                                         .click($.proxy(post.upvote, post)))
                                 .append($('<div>100</div>').addClass('metric'))
                                 .append($('<image>')
-                                        .attr('src','/images/hpd.png')
-                                        .addClass('downhand')
-                                        .addClass('votehand')
+                                        .attr('src','/images/repost_x.gif')
+                                        .addClass('downvote')
                                         .click($.proxy(post.downvote, post)))
                                 .hide();
 
@@ -168,17 +165,17 @@ this.postImage = function(){
 
         metric : function(value) {
             if(value){
-                this.element.attr('metric', value);
+                this.metric = value;
             } else {
-                return this.element.attr('metric');
+                return this.metric;
             }
         },
 
         uuid : function(value) {
             if(value){
-                this.element.attr('uuid', value);
+                this.uuid = value;
             } else {
-                return this.element.attr('uuid');
+                return this.uuid;
             }
         },
     };
@@ -218,7 +215,10 @@ this.postImage = function(){
     };
     
     $.fn.post.defaults = {
-
+        masktext: '',
+        width: '',
+        uuid: '',
+        metric: ''
     };
 
 })(window, $);

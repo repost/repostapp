@@ -43,13 +43,14 @@ function xmlPost(uuid, metric){
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank) {
     if( post.content ) {
-        var con = buildFromJSON(post.content);
-        con.setUuid(post.uuid);
-        con.setMetric(post.metric);
-    var test = $('<div>').append($('<div>caption</div>')).append($('<div>conente</div>')).post();
+      //  var con = buildFromJSON(post.content);
+        //con.setUuid(post.uuid);
+        //con.setMetric(post.metric);
+    var test = $('<div>').imagepost({metric: 99, uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+
     ptable.insertPost(test,0);
         ptable.insertPost(test,0);
-        repostNotify.queueNotification(con.getCaption());
+        //repostNotify.queueNotification(con.getCaption());
    }
 };
 
