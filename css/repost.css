@@ -56,27 +56,13 @@
 /**
  * Post styles 
  */
- .postspace{
-    position:relative;
-    height: 100%;
-    width: 100%;
-	text-align:center;
- }
 .post{
-    position:absolute;
-    left:0px;
-    top:0px;
-    height: 100%;
-    width: 100%;
-	text-align:center;
+	float:left;
  }
 
 div.imagepost {
-	text-align:center;
-	float:left;
-	top: 0px;
-    width:100%;
-    height:100%;    
+    width: 100px;
+    height: 150px;
 }
 
 .imagepreview{
@@ -261,12 +247,12 @@ span.name {
 /**
  * Post table
  */
-#repost #divtable {
+#repost div.divtable {
     top:65px;
     left:10%;
     width:80%;
-    height:100%;
-	position:fixed;
+    height:430px;
+	/* position:fixed; */
 }
 #repost #divtable div.divrow {
 	width:100%;

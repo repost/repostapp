@@ -31,12 +31,12 @@ this.posttable = function(){
     var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
-        var page = document.getElementById("repost"); 
-        //table = document.createElement("table"); 
-        divtable = document.createElement("div");
-        divtable.id = "divtable";
-        //page.appendChild(table); 
-        page.appendChild(divtable); 
+        divtable = $('<div>').addClass('divtable');
+        $('#repost').append(divtable); 
+        divtable.imagesLoaded( function() {
+            divtable.masonry({itemSelector: '.post'});
+        });
+        divtable.masonry({itemSelector: '.post'});
     }; 
 
     // Deletes a post from the table given rank
@@ -104,22 +104,14 @@ this.posttable = function(){
     // inserts a post at the given location and 
     // shuffles all posts behind it up a rank.
     this.insertPost = function(post, rank){
-
-        // shuffle shit along
-        for ( var i = numentries; i > rank; i-- )
-        {
-            var pos = this.rankToxy(i-1);
-            var temppost = this.getPostXY(pos);
-            if (temppost) {
-                this.deletePostXY(pos);
-                /* only add posts that fit in our page */
-                if ( i < MAX_POSTS ) {
-                    this.addPost(temppost,(i));
-                }
-            }
+        // get the children
+        var posts = divtable.children();
+        if(posts.size() == 0) {
+            divtable.append(post.getXml());   
+        }else {
+            $(posts[rank]).before(post.getXml());
         }
-        //insert at position
-        this.addPost(post,rank);
+        divtable.masonry('reload');
     };
 
     // add the post(expecting innerHTML) to rank whatever
