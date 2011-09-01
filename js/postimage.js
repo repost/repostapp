@@ -166,10 +166,20 @@ this.postImage = function(){
             postmask.hide();
         },
 
-        metric : function() {
+        metric : function(value) {
+            if(value){
+                this.element.attr('metric', value);
+            } else {
+                return this.element.attr('metric');
+            }
         },
 
-        uuid : function() {
+        uuid : function(value) {
+            if(value){
+                this.element.attr('uuid', value);
+            } else {
+                return this.element.attr('uuid');
+            }
         },
     };
 
