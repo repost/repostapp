@@ -5,8 +5,8 @@ this.linkVisual = function() {
     
     var linkBox; /* send that text */
     var displayed; /* Are we being displayed already? */
-    var linkarr; /* Array of link */
-    var acctarr; /* Array of accounts */
+    var linkarr = new Array(); /* Array of link */
+    var acctarr = new Array(); /* Array of accounts */
     var instance = this;
     var fd;
     var labelType = 'Native';
@@ -126,21 +126,17 @@ this.linkVisual = function() {
     };
     
     this.isAccount = function(node) {
-        return (node.data.$reposttype == "hostobj");
+        return (node.data.$reposttype == "account");
     };
 
-    this.init = function(aa, la) {
-        if(aa) {
-            acctarr = aa;
-        } else {
-            acctarr = new Array();   
-        }
-
-        if(la) {
-            linkarr = la;
-        } else {
-            linkarr = new Array();   
-        }
+    this.init = function(accts, links) {
+	      var i;
+				for(i=0; i < accts.length; i++) {
+					this.addAccount(accts[i]);
+				}
+				for(i=0; i < links.length; i++) {
+					this.addLink(links[i]);
+				}
         displayed = false;
     };
     
@@ -186,40 +182,22 @@ this.linkVisual = function() {
         var acctree = new Array();
         
         // create you at the center
-        var you = this.createTreeElement("you", "you", "you");
+        var acctyou = {user: "you", host: "you", status: "you"};
+        var you = this.createAcctElement(acctyou);
         acctree.push(you);
 
         // create account tree
         for(var i=0; i<acctlen; i++) {
-            var treeobj;
-            var user = stripResource(accts[i].user);
-            if(accts[i].status == "online")
-            {
-                treeobj = this.createTreeElement(user, accts[i].user, "onlineacct");
-            }
-            else
-            {
-                treeobj = this.createTreeElement(user, accts[i].user, "offlineacct");
-            }
+            var treeobj = this.createAcctElement(accts[i]);
             acctree.push(treeobj);
-            var adjobj = this.createAdjacency(accts[i].user);
+            var adjobj = this.createAdjacency(stripResource(accts[i].user));
             you.adjacencies.push(adjobj);
         }
         // create link tree
         for(var i=0; i<linklen; i++) {
             for(var x=0; x<acctree.length; x++) {
-                if(acctree[x].id == links[i].host) {
-                    var treeobj; 
-                    if(links[i].status == "online") {
-                        treeobj = this.createTreeElement(links[i].name,
-                                            links[i].name, "onlinelink");
-                    }else if(links[i].status == "reposter") {
-                        treeobj = this.createTreeElement(links[i].name, 
-                                            links[i].name, "reposterlink");
-                    }else{
-                        treeobj = this.createTreeElement(links[i].name,
-                                            links[i].name, "offlinelink");
-                    }
+                if(acctree[x].id == stripResource(links[i].host)) {
+                    var treeobj = this.createLinkElement(links[i]);
                     var adjobj = this.createAdjacency(links[i].name);
                     acctree[x].adjacencies.push(adjobj);
                     linktree.push(treeobj);
@@ -239,143 +217,100 @@ this.linkVisual = function() {
         return acctree.concat(linktree);
     };
    
-    this.createTreeElement = function(name, id, type){
-        if(type == "onlinelink"){
+    this.createLinkElement = function(link) {
+        if(link.status == "online"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#C74243",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "reposterlink"){
+        }else if(link.status == "reposter"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#00BB3F",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "offlinelink"){
+        }else if(link.status == "offline"){
             var obj = {
-                $reposttype: "buddyobj",
+                $reposttype: "link",
                 $color:  "#777777",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "onlineacct"){
+        }
+
+        return {
+                name: link.name,
+                id: link.name,
+                data: obj,
+                adjacencies: new Array()
+            };
+    };
+
+    this.createAcctElement = function(account) {
+        if(account.status == "online"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#EBB056",
                 $type:  "circle",
                 $dim:  25
             };
-        }else if(type == "offlineacct"){
+        }else if(account.status == "offline"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#777777",
                 $type:  "circle",
                 $dim:  15
             };
-        }else if(type == "you"){
+        }else if(account.status == "you"){
             var obj = {
-                $reposttype: "hostobj",
+                $reposttype: "account",
                 $color:  "#EBB056",
                 $type:  "circle",
                 $dim:  30
             };
-        }else{
-            return;
         }
 
         return {
-                name: name,
-                id: id,
+                name: stripResource(account.user),
+                id: stripResource(account.user),
                 data: obj,
                 adjacencies: new Array()
             };
     };
     
     this.addLink = function(link) {
-        linkarr.push(link);
-        var treeobj = this.createTreeElement(link.name, link.name, "reposterlink");
-        var adj = this.createAdjacency(stripResource(link.host));
-        fd.graph.addNode(treeobj);
-        fd.graph.addAdjacence(fd.graph.getNode(stripResource(link.host)),
-                        fd.graph.getNode(link.name),adj.data);
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
-            }
-        });
-    };
-
-    this.addAccount = function(account) {
-        acctarr.push(account);
-        var treeobj = this.createTreeElement(stripResource(account.user), account.user, "offlineacct");
-        var adj = this.createAdjacency(account.user);
-        fd.graph.addNode(treeobj);
-        fd.graph.addAdjacence(fd.graph.getNode("you"),
-                        fd.graph.getNode(account.user), adj.data);
-        fd.computeIncremental({
-            iter: 40,
-            property: 'end',
-            onStep:  function(perc){},
-            onComplete: function(){
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
-            }
-        });
-    };
-
-    this.removeLink = function(user) {
-        if(user != "") {
-            var node = fd.graph.getNode(user);
-            node.setData('alpha', 0, 'end');  
-            node.eachAdjacency(function(adj) {  
-                    adj.setData('alpha', 0, 'end');  
-                    });  
-            fd.animate({  
-                            modes: ['node-property:alpha',  
-                            'edge-property:alpha'],  
-                            duration: 500  
-                        });  
-            fd.graph.removeNode(node.id);
-        }
-    };
-
-    this.removeAccount = function(user) {
-        var i = 0;
-        for( i = 0; i < acctarr.length; i++) {
-                if( stripResource(acctarr[i].user) == stripResource(user) ) {
-                        acctarr.splice(i,1);
-                }
-        }
-        this.removeLink(user);
-    };
-
-    this.statusChanged = function(account) {
+        // Does link already exist in array
         var i;
-        for(i = 0; i < acctarr.length; i++) {
-            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
-                acctarr[i] = account;
-                var node = fd.graph.getNode(stripResource(account.user));
-                if(node) {
-                    node.setData('color', '#EBB056', 'end');  
-                    console.log("status changed " + account.status);
-                    fd.animate({  
-                                    modes: ['node-property:color'],
-                                    duration: 500  
-                                });
-                }
+        var found = false;
+        for(i = 0; i < linkarr.length; i++) {
+            if(linkarr[i].name == link.name) {
+                found = true;
+            }
+        }
+        if(!found) {
+            linkarr.push(link);
+            // Do we need to display
+            if(displayed) {
+                var treeobj = this.createLinkElement(link);
+                var adj = this.createAdjacency(stripResource(link.host));
+                fd.graph.addNode(treeobj);
+                fd.graph.addAdjacence(fd.graph.getNode(stripResource(link.host)),
+                                fd.graph.getNode(link.name), adj.data);
+                fd.computeIncremental({
+                    iter: 40,
+                    property: 'end',
+                    onStep:  function(perc){},
+                    onComplete: function(){
+                        fd.animate({
+                            modes: ['linear'],
+                            transition: $jit.Trans.Elastic.easeOut,
+                            duration: 2500
+                        });
+                    }
+                });
             }
         }
     };
@@ -383,20 +318,23 @@ this.linkVisual = function() {
     this.linkStatusChanged = function(link) {
         var i;
         var found = false;
-        console.log("link status changed " + link.name);
+        console.log("Link " + link.name + " status " + link.status);
         for(i = 0; i < linkarr.length; i++) {
             if(linkarr[i].name == link.name) {
-                linkarr[i] = link;
-                var node = fd.graph.getNode(link.name);
-                if(node) {
-                    node.setData('color', '#EBB056', 'end');  
-                    console.log("link status changed " + link.status);
-                    fd.fx.animate({  
-                                    modes: ['node-property:color'],
-                                    duration: 500  
-                                });
+                linkarr[i].status = link.status;
+                // If we are displayed we need to update
+                if( displayed ) {
+                    var node = fd.graph.getNode(link.name);
+                    var newnode = this.createLinkElement(link);
+                    if(node) {
+                        node.setData('color', newnode.$color, 'end');  
+                        fd.fx.animate({  
+                            modes: ['node-property:color'],
+                            duration: 500  
+                        });
+                    }
+                    found = true;
                 }
-                found = true;
             }
         }
         if( !found ) {
@@ -404,9 +342,122 @@ this.linkVisual = function() {
         }
     };
 
+		this.removeLink = function(user) {
+        if(user != "") {
+					var i;
+					for( i=0; i < linkarr.length; i++) {
+						if(linkarr[i].name == user) {
+							linkarr.splice(i,1);
+						}
+					}
+					this.removeId(user);
+        }
+    };
+
+    this.removeId = function(user) {
+        if(user != "") {
+            var node = fd.graph.getNode(user);
+            node.setData('alpha', 0, 'end');  
+            node.eachAdjacency(function(adj) {  
+                    adj.setData('alpha', 0, 'end');  
+                });  
+            fd.animate({  
+                    modes: ['node-property:alpha',  
+                    'edge-property:alpha'],  
+                    duration: 500  
+                });  
+            fd.graph.removeNode(node.id);
+        }
+    };
+
+    this.addAccount = function(account) {
+        // Does link already exist in array
+        var i;
+        var found = false;
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                found = true;
+            }
+        }
+        if(!found) {
+            acctarr.push(account);
+            if(displayed) {
+                var treeobj = this.createAcctElement(account);
+                var adj = this.createAdjacency(stripResource(account.user));
+                fd.graph.addNode(treeobj);
+                fd.graph.addAdjacence(fd.graph.getNode("you"),
+                                fd.graph.getNode(account.user), adj.data);
+                fd.computeIncremental({
+                    iter: 40,
+                    property: ['end', 'start', 'current'],
+                    onStep:  function(perc){},
+                    onComplete: function(){
+                        fd.fx.animate({
+                            modes: ['linear'],
+                            transition: $jit.Trans.Elastic.easeOut,
+                            duration: 2500
+                        });
+                    }
+                });
+            }
+        }
+    };
+
+    this.statusChanged = function(account) {
+        var i;
+        var found = false;
+        console.log("Account " + account.user + " status " + account.status);
+        for(i = 0; i < acctarr.length; i++) {
+            if(stripResource(acctarr[i].user) == stripResource(account.user)) {
+                acctarr[i].status = account.status;
+                if(displayed) {
+                    var node = fd.graph.getNode(stripResource(account.user));
+                    var newnode = this.createAcctElement(account);
+                    if(node) {
+                        node.setData('color', newnode.$color, 'end');  
+                        //node.setData('dim', newnode.$dim, 'end');  
+                        fd.computeIncremental({
+                                iter: 40,
+                                property: 'end',
+                                onStep:  function(perc){},
+                                onComplete: function(){
+                                    fd.fx.animate({  
+                                        modes: ['node-property:color', 'node-property:dim'],
+                                        duration: 500  
+                                    });
+                                }
+                        });
+                    }
+                }
+                found = true;
+            }
+        }
+        if(!found) {
+            this.addAccount(account);
+        }
+    };
+
+    this.removeAccount = function(user) {
+        var i = 0;
+        // Remove account from array
+        for( i = 0; i < acctarr.length; i++) {
+                if( stripResource(acctarr[i].user) == stripResource(user) ) {
+                        acctarr.splice(i,1);
+                }
+        }
+        // Remove links from array
+        for( i = linkarr.length - 1;  i >= 0; i--) {
+                if( stripResource(linkarr[i].host) == stripResource(user) ) {
+                        this.removeLink(linkarr[i].name);
+                        linkarr.splice(i,1);
+                }
+        }
+        this.removeId(user);
+    };
+
     this.accountDisconnected = function(account, reason) {
         var i;
-        console.log(reason);
+        console.log("Account " + account.user + " " + reason);
         for(i = 0; i < acctarr.length; i++) {
             if(stripResource(acctarr[i].user) == stripResource(account.user)) {
                 acctarr[i].error = reason;
@@ -493,6 +544,7 @@ this.linkAdder = function(display, acct){
             var link = plugin.Link();
             link.name = input.val();
             link.host = account;
+						link.status = "offline";
             // Display new link
             cbdisplay.addLink(link);
             // Add to plugin
@@ -573,6 +625,7 @@ this.accountAdder = function(display){
             acc.user = username.val();
             acc.pass = password.val();
             acc.type = type.val();
+            acc.status = "offline";
             // Add to display. Needs to be first as plugin is too fast with
             // status updates.
             display.addAccount(acc);
@@ -616,175 +669,3 @@ this.accountRemover = function(display, account){
     
 };
 
-
-(function(window, $, undefined){
-
-    $.fn.confirmDialog = function(options) {
-        var opts = $.extend({}, $.fn.confirmDialog.defaults, options);
-        
-        var ok = function(sf){
-            opts.response(true);
-            $(sf).repostDialog('remove');
-        };
-
-        var cancel = function(sf){
-            opts.response(false);
-            $(sf).repostDialog('remove');
-        };
-
-        return this.each(function(){
-            var sf = this;  
-            $(this).addClass("confirmation")
-                .append($('<button>Ok</button>')
-                            .addClass('ok')
-                            .click(function(){ok(sf)}))
-                .append($('<button>Cancel</button>')
-                            .addClass('cancel')
-                            .click(function(){cancel(sf)}))
-                .repostDialog({'modal': true, 
-                                'centred': true});
-            $('#repost').append(this);
-            $(this).repostDialog('show');
-        });
-    };
-    
-    $.fn.confirmDialog.defaults = {
-        response: function(){}
-    };
-
-})(window, $);   
-
-(function(window, $, undefined){
-
-    $.Dialog = function( options, element ){
-        this.opts = $.extend({}, $.fn.repostDialog.defaults, options);
-        this.element = $( element );
-        this._create( options );
-    };
-
-    $.Dialog.prototype = {
-
-        // sets up widget
-        _create : function( options ) {
-            var dialog = this;
-            this.element
-                    .hide()
-                    .attr('id', 'rpdialog')
-                    .append($('<img src=images/repost_x.gif>')
-                        .addClass('floatclose')
-                        .click(function(){dialog.remove()}));
-            if(this.opts.draggable == true){
-                 this.element.mousedown(function(e){dialog.mdown(e)})
-                            .mouseup(function(e){dialog.mup(e)});
-            }
-        },
-
-        mdown : function(e){
-            var dialog = this;
-            this.offsetx = dialog.element.offset().left;
-            this.offsety = dialog.element.offset().top;
-            this.startx = e.clientX;
-            this.starty = e.clientY;
-            $(document).mousemove(function(e){dialog.mmove(e)});
-        },
-
-        mmove : function(e){
-            var dialog = this;
-            dialog.element.offset({top: this.offsety + e.clientY - this.starty,  
-                        left: this.offsetx + e.clientX - this.startx});
-        },
-
-        mup : function(e){
-            $(document).unbind('mousemove');
-        },
-
-        show : function(x, y){
-            var dialog = this;
-            // Keep moving indexes outwards
-            var zindex = parseInt($('#mask').css('z-index'));
-            dialog.element.css({'z-index': zindex+4});
-
-            if(this.opts.modal == true){
-                $('#mask').css({'z-index': zindex+3});
-                // Get the screen height and width
-                var maskHeight = $(document).height();
-                var maskWidth = $(window).width();
-
-                // Set height and width to mask to fill up the whole screen
-                $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-                // transition effect     
-                $('#mask').fadeIn(500);    
-                $('#mask').fadeTo("slow",0.8);  
-                $('#mask').show();
-            }
-            if(this.opts.centred == true){
-                //Get the window height and width
-                var winH = $(window).height();
-                var winW = $(window).width();
-                this.element.css({'top': winH/2-this.element.height()/2, 
-                                    'left': winW/2-this.element.width()/2})
-            } else if( x && y) {
-                this.element.css({'top': y,
-                                    'left': x});
-            }
-            this.element.show();
-        },
-        
-        remove : function(){
-            var kthis = this;
-            this.element.fadeOut('fast', function() {
-                                    kthis.opts.closefunc(kthis.element);
-                                    });
-            if(this.opts.modal == true){
-                var zindex = parseInt($('#mask').css('z-index'));
-                $('#mask').css('z-index', zindex-3);
-                if( (zindex-3) <= 9000){
-                    $('#mask').hide();
-                }
-            }
-        },
-
-    };
-
-    $.fn.repostDialog = function(options) {
-        if ( typeof options === 'string' ) {
-            // call method
-            var args = Array.prototype.slice.call( arguments, 1 );
-            this.each(function(){
-                var instance = $.data( this, 'rpdialog' );
-                if ( !instance ) {
-                  logError( "cannot call methods on repostDialog prior to initialization; " +
-                    "attempted to call method '" + options + "'" );
-                  return;
-                }
-                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
-                  logError( "no such method '" + options + "' for repostDialog instance" );
-                  return;
-                }
-                // apply method
-                instance[ options ].apply( instance, args );
-            });
-        } else {
-            this.each(function(){
-                var instance = $.data( this, 'rpdialog' );
-                if ( instance ) {
-                  // apply options & init
-                  instance.option( options || {} );
-                  instance._init();
-                } else {
-                  // initialize new instance
-                  $.data( this, 'rpdialog', new $.Dialog( options, this ) );
-                }
-            });
-        }
-        return this;
-    };
-    
-    $.fn.repostDialog.defaults = {
-        modal: true,
-        centred: true,
-        draggable: true,
-        closefunc: function(el){el.remove();}
-    };
-})(window, $);

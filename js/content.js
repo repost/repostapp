@@ -1,9 +1,11 @@
-this.imagePostBox = function(sendPostCB){
+this.itemPostBox = function(sendPostCB){
 
     // Dialog
-    var imagePostBox;
+    var itemPostBox;
+    var displayed = false;
 
     // Content
+    var ipb = this;
     var image;
     var caption;
     var curpost; /* captured over two events. Cleanest way */
@@ -12,98 +14,57 @@ this.imagePostBox = function(sendPostCB){
     var spCB = sendPostCB;
 
     this.init = function(){
+        // add event listener to each image on the page
+        var images = $('img');
+        for( var i = 0; i < images.length; i++ ){
+            $(images[i]).click(ipb.imgClickListener);
+        }
+    };
 
-        var close; /* close button */
-        var label; /* temp label */
-        var postbutton; /* send that text */
+    this.createDialog = function() {
 
         // Create Dialog
-        imagePostBox = document.createElement('div');
-        imagePostBox.className = "repostdialog floater";
-        imagePostBox.style.visibility = "hidden";
-
-        // Caption
-        label = document.createElement("label");
-        label.innerHTML = "What say you:";
-        label.className = "repostdialog label";
-        caption = document.createElement("input");
-        caption.className = "repostdialog imagecaption";
-        caption.addEventListener('keypress', this.submitPost(this), false);
-        label.appendChild(caption);
-        imagePostBox.appendChild(label);
-
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "repostdialog floatclose";
-        close.onclick = this.onclickclose(this);
-        imagePostBox.appendChild(close);
-        // Append
-        document.body.appendChild(imagePostBox);
-
-        // add event listener to each image on the page
-        var images = document.getElementsByTagName("img");
-        for( var i = 0; i < images.length; i++ ){
-            images[i].addEventListener('click',this.imgClickListener(this),false);
-        }
-
-    };
-
-    this.onclickclose = function(popup){
-        return function(){
-            popup.close();
-        };
-    };
-
-    this.close = function(){
-        this.clear();
-        imagePostBox.style.visibility = "hidden";
-    };
-
-    this.clear = function(){
-        caption.value = "";
-        image = "";
-    };
-
-    this.focus = function(){
+        caption = $('<input>').addClass('caption')
+                            .keypress(function(e) {
+                                        if(e.which == 13) {
+                                            ipb.submitPost(true);
+                                            itemPostBox.confirmDialog('remove');
+                                        }
+                            });
+        itemPostBox = $('<div>').addClass('itempostbox')
+                                .append($('<div>Comment:</div>')
+                                            .addClass('label'))
+                                .append(caption)
+                                .confirmDialog({response: $.proxy(ipb.submitPost, ipb)});
         caption.focus();
     };
 
-    this.submitPost = function(postbox){
-        return function(event){
-            if(event.keyCode == 13){
-                curpost.setCaption(caption.value);
-                spCB(curpost);
-                imagePostBox.style.visibility = "hidden";
-                postbox.close();
-            }
-        };
+    this.clear = function() {
+        caption.val('');
+        image = "";
     };
 
-    this.imgClickListener = function(postbox){
-        return function(event){
-            if(event.altKey){
-                curpost = new postImage();
-                curpost.setImage(event.currentTarget.src);
-							  image = event.currentTarget.src;
-								curpost.setContext(event.currentTarget.baseURI);
-                postbox.display(event.clientX, event.clientY);
-                postbox.focus();
-                event.returnValue = false;
-                return false;
-            }
-        };
+    this.submitPost = function(response) {
+        if(response) {
+            curpost.setCaption(caption.val());
+            spCB(curpost);
+        }
+        displayed = false;
     };
 
-    this.display = function(x, y){
-        imagePostBox.style.display = "inline";
-        imagePostBox.style.visibility = "visible";
-        imagePostBox.style.top = y + "px";
-        imagePostBox.style.left = x + "px";
+    this.imgClickListener = function(e) {
+        if(e.altKey && !displayed) {
+            curpost = new postImage();
+            curpost.setImage(e.currentTarget.src);
+            image = e.currentTarget.src;
+            curpost.setContext(e.currentTarget.baseURI);
+            ipb.createDialog();
+            e.returnValue = false;
+            return false;
+        }
     };
 
     this.init();
-
 }
 
 this.contentClicker = function() {
@@ -112,8 +73,9 @@ this.contentClicker = function() {
     var textbox;
 
     this.init = function(){
-        imagebox = new imagePostBox(this.sendPost());
+        imagebox = new itemPostBox(this.sendPost());
         textbox = new textPostBox(this.sendPost());
+        $('body').append($('<div>').attr('id','repost'));
         document.addEventListener("keydown", this.shortcuts());
     };
 

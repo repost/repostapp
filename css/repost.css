@@ -19,15 +19,15 @@
 /**
  * Post Table
  */
-.postcell {
+#repost .postcell {
     background:#B4C3FF;
     border:1px solid #fff;
 	width:20%;
 }
-.fuckoff {
+#repost .fuckoff {
     background:#9D98E8;
 }
-.rockon {
+#repost .rockon {
     background:#A7E7FF;
 }
 #repost .votehand{
@@ -56,13 +56,13 @@
 /**
  * Post styles 
  */
- .postspace{
+#repost .postspace{
     position:relative;
     height: 100%;
     width: 100%;
 	text-align:center;
  }
-.post{
+#repost .post{
     position:absolute;
     left:0px;
     top:0px;
@@ -70,22 +70,20 @@
     width: 100%;
 	text-align:center;
  }
-
-div.imagepost {
+#repost div.imagepost {
 	text-align:center;
 	float:left;
 	top: 0px;
     width:100%;
     height:100%;    
 }
-
-.imagepreview{
+#repost .imagepreview{
     top: 0px;
     max-width:100%;
     max-height:100%;    
 	vertical-align:middle;
 }
-div.posttextbody{
+#repost div.posttextbody{
     position: absolute;
     font-size: 75%;
     top: 30px;
@@ -94,22 +92,22 @@ div.posttextbody{
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     word-wrap: break-word;
 }
-.textpostcaption{
+#repost .textpostcaption{
     position: absolute;
     top: 10px;
     left: 10px;
 }
-div.postcaption{
+#repost div.postcaption{
     font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
-.imagepostcaption{
+#repost .imagepostcaption{
     position:absolute;
     top: 140px;
     left: 12px;
     height: 35px;
     overflow: hidden;
 }
-.imagepostcaption:hover{
+#repost .imagepostcaption:hover{
     overflow: visible;
     z-index:9999;
 }
@@ -117,77 +115,13 @@ div.postcaption{
 /**
  * Repost commons
  */
-span.name {
+#repost span.name {
       cursor: pointer;
 }
 
 /**
  * Floating Boxes
  */
-#repost div#rpdialog{
-    opacity:0.95;
-    position: fixed;
-    margin: auto;
-    background:#ececec;
-    box-shadow:2px 2px 5px #000;
-    padding: 7px 10px 7px 10px;
-    z-index: 8999;
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-}
-#repost #rpdialog label{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-    margin: 0 5px 0 0 ;
-}
-#repost #rpdialog img.floatclose {
-    cursor: pointer;
-    position: absolute;
-    top: 5px;
-    right: 7px;
-    z-index: 999;
-    height: 20px;
-    width: 20px;
-}
-/* Confirmation Popup */
-#repost .confirmation#rpdialog{
-    width: 250px;
-    height: 70px;
-}
-#repost .confirmation#rpdialog .ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
-}
-#repost .confirmation#rpdialog .cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
-}
-/* Single Field Popup */
-#repost .singlefield#rpdialog{
-    width: 280px;
-    height: 90px;
-}
-#repost .singlefield#rpdialog .ok{
-    position: absolute;
-    top: 70px;
-    left: 120px;
-    width: 70px;
-}
-#repost .singlefield#rpdialog .cancel{
-    position: absolute;
-    top: 70px;
-    left: 200px;
-    width: 70px;
-}
-#repost .singlefield#rpdialog .inputbox{
-    position:absolute;
-    top: 25px;
-    left: 15px;
-    width: 250px;
-    margin: 15px 5px 15px 0px;
-}
 /* Add Account Dialog */
 #repost .confirmation.accountaddbox#rpdialog {
     width: 210px;
@@ -248,6 +182,13 @@ span.name {
 #repost .confirmation.linkremover#rpdialog input.linkinput{
     width: 200px;
 }
+/* rpdialog submenu */
+#repost #rpdialog div.menuopt{
+		cursor: pointer;
+}
+#repost #rpdialog div.menuopt:hover{
+    background:#777777;
+}
 /**
  * Links
  */
@@ -286,31 +227,31 @@ span.name {
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-.captioninput{
+#repost .captioninput{
     position: absolute;
     left:100px;
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-.content{
+#repost .content{
     position:absolute;
     left:10px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.contentinput{
+#repost .contentinput{
     position:absolute;
     left:100px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.sendtext{
+#repost .sendtext{
     position:absolute;
     left:150px;
     top:110px;
     width:130px;
 }
-.contenttext{
+#repost .contenttext{
 }
 
 /**
@@ -410,7 +351,7 @@ body {
      -khtml-user-select: none; /* webkit browsers */
     background: #ececec;
 }
-#mask {
+#repost #mask {
     position: fixed;
     display: none;
     top: 0px;
