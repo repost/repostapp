@@ -106,4 +106,109 @@ this.postImage = function(){
     };
 };
 
+(function(window, $, undefined){
 
+    $.Post = function( options, element ){
+        this.opts = $.extend({}, $.fn.repostDialog.defaults, options);
+        this.element = $( element );
+        this._create( options );
+    };
+
+    $.Post.prototype = {
+
+        // sets up widget
+        _create : function( options ) {
+
+            var post = this;
+            post.element.addClass('post')
+                    .mouseover($.proxy(post.mover, post))
+                    .mouseout($.proxy(post.mout, post));
+            var mouseover = $('<div>').addClass('postmask')
+                                .append($('<image>')
+                                        .attr('src','/images/hpu.png')
+                                        .addClass('uphand')
+                                        .addClass('votehand')
+                                        .click($.proxy(post.upvote, post)))
+                                .append($('<div>100</div>').addClass('metric'))
+                                .append($('<image>')
+                                        .attr('src','/images/hpd.png')
+                                        .addClass('downhand')
+                                        .addClass('votehand')
+                                        .click($.proxy(post.downvote, post)))
+                                .hide();
+
+            post.element.append(mouseover);
+        },
+       
+        upvote : function(){
+                uparrow.src = "./images/hpuselect.png";
+                var pos = ptable.rankToxy(rank);
+                var uppost = ptable.getPostXY(pos);
+                uppost["upvoted"] = true;
+                hw.upboat(ptable.getUuid(pos));
+        },
+
+        downvote : function() {
+            var pos = ptable.rankToxy(rank);
+            hw.downboat(ptable.getUuid(pos));
+            ptable.delShufflePost(rank);
+        },
+
+        mover : function() {
+            var post = this;
+            var postmask = post.element.children('.postmask');
+            postmask.show();
+        },
+        
+        mout : function() {
+            var post = this;
+            var postmask = post.element.children('.postmask');
+            postmask.hide();
+        },
+
+        metric : function() {
+        },
+
+        uuid : function() {
+        },
+    };
+
+    $.fn.post = function(options) {
+        if ( typeof options === 'string' ) {
+            // call method
+            var args = Array.prototype.slice.call( arguments, 1 );
+            this.each(function(){
+                var instance = $.data( this, 'post' );
+                if ( !instance ) {
+                  logError( "cannot call methods on repostDialog prior to initialization; " +
+                    "attempted to call method '" + options + "'" );
+                  return;
+                }
+                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                  logError( "no such method '" + options + "' for post instance" );
+                  return;
+                }
+                // apply method
+                instance[ options ].apply( instance, args );
+            });
+        } else {
+            this.each(function(){
+                var instance = $.data( this, 'post' );
+                if ( instance ) {
+                  // apply options & init
+                  instance.option( options || {} );
+                  instance._init();
+                } else {
+                  // initialize new instance
+                  $.data( this, 'post', new $.Post( options, this ) );
+                }
+            });
+        }
+        return this;
+    };
+    
+    $.fn.post.defaults = {
+
+    };
+
+})(window, $);

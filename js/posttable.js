@@ -106,11 +106,7 @@ this.posttable = function(){
     this.insertPost = function(post, rank){
         // get the children
         var posts = divtable.children();
-        if(posts.size() == 0) {
-            divtable.append(post.getXml());   
-        }else {
-            $(posts[rank]).before(post.getXml());
-        }
+            divtable.append(post);   
         divtable.masonry('reload');
     };
 

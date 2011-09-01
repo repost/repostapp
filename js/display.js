@@ -14,7 +14,8 @@ function buildFromJSON(content){
 function sendPost(p){
     var post = plugin.Post();
     p.setUuid(post.uuid);
-    ptable.insertPost(p,0);
+    var test = $('<div>').append($('<div>caption</div>')).append($('<div>conente</div>')).post();
+    ptable.insertPost(test,0);
     post.content = JSON.stringify(p);
     hw.sendPost(post);
 };
@@ -45,7 +46,9 @@ function checkForPost(post,rank) {
         var con = buildFromJSON(post.content);
         con.setUuid(post.uuid);
         con.setMetric(post.metric);
-        ptable.insertPost(con,rank);
+    var test = $('<div>').append($('<div>caption</div>')).append($('<div>conente</div>')).post();
+    ptable.insertPost(test,0);
+        ptable.insertPost(test,0);
         repostNotify.queueNotification(con.getCaption());
    }
 };
@@ -135,9 +138,7 @@ function addShortCuts(){
     };
     document.addEventListener("keydown",shortFunc);
     $('#connlink').click(function(){ // Text Post Box Popup
-                var linkarr = hw.getLinks();
-                var acctarr = hw.getAccounts();
-                linksdisplay.show(linkarr, acctarr);       
+                linksdisplay.show();       
             });
 };
 
@@ -145,17 +146,9 @@ function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
 
-function statuschanged(){
-    console.log("STATUS CHANGED");
-};
-
 function postmetricupdate(){
 	console.log("Metric update");
 }
-
-function AccountDisconnected(acct, reason){
-    console.log(reason)
-};
 
 var ptable; // Mainpage table display
 var plugin; // the repost plugin instance
@@ -171,17 +164,8 @@ var statusBar;
 
 function main() {
     $('document').ready(function(){
-        // Check we have an account to log into
-        var accounts = loadAccounts();
-        // start repost
-        ptable = new posttable();
-        // Create input windows
-        textbox = new textPostBox(sendPost);
-        repostNotify = new repostNotification();
-        wel = document.getElementById("welcome");
-        // attach repost shortcuts
-        addShortCuts();
-        // init the posttable
+        linksdisplay = new linkVisual();
+        // Create instance of plugin
         plugin = document.getElementById("plugin");
         hw = plugin.rePoster();
         // Set UI callbacks
@@ -190,28 +174,28 @@ function main() {
         postuiops.postmetriccb = postmetricupdate;
         hw.setPostUiOps(postuiops);
         var networkuiops = plugin.NetworkUiOps();
-        networkuiops.statuschangedcb = statuschanged;
-        networkuiops.accountdisconnectcb = AccountDisconnected;
+        networkuiops.statuschangedcb = $.proxy(linksdisplay.statusChanged, linksdisplay);
+        networkuiops.linkstatuschangedcb = $.proxy(linksdisplay.linkStatusChanged, linksdisplay);
+        networkuiops.accountdisconnectcb = $.proxy(linksdisplay.accountDisconnected, linksdisplay);
         hw.setNetworkUiOps(networkuiops);
         hw.init();
-
+        hw.startRepost();
+        // Initialise UI
+        ptable = new posttable();
+        // Create input windows
+        textbox = new textPostBox(sendPost);
+        repostNotify = new repostNotification();
+        wel = document.getElementById("welcome");
+        // attach repost shortcuts
+        addShortCuts();
         // setup status bar
         statusBar = new statusBar();
-
         // Create link management window
-        linksdisplay = new linkVisual();
-        linksdisplay.init();
-        if(accounts){
-            var acc = plugin.Account();
-            // add saved accounts
-            for(var i=0; i<accounts.length; i++){
-                acc.user = accounts[i].username;
-                acc.pass = accounts[i].password;
-                acc.type = accounts[i].type;
-                hw.addAccount(acc);
-            }
-        }
-        hw.startRepost();
+        var linkarr = hw.getLinks();
+        var acctarr = hw.getAccounts();
+        linksdisplay.init(acctarr, linkarr);
+		
+        // Get repost rolling
         hw.getInitialPosts();
         setTimeout("checkStatus()",10000);
     })
