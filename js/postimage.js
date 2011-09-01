@@ -123,6 +123,8 @@ $.fn.textWidth = function(){
                     .mouseover($.proxy(post.mover, post))
                     .mouseout($.proxy(post.mout, post));
             var mouseover = $('<div>'+this.opts.masktext+'</div>').addClass('postmask')
+                                .append($('<div>'+this.opts.masktext+'</div>')
+                                        .addClass('postmaskcaption'))
                                 .append($('<image>')
                                         .attr('src','/images/repost_r.gif')
                                         .addClass('upvote')

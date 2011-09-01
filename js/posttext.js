@@ -1,4 +1,5 @@
 // Text content class.
+
 this.postText = function(){
 
     // image post specific

@@ -15,98 +15,12 @@
     font-family: "Abel"; 
     src: url('chrome-extension://__MSG_@@extension_id__/css/Abel-Regular.ttf');
 }
-
-/**
- * Post Table
- */
-#repost .postcell {
-    background:#B4C3FF;
-    border:1px solid #fff;
-	width:20%;
-}
-#repost .fuckoff {
-    background:#9D98E8;
-}
-#repost .rockon {
-    background:#A7E7FF;
-}
-#repost .votehand{
-    width:27px;
-    position: relative; 
-}
-#repost .downhand{
-    position:absolute;
-    bottom:0%;
-    left:80%;
-    z-index:1;
-}
-#repost .uphand{
-    position:absolute;
-    top:0%;
-    left:80%;
-    z-index:1;
-}
-#repost div.metric{
-    top:30px;
-    left:240px;
-    position: relative; 
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-}
-
-/**
- * Post styles 
- */
-#repost .postspace{
-    position:relative;
-    height: 100%;
-    width: 100%;
-	text-align:center;
- }
-
-#repost div.imagepost {
-}
-#repost .imagepreview{
-    top: 0px;
-    max-width:100%;
-    max-height:100%;    
-	vertical-align:middle;
-}
-#repost div.posttextbody{
-    position: absolute;
-    font-size: 75%;
-    top: 30px;
-    left: 10px;
-    max-width:180px;
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-    word-wrap: break-word;
-}
-#repost .textpostcaption{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-#repost div.postcaption{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-}
-#repost .imagepostcaption{
-    position:absolute;
-    top: 140px;
-    left: 12px;
-    height: 35px;
-    overflow: hidden;
-}
-#repost .imagepostcaption:hover{
-    overflow: visible;
-    z-index:9999;
-}
-
 /**
  * Repost commons
  */
 #repost span.name {
       cursor: pointer;
 }
-
 /**
  * Floating Boxes
  */
@@ -241,7 +155,6 @@
 }
 #repost .contenttext{
 }
-
 /**
  * Post table
  */
@@ -251,11 +164,15 @@
     width:80%;
     height:430px;
 }
+/**
+ * Post styles 
+ */
 #repost div.divtable .post{
 	float:left;
     height: 150px;
 	text-align:center;
 }  
+/* Post mask */
 #repost div.divtable .post .postmask{
     background-color:#000;
     opacity:0.8;
@@ -266,46 +183,69 @@
     height: 100%;
     width: 100%;
 }
-#repost #divtable div.divrow {
-	width:100%;
-    height:25%;
-    margin: 0px;
-    left:0px;
+#repost div.divtable .post .postmask img.downvote {
+    cursor: pointer;
+    position: absolute;
+    bottom: 5px;
+    right: 7px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
+}
+#repost div.divtable .post .postmask img.upvote {
+    cursor: pointer;
+    position: absolute;
+    bottom: 5px;
+    right: 30px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
+}
+#repost div.divtable .post .postmask .postmaskcaption{
+    color: white;
+}
+#repost div.metric{
+    top:30px;
+    left:240px;
+    position: relative; 
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+}
+#repost div.imagepost {
+}
+#repost .imagepreview{
+    top: 0px;
+    max-width:100%;
+    max-height:100%;    
+	vertical-align:middle;
+}
+#repost div.posttextbody{
+    position: absolute;
+    font-size: 75%;
+    top: 30px;
+    left: 10px;
+    max-width:180px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    word-wrap: break-word;
+}
+#repost .textpostcaption{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+#repost div.postcaption{
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+}
+#repost .imagepostcaption{
     position:absolute;
+    top: 140px;
+    left: 12px;
+    height: 35px;
+    overflow: hidden;
 }
-#repost #divtable div.divcol {
-	position:absolute;
-	text-align:center;
-    height: 100%;
+#repost .imagepostcaption:hover{
+    overflow: visible;
+    z-index:9999;
 }
-#repost #divtable #divRow0 {
-    top:0%;
-}
-#repost #divtable #divRow1 {
-    top:25%;
-}
-#repost #divtable #divRow2 {
-    top:50%;
-}
-#repost #divtable #divRow3 {
-    top:75%;
-}
-#repost #divtable .divCol0 {
-	width:20%;
-}
-#repost #divtable .divCol1 {
-    left:30%;
-	width:20%;
-}
-#repost #divtable .divCol2 {
-    left:55%;
-	width:20%;
-}
-#repost #divtable .divCol3 {
-    left:80%;
-	width:20%;
-}
-
 /**
  * Menu Bar
  */
