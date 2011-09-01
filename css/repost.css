@@ -168,8 +168,10 @@
  * Post styles 
  */
 #repost div.divtable .post{
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
 	float:left;
     height: 150px;
+		width: 150px;
 	text-align:center;
 }  
 /* Post mask */
@@ -201,14 +203,16 @@
     height: 20px;
     width: 20px;
 }
+#repost div.divtable .post .postmask div.metric {
+    position: absolute;
+    bottom: 5px;
+    right: 55px;
+    z-index: 999;
+		color: white;
+}
 #repost div.divtable .post .postmask .postmaskcaption{
     color: white;
 }
-#repost div.metric{
-    top:30px;
-    left:240px;
-    position: relative; 
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
 #repost div.imagepost {
 }

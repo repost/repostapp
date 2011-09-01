@@ -46,11 +46,15 @@ function checkForPost(post,rank) {
       //  var con = buildFromJSON(post.content);
         //con.setUuid(post.uuid);
         //con.setMetric(post.metric);
-    var test = $('<div>').imagepost({metric: 99, uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+				var json = JSON.parse(post.content);
+				if(json.cname == 'postImage') {
+    var test = $('<div>').imagepost({metric: '99', uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+
 
     ptable.insertPost(test,0);
         ptable.insertPost(test,0);
         //repostNotify.queueNotification(con.getCaption());
+				}
    }
 };
 

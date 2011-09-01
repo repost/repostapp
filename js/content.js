@@ -76,7 +76,7 @@ this.contentClicker = function() {
         imagebox = new itemPostBox(this.sendPost());
         textbox = new textPostBox(this.sendPost());
         $('body').append($('<div>').attr('id','repost'));
-        document.addEventListener("keydown", this.shortcuts());
+        $(document).keydown(this.shortcuts());
     };
 
     this.shortcuts = function(contentclicker){
@@ -86,6 +86,8 @@ this.contentClicker = function() {
                 var c = String.fromCharCode(code).toLowerCase();
                 if(c == "t"){ // Text Post Box Popup
                     textbox.display();
+										e.returnValue = false;
+										return false;
                 }
             }
         };

@@ -4,6 +4,8 @@
         this.opts = $.extend({}, $.fn.imagepost.defaults, options);
         this.element = $( element );
         this.loadFromJSON(this.opts.json);
+				this.metric = this.opts.metric;
+				this.uuid = this.opts.uuid;
         this._create( options );
     };
 
@@ -129,7 +131,7 @@ $.fn.textWidth = function(){
                                         .attr('src','/images/repost_r.gif')
                                         .addClass('upvote')
                                         .click($.proxy(post.upvote, post)))
-                                .append($('<div>100</div>').addClass('metric'))
+                                .append($('<div>'+this.opts.metric+'</div>').addClass('metric'))
                                 .append($('<image>')
                                         .attr('src','/images/repost_x.gif')
                                         .addClass('downvote')
@@ -222,5 +224,6 @@ $.fn.textWidth = function(){
         uuid: '',
         metric: ''
     };
+
 
 })(window, $);
