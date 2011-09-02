@@ -104,13 +104,13 @@ this.posttable = function(){
     this.insertPost = function(post, rank){
         // get the children
         var posts = divtable.children();
-				// add onload so we refresh after images are in place
-				post.find('img').one('load', ( function() {
-            divtable.masonry({itemSelector: '.post'});
+        // add onload so we refresh after images are in place
+        post.find('img').one('load', ( function() {
+       //     divtable.masonry({itemSelector: '.post'});
         })).each(function() {
-					if(this.complete) $(this).load();
-				});
-            divtable.append(post);   
+         //   if(this.complete) $(this).load();
+        });
+        divtable.append(post);   
         divtable.masonry('reload');
     };
 

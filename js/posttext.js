@@ -4,8 +4,8 @@
         this.opts = $.extend({}, $.fn.textpost.defaults, options);
         this.element = $( element );
         this.loadFromJSON(this.opts.json);
-				this.metric = this.opts.metric;
-				this.uuid = this.opts.uuid;
+        this.metric = this.opts.metric;
+        this.uuid = this.opts.uuid;
         this._create( options );
     };
 
@@ -13,31 +13,36 @@
 
         // sets up widget
         _create : function( options ) {
-						var addBlankPageTarget  = {
-										callback: function( text, href ) {
-												return href ? '<a href="' + href + '" title="' 
-												+ href + '" target="_blank" >' + text + '</a>' : text;
-										},
-										punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
-								};
-
-
+            var addBlankPageTarget  = {
+                callback: function( text, href ) {
+                        return href ? '<a href="' + href + '" title="' 
+                        + href + '" target="_blank" >' + text + '</a>' : text;
+                },
+                punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
+            };
             this.element.addClass('textpost');
-						var cap;
-						var cont;
-						if(this.link){
-							cap = $('<a>'+this.caption+'</a>')
-											.attr('href', this.link)
-											.attr('target', '_blank')
-											.attr('title', this.link);
-						}else{
-							cap= linkify(this.caption, addBlankPageTarget);
-						}
-						cont = linkify(this.content, addBlankPageTarget);
-            this.tpost = $('<div>').append(cap);
-
+            var cap;
+            var cont;
+            this.tpost = $('<span>'+this.caption+'</span>');
+          //  if(this.link){
+          //      cap = $('<a>'+this.caption+'</a>')
+          //                      .attr('href', this.link)
+          //                      .attr('target', '_blank')
+          //                      .attr('title', this.link);
+          //  }else{
+          //      cap= linkify(this.caption, addBlankPageTarget);
+          //  }
+           // cont = linkify(this.content, addBlankPageTarget);
             this.element.append(this.tpost);
             this.element.post({uuid: this.uuid, metric: this.metric, masktext: cont});
+        },
+
+        metric : function(value) {
+            return this.element.post('metric', value);
+        },
+
+        uuid : function(value) {
+            return this.element.post('uuid', value);
         },
 
         // Load from json packed up in content

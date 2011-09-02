@@ -13,7 +13,7 @@
       "matches": ["http://*/*","https://*/*"],
       "css" : ["css/content.css"],
       "js": ["js/jquery-1.6.1.min.js", "js/common.js", "js/textpostbox.js",
-                "js/content.js","js/posttext.js","js/postimage.js"],
+                "js/content.js", "js/postimage.js"],
       "run_at": "document_end"
     }
   ],

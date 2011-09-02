@@ -41,12 +41,12 @@ this.itemPostBox = function(sendPostCB){
 
     this.clear = function() {
         caption.val('');
-        image = "";
     };
 
     this.submitPost = function(response) {
         if(response) {
-            curpost.setCaption(caption.val());
+            curpost = {cname: "imagePost", image: this.image,
+                            context: this.context, caption: caption.val()};
             spCB(curpost);
         }
         displayed = false;
@@ -54,10 +54,8 @@ this.itemPostBox = function(sendPostCB){
 
     this.imgClickListener = function(e) {
         if(e.altKey && !displayed) {
-            curpost = new postImage();
-            curpost.setImage(e.currentTarget.src);
-            image = e.currentTarget.src;
-            curpost.setContext(e.currentTarget.baseURI);
+            ipb.image = e.currentTarget.src;
+            ipb.context = e.currentTarget.baseURI;
             ipb.createDialog();
             e.returnValue = false;
             return false;
@@ -86,8 +84,8 @@ this.contentClicker = function() {
                 var c = String.fromCharCode(code).toLowerCase();
                 if(c == "t"){ // Text Post Box Popup
                     textbox.display();
-										e.returnValue = false;
-										return false;
+                    e.returnValue = false;
+                    return false;
                 }
             }
         };

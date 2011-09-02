@@ -69,12 +69,10 @@
 }
 /* TextPostBox */
 #repost .confirmation.textpostbox#rpdialog {
-    width: 320px;
-    height: 70px;
+    width: 250px;
+    height: 150px;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: large;
-}
-#repost .confirmation.textpostbox#rpdialog div.label {
 }
 #repost .confirmation.textpostbox#rpdialog input.caption {
     width: 250px;
@@ -84,11 +82,17 @@
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: large;
 }
+#repost .confirmation.textpostbox#rpdialog input.captioninput {
+    width: 200px;
+}
+#repost .confirmation.textpostbox#rpdialog textarea.commentinput {
+    width: 200px;
+}
 #repost .confirmation.textpostbox#rpdialog button.ok {
-    top: 35px;
-    left: 280px;
+    top: 120px;
+    left: 15px;
     height: 30px;
-    width: 50px;
+    width: 60px;
 }
 #repost .confirmation.textpostbox#rpdialog button.cancel {
     display: none;
