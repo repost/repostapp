@@ -33,9 +33,7 @@ this.posttable = function(){
     this.createTable = function(){ 
         divtable = $('<div>').addClass('divtable');
         $('#repost').append(divtable); 
-        divtable.imagesLoaded( function() {
-            divtable.masonry({itemSelector: '.post'});
-        });
+        
         divtable.masonry({itemSelector: '.post'});
     }; 
 
@@ -106,6 +104,12 @@ this.posttable = function(){
     this.insertPost = function(post, rank){
         // get the children
         var posts = divtable.children();
+				// add onload so we refresh after images are in place
+				post.find('img').one('load', ( function() {
+            divtable.masonry({itemSelector: '.post'});
+        })).each(function() {
+					if(this.complete) $(this).load();
+				});
             divtable.append(post);   
         divtable.masonry('reload');
     };

@@ -48,10 +48,10 @@ function checkForPost(post,rank) {
         //con.setMetric(post.metric);
 				var json = JSON.parse(post.content);
 				if(json.cname == 'postImage') {
-    var test = $('<div>').imagepost({metric: '99', uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+    var test = $('<div>').imagepost({metric: post.metric, uuid: 'HELLWORLD', json:JSON.parse(post.content)});
 		}
 		if(json.cname == 'postText') {
-    var test = $('<div>').textpost({metric: '99', uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+    var test = $('<div>').textpost({metric: post.metric, uuid: 'HELLWORLD', json:JSON.parse(post.content)});
 }
     ptable.insertPost(test,0);
         ptable.insertPost(test,0);
