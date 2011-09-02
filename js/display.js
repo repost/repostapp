@@ -49,13 +49,14 @@ function checkForPost(post,rank) {
 				var json = JSON.parse(post.content);
 				if(json.cname == 'postImage') {
     var test = $('<div>').imagepost({metric: '99', uuid: 'HELLWORLD', json:JSON.parse(post.content)});
-
-
+		}
+		if(json.cname == 'postText') {
+    var test = $('<div>').textpost({metric: '99', uuid: 'HELLWORLD', json:JSON.parse(post.content)});
+}
     ptable.insertPost(test,0);
         ptable.insertPost(test,0);
         //repostNotify.queueNotification(con.getCaption());
 				}
-   }
 };
 
 this.repostNotification = function(){

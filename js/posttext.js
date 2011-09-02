@@ -1,104 +1,103 @@
-// Text content class.
+(function(window, $, undefined){
 
-this.postText = function(){
-
-    // image post specific
-    var cont;
-    var caption;
-    var link;
-
-    // holders for uuid and metric
-    var uuid;
-    var metric;
-
-    this.setUuid = function(u){
-        uuid = u;
+    $.TextPost = function( options, element ){
+        this.opts = $.extend({}, $.fn.textpost.defaults, options);
+        this.element = $( element );
+        this.loadFromJSON(this.opts.json);
+				this.metric = this.opts.metric;
+				this.uuid = this.opts.uuid;
+        this._create( options );
     };
 
-    this.setMetric = function(m){
-        metric = m;
-    };
+    $.TextPost.prototype = {
 
-    this.setContent = function(con){
-        cont = con;
-    };
+        // sets up widget
+        _create : function( options ) {
+						var addBlankPageTarget  = {
+										callback: function( text, href ) {
+												return href ? '<a href="' + href + '" title="' 
+												+ href + '" target="_blank" >' + text + '</a>' : text;
+										},
+										punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
+								};
 
-    this.setLink = function(lin){
-        link = lin;
-    };
 
-    this.setCaption = function(cap){
-        caption = cap;
-    };
+            this.element.addClass('textpost');
+						var cap;
+						var cont;
+						if(this.link){
+							cap = $('<a>'+this.caption+'</a>')
+											.attr('href', this.link)
+											.attr('target', '_blank')
+											.attr('title', this.link);
+						}else{
+							cap= linkify(this.caption, addBlankPageTarget);
+						}
+						cont = linkify(this.content, addBlankPageTarget);
+            this.tpost = $('<div>').append(cap);
 
-    this.getUuid = function(u){
-        return uuid;
-    };
-
-    this.getMetric = function(m){
-        return metric;
-    };
-
-    this.getCaption = function(cap){
-        return caption;
-    };
-
-    this.getContent = function(con){
-        return cont;
-    };
-
-    this.getLink = function(lin){
-        return link;
-    };
-
-    var addBlankPageTarget  = {
-        callback: function( text, href ) {
-            return href ? '<a href="' + href + '" title="' + href + '" target="_blank" >' 
-                    + text + '</a>' : text;
+            this.element.append(this.tpost);
+            this.element.post({uuid: this.uuid, metric: this.metric, masktext: cont});
         },
-        punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
-    };
 
-    // Construct text content from its parts
-    this.getXml = function() {
-        var xmlpost; /* generic xml post holder */
-        var textpost = document.createElement("div");
-        var cap = document.createElement("div");
-        var text = document.createElement("div");
-        
-        if(link){
-            cap.innerHTML = '<a href="' + link + '" title="' + link + '" target="_blank" >' 
-                    + caption + '</a>';
-        }else{
-            cap.innerHTML = linkify(caption, addBlankPageTarget);
+        // Load from json packed up in content
+        loadFromJSON : function(content){
+            this.link = content["link"];
+            this.content = content["content"];
+            this.caption = content["caption"];
+        },
+
+        toJSON : function() {
+            var j = {
+                "cname" : "postText",
+                "link" : this.link,
+                "content" : this.content,
+                "caption" : this.caption
+            };
+            return j;
         }
-        cap.className = "textpostcaption postcaption";
-        text.innerHTML = linkify(cont, addBlankPageTarget);
-        text.className = "posttextbody";
-        textpost.className = "textpost";
-        textpost.appendChild(cap);
-        textpost.appendChild(text);
-
-        xmlpost = xmlPost(uuid, metric);
-        xmlpost.appendChild(textpost);
-        return xmlpost;
-    };
-   
-    // Load from json packed up in content
-    this.loadFromJSON = function(content){
-        caption = content["caption"];
-        cont = content["content"];
-        link = content["link"];
+       
     };
 
-    this.toJSON = function() {
-        var j = {
-            "cname" : "postText",
-            "caption" : caption,
-            "content" : cont,
-            "link" : link
-        };
-        return j;
+    $.fn.textpost = function(options) {
+        if ( typeof options === 'string' ) {
+            // call method
+            var args = Array.prototype.slice.call( arguments, 1 );
+            this.each(function(){
+                var instance = $.data( this, 'textpost' );
+                if ( !instance ) {
+                  logError( "cannot call methods on textpost prior to initialization; " +
+                    "attempted to call method '" + options + "'" );
+                  return;
+                }
+                if ( !$.isFunction( instance[options] ) || options.charAt(0) === "_" ) {
+                  logError( "no such method '" + options + "' for textpost instance" );
+                  return;
+                }
+                // apply method
+                instance[ options ].apply( instance, args );
+            });
+        } else {
+            this.each(function(){
+                var instance = $.data( this, 'textpost' );
+                if ( instance ) {
+                  // apply options & init
+                  instance.option( options || {} );
+                  instance._init();
+                } else {
+                  // initialize new instance
+                  $.data( this, 'textpost', new $.TextPost( options, this ) );
+                }
+            });
+        }
+        return this;
     };
-};
+    
+    $.fn.textpost.defaults = {
+        masktext: '',
+        width: ''
+    };
+
+})(window, $);
+
 
