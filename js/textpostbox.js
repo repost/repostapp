@@ -50,7 +50,7 @@ this.textPostBox = function(sendPostCB) {
                 link = event.currentTarget.baseURI;
             }
             // Lets send this post
-            var t = { cname: "textPost", caption: caption.val(), content: comment.val(),
+            var t = { cname: "postText", caption: caption.val(), content: comment.val(),
                                link: link};
             this.sendPost(t);
         }

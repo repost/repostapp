@@ -19,7 +19,7 @@
  * Repost commons
  */
 #repost span.name {
-      cursor: pointer;
+    cursor: pointer;
 }
 /**
  * Floating Boxes
@@ -86,7 +86,7 @@
 }
 /* rpdialog submenu */
 #repost #rpdialog div.menuopt{
-		cursor: pointer;
+    cursor: pointer;
 }
 #repost #rpdialog div.menuopt:hover{
     background:#777777;
@@ -162,10 +162,10 @@
  * Post styles 
  */
 #repost div.divtable .post{
-	float:left;
-		width: 300px;
-		min-height: 50px;
-	text-align:center;
+    float:left;
+    width: 300px;
+    min-height: 50px;
+    text-align:center;
 }  
 /* Post mask */
 #repost div.divtable .post .postmask{
@@ -201,54 +201,34 @@
     bottom: 5px;
     right: 55px;
     z-index: 999;
-		color: white;
+    color: white;
 }
 #repost div.divtable .post .postmask .postmaskcaption{
     color: white;
 }
 #repost div.divtable .post.imagepost {
-	
+    
 }
+/* Text post */
 #repost div.divtable .post.textpost {
-	width: 200px;
-	color: #757575;
-	font-family: 'Abel', Helvetica, Arial, sans-serif;
-	font-size: x-large;
-	font-weight: 800;
-}
-#repost .imagepreview{
-    top: 0px;
-    max-width:100%;
-    max-height:100%;    
-	vertical-align:middle;
-}
-#repost div.posttextbody{
-    position: absolute;
-    font-size: 75%;
-    top: 30px;
-    left: 10px;
-    max-width:180px;
+    width: 200px;
+    color: #757575;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: x-large;
+    font-weight: 800;
     word-wrap: break-word;
 }
-#repost .textpostcaption{
-    position: absolute;
-    top: 10px;
-    left: 10px;
+#repost div.divtable .post.textpost.size1 {
+    width: 160px;
+    height: 100px;
 }
-#repost div.postcaption{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
+#repost div.divtable .post.textpost.size2 {
+    height: 200px;
+    width: 160px;
 }
-#repost .imagepostcaption{
-    position:absolute;
-    top: 140px;
-    left: 12px;
-    height: 35px;
-    overflow: hidden;
-}
-#repost .imagepostcaption:hover{
-    overflow: visible;
-    z-index:9999;
+#repost div.divtable .post.textpost.size3 {
+    width: 320px;
+    height: 200px;
 }
 /**
  * Menu Bar

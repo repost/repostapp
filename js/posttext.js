@@ -20,21 +20,19 @@
                 },
                 punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
             };
+            
+            // Check text lengths to determine style
+            if(this.caption.length < 50 && this.content.length < 50) {
+                this.element.addClass('size1');
+            } else if(this.caption.length < 150 && this.content.length < 150) {
+                this.element.addClass('size2');
+            } else {
+                this.element.addClass('size3');
+            }
             this.element.addClass('textpost');
-            var cap;
-            var cont;
             this.tpost = $('<span>'+this.caption+'</span>');
-          //  if(this.link){
-          //      cap = $('<a>'+this.caption+'</a>')
-          //                      .attr('href', this.link)
-          //                      .attr('target', '_blank')
-          //                      .attr('title', this.link);
-          //  }else{
-          //      cap= linkify(this.caption, addBlankPageTarget);
-          //  }
-           // cont = linkify(this.content, addBlankPageTarget);
             this.element.append(this.tpost);
-            this.element.post({uuid: this.uuid, metric: this.metric, masktext: cont});
+            this.element.post({uuid: this.uuid, metric: this.metric, masktext: this.content});
         },
 
         metric : function(value) {

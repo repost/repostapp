@@ -45,7 +45,7 @@ this.itemPostBox = function(sendPostCB){
 
     this.submitPost = function(response) {
         if(response) {
-            curpost = {cname: "imagePost", image: this.image,
+            curpost = {cname: "postImage", image: this.image,
                             context: this.context, caption: caption.val()};
             spCB(curpost);
         }

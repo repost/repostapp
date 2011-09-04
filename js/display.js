@@ -14,9 +14,9 @@ function buildFromJSON(content){
 function sendPost(p){
     var post = plugin.Post();
     var jsp = $('<div>');
-    if(p["cname"] == "textPost") {
+    if(p["cname"] == "postText") {
        jsp.textpost({json: p, metric: 0, uuid: post.uuid});
-    } else if(p["cname"] == "imagePost") {
+    } else if(p["cname"] == "postImage") {
        jsp.imagepost({json: p, metric: 0, uuid: post.uuid});
     }
     ptable.insertPost(jsp,0);
