@@ -166,6 +166,7 @@
     width: 300px;
     min-height: 50px;
     text-align:center;
+    margin: 10px;
 }  
 /* Post mask */
 #repost div.divtable .post .postmask{
@@ -207,7 +208,8 @@
     color: white;
 }
 #repost div.divtable .post.imagepost {
-    
+   height: 300px;
+   overflow: hidden;
 }
 /* Text post */
 #repost div.divtable .post.textpost {

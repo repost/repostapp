@@ -124,7 +124,7 @@ $.fn.textWidth = function(){
             post.element.addClass('post')
                     .mouseover($.proxy(post.mover, post))
                     .mouseout($.proxy(post.mout, post));
-            var mouseover = $('<div>'+this.opts.masktext+'</div>').addClass('postmask')
+            var mouseover = $('<div>').addClass('postmask')
                                 .append($('<div>'+this.opts.masktext+'</div>')
                                         .addClass('postmaskcaption'))
                                 .append($('<image>')

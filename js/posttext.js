@@ -21,10 +21,10 @@
                 punct_regexp: /(?:[!?.,:;'"]|(?:&|&amp;)(?:lt|gt|quot|apos|raquo|laquo|rsaquo|lsaquo);)$/
             };
             
-            // Check text lengths to determine style
-            if(this.caption.length < 50 && this.content.length < 50) {
+            // Check text lengths to determire style
+            if(this.caption.length < 20 && this.content.length < 20) {
                 this.element.addClass('size1');
-            } else if(this.caption.length < 150 && this.content.length < 150) {
+            } else if(this.caption.length < 75 && this.content.length < 50) {
                 this.element.addClass('size2');
             } else {
                 this.element.addClass('size3');
