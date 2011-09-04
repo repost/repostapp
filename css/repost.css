@@ -173,6 +173,7 @@
     background-color:#000;
     opacity:0.8;
     z-index:9000;
+		pointer-events: none;
     position: absolute;
     top: 0px;
     left: 0px;
