@@ -68,12 +68,19 @@ this.posttable = function(){
     }; 
 
     // Deletes a post from the table given rank
-    this.deletePost = function(rank){
+    this.deleteRank = function(rank){
         // get the children
         var posts = divtable.children();
         if(rank < posts.length) {
             $(posts[rank]).remove();
         }
+    };
+
+    // Deletes a post from the table given rank
+    this.deletePost = function(post){
+        // get the children
+        $(post).remove();
+        divtable.masonry('reload');
     };
 
     // Gets the post associated with the rank.

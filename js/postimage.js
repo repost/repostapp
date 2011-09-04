@@ -4,8 +4,8 @@
         this.opts = $.extend({}, $.fn.imagepost.defaults, options);
         this.element = $( element );
         this.loadFromJSON(this.opts.json);
-				this.metric = this.opts.metric;
-				this.uuid = this.opts.uuid;
+        this.metric = this.opts.metric;
+        this.uuid = this.opts.uuid;
         this._create( options );
     };
 
@@ -142,17 +142,12 @@ $.fn.textWidth = function(){
         },
        
         upvote : function(){
-                uparrow.src = "./images/hpuselect.png";
-                var pos = ptable.rankToxy(rank);
-                var uppost = ptable.getPostXY(pos);
-                uppost["upvoted"] = true;
-                hw.upboat(ptable.getUuid(pos));
+            hw.upboat(this.uuid);
         },
 
         downvote : function() {
-            var pos = ptable.rankToxy(rank);
-            hw.downboat(ptable.getUuid(pos));
-            ptable.delShufflePost(rank);
+            hw.downboat(this.uuid);
+            ptable.deletePost(this.element);
         },
 
         mover : function() {
