@@ -13,12 +13,13 @@
 
         // sets up widget
         _create : function( options ) {
+            var ip = this;
             this.element.addClass('imagepost');
 
             this.ipost = $('<a>')
-								.attr('href', this.context)
-								.attr('target', '_blank')
-                .append($('<image>').addClass('imagepreview')
+                .attr('href', this.context)
+                .attr('target', '_blank')
+                .append($('<img>').addClass('imagepreview')
                                 .attr('src', this.image)
                                 .attr('alt', this.caption)
                                 .attr('title', this.caption));
@@ -37,7 +38,7 @@
             this.element.append(this.ipost);
             this.element.post({uuid: this.uuid, metric: this.metric, masktext: this.caption});
         },
-
+        
         // Load from json packed up in content
         loadFromJSON : function(content){
             this.image = content["image"];

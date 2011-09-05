@@ -101,7 +101,7 @@ this.posttable = function(){
         var posts = divtable.children();
         // Do we need to make room?
         if(posts.length > 15) {
-            this.deletePost(15);
+            this.deleteRank(15);
         }
         // Perform the insertion
         if(posts.length < rank || posts.length == 0) {
@@ -109,8 +109,15 @@ this.posttable = function(){
         } else {
             $(posts[rank]).before(post);
         }
-        post.textfill();
-        divtable.masonry('reload');
+        var tp = post.find('.textpost');
+        if(tp.length > 0){
+            post.textfill();
+            divtable.masonry('reload');
+        } else {
+            post.find('img').load( function() {
+                divtable.masonry('reload')
+            });
+        }
     };
 
     // add the post(expecting innerHTML) to rank whatever
@@ -120,7 +127,7 @@ this.posttable = function(){
         var posts = divtable.children();
         // Do we need to make room?
         if(posts.length > 15) {
-            this.deletePost(15);
+            this.deleteRank(15);
         }
         // Perform the insertion
         if(posts.length < rank || posts.length == 0) {

@@ -162,7 +162,6 @@
  */
 #repost div.divtable .post{
     float:left;
-    width: 300px;
     min-height: 50px;
     text-align:center;
     margin: 10px;
@@ -172,18 +171,17 @@
     background-color:#000;
     opacity:0.8;
     z-index:9000;
-		pointer-events: none;
+    pointer-events: none;
     position: absolute;
     top: 0px;
     left: 0px;
     height: 100%;
     width: 100%;
-    padding: 5%;
 }
 #repost div.divtable .post .postmask img.downvote {
     cursor: pointer;
     position: absolute;
-		pointer-events: auto;
+    pointer-events: auto;
     bottom: 5px;
     right: 7px;
     z-index: 999;
@@ -193,7 +191,7 @@
 #repost div.divtable .post .postmask img.upvote {
     cursor: pointer;
     position: absolute;
-		pointer-events: auto;
+    pointer-events: auto;
     bottom: 5px;
     right: 30px;
     z-index: 999;
@@ -212,8 +210,10 @@
     color: white;
     line-height: normal;
 }
+/* Image post */
 #repost div.divtable .post.imagepost {
-   height: 300px;
+   max-height: 300px;
+   max-width: 300px;
    overflow: hidden;
 }
 /* Text post */
