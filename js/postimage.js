@@ -15,7 +15,9 @@
         _create : function( options ) {
             this.element.addClass('imagepost');
 
-            this.ipost = $('<a>').attr('href', this.context)
+            this.ipost = $('<a>')
+								.attr('href', this.context)
+								.attr('target', '_blank')
                 .append($('<image>').addClass('imagepreview')
                                 .attr('src', this.image)
                                 .attr('alt', this.caption)

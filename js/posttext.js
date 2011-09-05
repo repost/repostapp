@@ -13,6 +13,7 @@
 
         // sets up widget
         _create : function( options ) {
+				    var tp = this;
             var addBlankPageTarget  = {
                 callback: function( text, href ) {
                         return href ? '<a href="' + href + '" title="' 
@@ -30,7 +31,10 @@
                 this.element.addClass('size3');
             }
             this.element.addClass('textpost');
-            this.tpost = $('<span>'+this.caption+'</span>');
+            this.tpost = $('<span>'+this.caption+'</span>')
+						            .click(function(){ if(tp.link.length > 0) {
+																							window.open(tp.link);
+																					}});
             this.element.append(this.tpost);
             this.element.post({uuid: this.uuid, metric: this.metric, masktext: this.content});
         },
