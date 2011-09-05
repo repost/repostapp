@@ -154,9 +154,8 @@
  */
 #repost div.divtable {
     top:65px;
-    left:10%;
-    width:80%;
-    height:430px;
+    left:5%;
+    width:90%;
 }
 /**
  * Post styles 
@@ -178,6 +177,7 @@
     left: 0px;
     height: 100%;
     width: 100%;
+    padding: 5%;
 }
 #repost div.divtable .post .postmask img.downvote {
     cursor: pointer;
@@ -203,9 +203,11 @@
     right: 55px;
     z-index: 999;
     color: white;
+    line-height: normal;
 }
 #repost div.divtable .post .postmask .postmaskcaption{
     color: white;
+    line-height: normal;
 }
 #repost div.divtable .post.imagepost {
    height: 300px;
@@ -220,15 +222,17 @@
     font-weight: 800;
     word-wrap: break-word;
 }
-#repost div.divtable .post.textpost.size1 {
+#repost div.divtable div.post.textpost.size1 {
     width: 160px;
     height: 100px;
+    /* Hack for single line text. Vertical center */
+    line-height: 100px; /* Same height as div */
 }
-#repost div.divtable .post.textpost.size2 {
+#repost div.divtable div.post.textpost.size2 {
     height: 200px;
     width: 160px;
 }
-#repost div.divtable .post.textpost.size3 {
+#repost div.divtable div.post.textpost.size3 {
     width: 320px;
     height: 200px;
 }
