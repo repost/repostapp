@@ -162,7 +162,7 @@ $.fn.textWidth = function(){
             postmask.hide();
         },
 
-        metric : function(value) {
+        metricfn : function(value) {
             if(value){
                 this.metric = value;
             } else {
@@ -170,7 +170,7 @@ $.fn.textWidth = function(){
             }
         },
 
-        uuid : function(value) {
+        uuidfn : function(value) {
             if(value){
                 this.uuid = value;
             } else {
@@ -184,7 +184,7 @@ $.fn.textWidth = function(){
             // call method
             var args = Array.prototype.slice.call( arguments, 1 );
             this.each(function(){
-                var instance = $.data( this, 'post' );
+                var instance = $.data( this, 'postclass' );
                 if ( !instance ) {
                   logError( "cannot call methods on repostDialog prior to initialization; " +
                     "attempted to call method '" + options + "'" );
@@ -199,14 +199,14 @@ $.fn.textWidth = function(){
             });
         } else {
             this.each(function(){
-                var instance = $.data( this, 'post' );
+                var instance = $.data( this, 'postclass' );
                 if ( instance ) {
                   // apply options & init
                   instance.option( options || {} );
                   instance._init();
                 } else {
                   // initialize new instance
-                  $.data( this, 'post', new $.Post( options, this ) );
+                  $.data( this, 'postclass', new $.Post( options, this ) );
                 }
             });
         }

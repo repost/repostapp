@@ -133,6 +133,18 @@ this.posttable = function(){
 
     };
     
+    this.updateMetric = function(uppost) {
+        var posts = divtable.children();
+        var plen = posts.length;
+        var i;
+        for(i=0; i < plen; i++) {
+            if(uppost.uuid == $(posts[i]).post('uuidfn')) {
+                $(posts[i]).post('metricfn', uppost.metric);
+                return;
+            }
+        }
+    };
+
     this.createTable();
 
 };
