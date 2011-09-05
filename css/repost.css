@@ -228,8 +228,6 @@
 #repost div.divtable div.post.textpost.size1 {
     width: 160px;
     height: 100px;
-    /* Hack for single line text. Vertical center */
-    line-height: 100px; /* Same height as div */
 }
 #repost div.divtable div.post.textpost.size2 {
     height: 200px;
