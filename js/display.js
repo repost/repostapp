@@ -194,8 +194,8 @@ function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
 
-function postmetricupdate(){
-	console.log("Metric update");
+function postmetricupdate(post){
+	ptable.updateMetric(post);
 }
 
 var ptable; // Mainpage table display
