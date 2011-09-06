@@ -248,7 +248,7 @@ function main() {
 		
         // Get repost rolling
         hw.getInitialPosts();
-        setTimeout("checkStatus()",10000);
+        setInterval("checkStatus()",10000);
     });
 };
 
