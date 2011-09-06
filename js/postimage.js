@@ -13,12 +13,13 @@
 
         // sets up widget
         _create : function( options ) {
+            var ip = this;
             this.element.addClass('imagepost');
 
             this.ipost = $('<a>')
-								.attr('href', this.context)
-								.attr('target', '_blank')
-                .append($('<image>').addClass('imagepreview')
+                .attr('href', this.context)
+                .attr('target', '_blank')
+                .append($('<img>').addClass('imagepreview')
                                 .attr('src', this.image)
                                 .attr('alt', this.caption)
                                 .attr('title', this.caption));
@@ -37,7 +38,7 @@
             this.element.append(this.ipost);
             this.element.post({uuid: this.uuid, metric: this.metric, masktext: this.caption});
         },
-
+        
         // Load from json packed up in content
         loadFromJSON : function(content){
             this.image = content["image"];
@@ -127,8 +128,8 @@ $.fn.textWidth = function(){
                     .mouseover($.proxy(post.mover, post))
                     .mouseout($.proxy(post.mout, post));
             var mouseover = $('<div>').addClass('postmask')
-                                .append($('<div>'+this.opts.masktext+'</div>')
-                                        .addClass('postmaskcaption'))
+                                .append($('<div>').append($('<div>'+this.opts.masktext+'</div>')
+                                        .addClass('postmaskcaption')))
                                 .append($('<image>')
                                         .attr('src','/images/repost_r.gif')
                                         .addClass('upvote')
@@ -164,7 +165,7 @@ $.fn.textWidth = function(){
             postmask.hide();
         },
 
-        metric : function(value) {
+        metricfn : function(value) {
             if(value){
                 this.metric = value;
             } else {
@@ -172,7 +173,7 @@ $.fn.textWidth = function(){
             }
         },
 
-        uuid : function(value) {
+        uuidfn : function(value) {
             if(value){
                 this.uuid = value;
             } else {
@@ -186,7 +187,7 @@ $.fn.textWidth = function(){
             // call method
             var args = Array.prototype.slice.call( arguments, 1 );
             this.each(function(){
-                var instance = $.data( this, 'post' );
+                var instance = $.data( this, 'postclass' );
                 if ( !instance ) {
                   logError( "cannot call methods on repostDialog prior to initialization; " +
                     "attempted to call method '" + options + "'" );
@@ -201,14 +202,14 @@ $.fn.textWidth = function(){
             });
         } else {
             this.each(function(){
-                var instance = $.data( this, 'post' );
+                var instance = $.data( this, 'postclass' );
                 if ( instance ) {
                   // apply options & init
                   instance.option( options || {} );
                   instance._init();
                 } else {
                   // initialize new instance
-                  $.data( this, 'post', new $.Post( options, this ) );
+                  $.data( this, 'postclass', new $.Post( options, this ) );
                 }
             });
         }
