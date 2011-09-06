@@ -246,6 +246,8 @@
     left: 10%;
     width: 80%;
     height: 50px;
+    background: #ececec;
+    z-index: 1;
 }
 #repost #repostMenu .statusCircle {
     width: 10px;
@@ -299,4 +301,9 @@ body {
 #repost .helpbox {
     width: 400px;
     height: 400px;
+}
+
+#repost .helpbox .logtext {
+    bottom: 10px;
+    position: absolute;
 }

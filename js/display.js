@@ -130,16 +130,16 @@ this.repostNotification = function(){
 // help stuff
 this.helpVisual = function() {
     this.show = function() {
-        var helptext = document.createElement("div");
-        helptext.class = "helptext";
-        helptext.innerHTML = 
+        var helptext = $(document.createElement("div"))
+                            .addClass("helptext")
+                            .html(
             "<p>HELP</p>" +
             "web: <a href=\"www.getrepost.com\">www.getrepost.com</a><br/>" +
-            "irc: #repost on irc.freenode.net<br/>";
+            "irc: #repost on irc.freenode.net<br/>");
 
-        var logtext = document.createElement("div");
-        logtext.class = "logtext";
-        logtext.innerHTML = "Send logs to repost";
+        var logtext = $(document.createElement("div"))
+                        .addClass("logtext")
+                        .html("Send logs to repost");
 
         helpdiv = $('<div>').addClass('helpbox')
             .append($(helptext))
