@@ -15,110 +15,12 @@
     font-family: "Abel"; 
     src: url('chrome-extension://__MSG_@@extension_id__/css/Abel-Regular.ttf');
 }
-
-/**
- * Post Table
- */
-#repost .postcell {
-    background:#B4C3FF;
-    border:1px solid #fff;
-	width:20%;
-}
-#repost .fuckoff {
-    background:#9D98E8;
-}
-#repost .rockon {
-    background:#A7E7FF;
-}
-#repost .votehand{
-    width:27px;
-    position: relative; 
-}
-#repost .downhand{
-    position:absolute;
-    bottom:0%;
-    left:80%;
-    z-index:1;
-}
-#repost .uphand{
-    position:absolute;
-    top:0%;
-    left:80%;
-    z-index:1;
-}
-#repost div.metric{
-    top:30px;
-    left:240px;
-    position: relative; 
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-}
-
-/**
- * Post styles 
- */
-#repost .postspace{
-    position:relative;
-    height: 100%;
-    width: 100%;
-	text-align:center;
- }
-#repost .post{
-    position:absolute;
-    left:0px;
-    top:0px;
-    height: 100%;
-    width: 100%;
-	text-align:center;
- }
-#repost div.imagepost {
-	text-align:center;
-	float:left;
-	top: 0px;
-    width:100%;
-    height:100%;    
-}
-#repost .imagepreview{
-    top: 0px;
-    max-width:100%;
-    max-height:100%;    
-	vertical-align:middle;
-}
-#repost div.posttextbody{
-    position: absolute;
-    font-size: 75%;
-    top: 30px;
-    left: 10px;
-    max-width:180px;
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-    word-wrap: break-word;
-}
-#repost .textpostcaption{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-#repost div.postcaption{
-    font-family: 'Abel', Helvetica, Arial, sans-serif;
-}
-#repost .imagepostcaption{
-    position:absolute;
-    top: 140px;
-    left: 12px;
-    height: 35px;
-    overflow: hidden;
-}
-#repost .imagepostcaption:hover{
-    overflow: visible;
-    z-index:9999;
-}
-
 /**
  * Repost commons
  */
 #repost span.name {
-      cursor: pointer;
+    cursor: pointer;
 }
-
 /**
  * Floating Boxes
  */
@@ -184,7 +86,7 @@
 }
 /* rpdialog submenu */
 #repost #rpdialog div.menuopt{
-		cursor: pointer;
+    cursor: pointer;
 }
 #repost #rpdialog div.menuopt:hover{
     background:#777777;
@@ -227,12 +129,6 @@
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-#repost .captioninput{
-    position: absolute;
-    left:100px;
-    top:20px;
-    margin: 15px 5px 15px 0px;
-}
 #repost .content{
     position:absolute;
     left:10px;
@@ -253,57 +149,94 @@
 }
 #repost .contenttext{
 }
-
 /**
  * Post table
  */
-#repost #divtable {
+#repost div.divtable {
     top:65px;
-    left:10%;
-    width:80%;
-    height:100%;
-	position:fixed;
+    left:5%;
+    width:90%;
 }
-#repost #divtable div.divrow {
-	width:100%;
-    height:25%;
-    margin: 0px;
-    left:0px;
-    position:absolute;
-}
-#repost #divtable div.divcol {
-	position:absolute;
-	text-align:center;
+/**
+ * Post styles 
+ */
+#repost div.divtable .post{
+    float:left;
+    min-height: 50px;
+    text-align:center;
+    margin: 10px;
+}  
+/* Post mask */
+#repost div.divtable .post .postmask{
+    background-color:#000;
+    opacity:0.8;
+    z-index:9000;
+    pointer-events: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
     height: 100%;
+    width: 100%;
 }
-#repost #divtable #divRow0 {
-    top:0%;
+#repost div.divtable .post .postmask img.downvote {
+    cursor: pointer;
+    position: absolute;
+    pointer-events: auto;
+    bottom: 5px;
+    right: 7px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
 }
-#repost #divtable #divRow1 {
-    top:25%;
+#repost div.divtable .post .postmask img.upvote {
+    cursor: pointer;
+    position: absolute;
+    pointer-events: auto;
+    bottom: 5px;
+    right: 30px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
 }
-#repost #divtable #divRow2 {
-    top:50%;
+#repost div.divtable .post .postmask div.metric {
+    position: absolute;
+    bottom: 5px;
+    right: 55px;
+    z-index: 999;
+    color: white;
+    line-height: normal;
 }
-#repost #divtable #divRow3 {
-    top:75%;
+#repost div.divtable .post .postmask .postmaskcaption{
+    color: white;
+    line-height: normal;
 }
-#repost #divtable .divCol0 {
-	width:20%;
+/* Image post */
+#repost div.divtable .post.imagepost {
+   max-height: 300px;
+   max-width: 300px;
+   overflow: hidden;
 }
-#repost #divtable .divCol1 {
-    left:30%;
-	width:20%;
+/* Text post */
+#repost div.divtable .post.textpost {
+    width: 200px;
+    color: #757575;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: x-large;
+    font-weight: 800;
+    word-wrap: break-word;
 }
-#repost #divtable .divCol2 {
-    left:55%;
-	width:20%;
+#repost div.divtable div.post.textpost.size1 {
+    width: 160px;
+    height: 100px;
 }
-#repost #divtable .divCol3 {
-    left:80%;
-	width:20%;
+#repost div.divtable div.post.textpost.size2 {
+    height: 200px;
+    width: 160px;
 }
-
+#repost div.divtable div.post.textpost.size3 {
+    width: 320px;
+    height: 200px;
+}
 /**
  * Menu Bar
  */

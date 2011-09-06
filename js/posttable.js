@@ -5,6 +5,37 @@
    }
 })(jQuery);
 
+(function($) {
+	/**
+	* Resizes an inner element's font so that the inner element completely fills the outer element.
+	* @author Russ Painter WebDesign@GeekyMonkey.com
+	* @version 0.1
+	* @param {Object} Options which are maxFontPixels (default=40), innerTag (default='span')
+	* @return All outer elements processed
+	* @example <div class='mybigdiv filltext'><span>My Text To Resize</span></div>
+	*/
+	$.fn.textfill = function(options) {
+		var defaults = {
+			maxFontPixels: 40,
+			innerTag: 'span'
+		};
+		var Opts = jQuery.extend(defaults, options);
+		return this.each(function() {
+			var fontSize = Opts.maxFontPixels;
+			var ourText = $(Opts.innerTag + ':visible:first', this);
+			var maxHeight = $(this).height();
+			var maxWidth = $(this).width();
+			var textHeight;
+			var textWidth;
+			do {
+				ourText.css('font-size', fontSize);
+				textHeight = ourText.height();
+				textWidth = ourText.width();
+				fontSize = fontSize - 1;
+			} while ((textHeight > maxHeight || textWidth > maxWidth) && fontSize > 3);
+		});
+	};
+})(jQuery);
 
 // Holds the post while we move posts around
 this.postHolder = function(){
@@ -31,224 +62,96 @@ this.posttable = function(){
     var MAX_POSTS = MAX_COLS * MAX_ROWS;
 
     this.createTable = function(){ 
-        var page = document.getElementById("repost"); 
-        //table = document.createElement("table"); 
-        divtable = document.createElement("div");
-        divtable.id = "divtable";
-        //page.appendChild(table); 
-        page.appendChild(divtable); 
+        divtable = $('<div>').addClass('divtable');
+        $('#repost').append(divtable); 
+        divtable.masonry({itemSelector: '.post', isAnimated: true});
     }; 
 
     // Deletes a post from the table given rank
-    this.deletePost = function(rank){
-        var pos = this.rankToxy(rank);
-        this.deletePostXY(pos);
-    };
-
-    // Delete a post from table given xy coords
-    this.deletePostXY = function(pos){
-        // hack so chrome repaints the screen nicely when downvoting
-        $("#divRow"+pos.y+"Col"+pos.x).hide(0);
-        $("#divRow"+pos.y+"Col"+pos.x).empty();
-        numentries--;
-    };
-
-    // Deletes a post and shuffles all items in the table down.
-    this.delShufflePost = function(rank){
-        var pos = this.rankToxy(rank);
-
-        for( i = rank; i < numentries; i++ ) {
-            this.deletePost(i);
-            if ( ( i + 1 ) > numentries ) {
-                break;
-            }
-            var post = this.getPostXY(this.rankToxy(1+i));
-            this.addPost(post,i);
+    this.deleteRank = function(rank){
+        // get the children
+        var posts = divtable.children();
+        if(rank < posts.length) {
+            $(posts[rank]).remove();
         }
     };
 
-    // Convert xy to rank
-    this.xytorank = function(x,y){
-       return (y*MAX_COLS + x);
-    };
-
-    // Converts a rank into a position in the table.
-    this.rankToxy = function(rank){
-        var y = Math.floor(rank / MAX_COLS);
-        var x = (rank - MAX_COLS*y);
-        return{ y:y, x:x};
+    // Deletes a post from the table given rank
+    this.deletePost = function(post){
+        // get the children
+        $(post).remove();
+        divtable.masonry('reload');
     };
 
     // Gets the post associated with the rank.
     this.getPost = function(rank){
-        var pos = this.rankToxy(rank);
-        return this.getPostXY(pos);
+        // get the children
+        var posts = divtable.children();
+        if( rank < posts.length) {
+            return posts[rank]
+        } else {
+            return;
+        }
     };
     
-    // Return copy post from coord (x,y)
-    this.getPostXY = function(pos) {
-        var post = new postHolder();
-        var postdom = $("#divRow"+pos.y+"Col"+pos.x+" .post");
-        if ( postdom == null )
-          return null;
-
-        post.setXml(postdom[0]);
-        return post;
-    };
-
-    // Return the uuid from the (x,y)
-    this.getUuid = function(pos){
-        return $("#divRow"+pos.y+"Col"+pos.x+" .post").attr("data-uuid");
-    };
-
     // inserts a post at the given location and 
     // shuffles all posts behind it up a rank.
     this.insertPost = function(post, rank){
-
-        // shuffle shit along
-        for ( var i = numentries; i > rank; i-- )
-        {
-            var pos = this.rankToxy(i-1);
-            var temppost = this.getPostXY(pos);
-            if (temppost) {
-                this.deletePostXY(pos);
-                /* only add posts that fit in our page */
-                if ( i < MAX_POSTS ) {
-                    this.addPost(temppost,(i));
-                }
-            }
+        // get the children
+        var posts = divtable.children();
+        // Do we need to make room?
+        if(posts.length > 15) {
+            this.deleteRank(15);
         }
-        //insert at position
-        this.addPost(post,rank);
+        // Perform the insertion
+        if(posts.length < rank || posts.length == 0) {
+            divtable.append(post);   
+        } else {
+            $(posts[rank]).before(post);
+        }
+        var tp = post.find('.textpost');
+        if(tp.length > 0){
+            post.textfill();
+            divtable.masonry('reload');
+        } else {
+            post.find('img').load( function() {
+                divtable.masonry('reload')
+            });
+        }
     };
 
     // add the post(expecting innerHTML) to rank whatever
     // If there is a post already there is will remove it
     this.addPost = function( post, rank){
-        
-        // Hack to remove welcome
-        if ( $("#welcome").length ) {
-            $("#welcome").remove();
+         // get the children
+        var posts = divtable.children();
+        // Do we need to make room?
+        if(posts.length > 15) {
+            this.deleteRank(15);
         }
-
-        var pos = this.rankToxy(rank);
-        var row;
-
-        // check we got enough rows
-        if ( rows <= pos.y ) {
-            //row = table.insertRow(rows++);
-            row = document.createElement("div");
-            row.id = "divRow"+rows++;
-            row.className = "divrow";
-            divtable.appendChild(row);
+        // Perform the insertion
+        if(posts.length < rank || posts.length == 0) {
+            divtable.append(post);   
+        } else {
+            $(posts[rank]).after(post);
         }
-        else {
-            row = document.getElementById("divRow"+pos.y);
-        }
+        post.textfill();
+        divtable.masonry('reload');       
 
-        // check if cell exists
-        //var cell = row.insertCell(pos.x);
-        var cell = document.getElementById("divRow"+pos.y+"Col"+pos.x);
-        if ( !cell ) {
-            cell = document.createElement("div");
-            cell.id = "divRow"+pos.y+"Col"+pos.x;
-            cell.className = "divCol"+pos.x+" divcol";
-            row.appendChild(cell);
-        }
-        // hack so chrome repaints the screen nicely when downvoting
-        $("#divRow"+pos.y+"Col"+pos.x).show(0);
-
-        //create the general stuff
-        var postspace = document.createElement("div");
-        postspace.className = "postspace";
-        cell.appendChild(postspace);
-
-        var uparrow = document.createElement("image");
-        uparrow.className = "uphand votehand";
-        uparrow.src = "./images/hpu.png";
-        postspace.appendChild(uparrow);
-
-        var met = document.createElement("div");
-        met.className = "metric";
-        //met.innerHTML = post.getMetric();
-        postspace.appendChild(met);
-
-        var downarrow = document.createElement("image");
-        downarrow.className = "downhand votehand";
-        downarrow.src = "./images/hpd.png";
-        postspace.appendChild(downarrow);
-
-        // add some action code to the cells
-        uparrow.onclick = function(){
-            uparrow.src = "./images/hpuselect.png";
-            var pos = ptable.rankToxy(rank);
-            var uppost = ptable.getPostXY(pos);
-            uppost["upvoted"] = true;
-            hw.upboat(ptable.getUuid(pos));
-        };
-
-        uparrow.onmouseover = function(){
-            this.parentNode.className += " rockon";
-        };
-
-        uparrow.onmouseout = function(){
-            this.parentNode.className = this.parentNode.className.replace(" rockon",'')
-        };
-
-        downarrow.onmouseover = function(){
-            this.parentNode.className += " fuckoff";
-        };
-
-        downarrow.onmouseout = function(){
-            this.parentNode.className = this.parentNode.className.replace(" fuckoff",'')
-        };
-
-        downarrow.onclick = function(){
-            //var pos = {x:this.parentNode.parentNode.cellIndex,
-            //            y:this.parentNode.parentNode.parentNode.rowIndex};
-            var pos = ptable.rankToxy(rank);
-            hw.downboat(ptable.getUuid(pos));
-            ptable.delShufflePost(rank);
-        };
-
-        /*
-        postspace.onmouseover = function(){
-        };
-        postspace.onmouseout =  function() {
-        };
-        postspace.onmousedown = function(){
-        };
-        postspace.onmouseup = function(){
-        };                
-        postspace.onclick = function(){
-        };            
-        */
-        
-        numentries++;
-        // Ensure that upvote highlighting follows post around table
-        var postxml = post.getXml();
-        if (postxml["upvoted"]){
-            uparrow.src = "./images/hpuselect.png";
-        }
-
-        //var test = post.getXml();
-        postspace.appendChild(post.getXml());
-        cell.appendChild(postspace);
-
-        $(".downhand").hide();
-        $(".uphand").hide();
-        $("#"+cell.id+" .postspace").mouseenter(function() {
-            $("#"+cell.id+" .uphand").fadeIn("fast");
-            $("#"+cell.id+" .downhand").fadeIn("fast");
-          }).mouseleave(function() {
-            $("#"+cell.id+" .uphand").fadeOut("fast");
-            $("#"+cell.id+" .downhand").fadeOut("fast");
-        });
-
-        // lightbox all images
-        $('a.lightbox').lightBox();
     };
     
+    this.updateMetric = function(uppost) {
+        var posts = divtable.children();
+        var plen = posts.length;
+        var i;
+        for(i=0; i < plen; i++) {
+            if(uppost.uuid == $(posts[i]).post('uuidfn')) {
+                $(posts[i]).post('metricfn', uppost.metric);
+                return;
+            }
+        }
+    };
+
     this.createTable();
 
 };

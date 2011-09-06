@@ -20,8 +20,8 @@ this.textPostBox = function(sendPostCB) {
         caption = $('<input>').addClass('captioninput')
                                 .attr('type', 'text');
         // Comment input
-        comment = $('<input>').addClass('commentinput')
-                                .attr('type', 'text');
+        comment = $('<textarea>').addClass('commentinput');
+                                //.attr('type', 'text');
         // Create dialog
         textPostBox = $('<div>').addClass('textpostbox')
                             .append($('<div>Caption:</div>')
@@ -41,19 +41,17 @@ this.textPostBox = function(sendPostCB) {
 
     this.submitPost = function(response){
         if(response){
-            // Lets send this post
-            var t = new postText();
-            t.setCaption(caption.val());
-            t.setContent(comment.val());
+            var link;
             // See if we are posting from repost page
             var rpurl = new RegExp("chrome-extension://.*");
             if(rpurl.test(event.currentTarget.baseURI)){
-                t.setLink("");
+                link = "";
             }else{
-                t.setLink(event.currentTarget.baseURI);
+                link = event.currentTarget.baseURI;
             }
-            t.setUuid("");
-            t.setMetric("");
+            // Lets send this post
+            var t = { cname: "postText", caption: caption.val(), content: comment.val(),
+                               link: link};
             this.sendPost(t);
         }
     };

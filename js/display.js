@@ -13,8 +13,13 @@ function buildFromJSON(content){
 // Sends and inserts jsPosts
 function sendPost(p){
     var post = plugin.Post();
-    p.setUuid(post.uuid);
-    ptable.insertPost(p,0);
+    var jsp = $('<div>');
+    if(p["cname"] == "postText") {
+       jsp.textpost({json: p, metric: 0, uuid: post.uuid});
+    } else if(p["cname"] == "postImage") {
+       jsp.imagepost({json: p, metric: 0, uuid: post.uuid});
+    }
+    ptable.insertPost(jsp,0);
     post.content = JSON.stringify(p);
     hw.sendPost(post);
 };
@@ -23,8 +28,9 @@ function sendPost(p){
 // repost something.
 chrome.extension.onRequest.addListener(
      function(request, sender, sendResponse) {
-        var post = buildFromJSON(request);
+        var post = JSON.parse(request);
         sendPost(post);
+        repostNotify.notification('Post Sent:', post.caption);
         sendResponse({}); // snub them.
      }
 );
@@ -42,12 +48,16 @@ function xmlPost(uuid, metric){
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank) {
     if( post.content ) {
-        var con = buildFromJSON(post.content);
-        con.setUuid(post.uuid);
-        con.setMetric(post.metric);
-        ptable.insertPost(con,rank);
-        repostNotify.queueNotification(con.getCaption());
-   }
+        var json = JSON.parse(post.content);
+        if(json.cname == 'postImage') {
+            var test = $('<div>').imagepost({metric: post.metric, uuid: post.uuid, json:JSON.parse(post.content)});
+		}
+		else if(json.cname == 'postText') {
+            var test = $('<div>').textpost({metric: post.metric, uuid: post.uuid, json:JSON.parse(post.content)});
+        }
+        ptable.insertPost(test,0);
+        repostNotify.queueNotification(json["caption"]);
+    }
 };
 
 this.repostNotification = function(){
@@ -71,6 +81,18 @@ this.repostNotification = function(){
     notification.show();
   };
   
+  this.notification = function(title, msg){
+    // Create a simple text notification:
+    var notification = webkitNotifications.createNotification(
+        'images/icon-16.jpeg',  // icon url - can be relative
+        title,
+        msg
+        );
+    notification.onclick = function(){ window.focus(); this.cancel(); };
+    setTimeout(function(){ notification.cancel();}, '5000');
+    notification.show();
+  };
+
   // On the timeout if there is only 1 post send out the caption
   // more than one send out the number
   this.onTimeOut = function(){
@@ -143,8 +165,8 @@ function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
 
-function postmetricupdate(){
-	console.log("Metric update");
+function postmetricupdate(post){
+	ptable.updateMetric(post);
 }
 
 var ptable; // Mainpage table display
