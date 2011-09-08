@@ -130,28 +130,18 @@ this.repostNotification = function(){
 // help stuff
 this.helpVisual = function() {
     this.show = function() {
-        var helptext = $(document.createElement("div"))
-                            .addClass("helptext")
-                            .html(
-            "<p>HELP</p>" +
-            "web: <a href=\"www.getrepost.com\">www.getrepost.com</a><br/>" +
-            "irc: #repost on irc.freenode.net<br/>");
+        var help = { cname: "postText", caption: "HELP", 
+                     content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
+                     link: "www.getrepost.com" };
+        var jsp = $('<div>');
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
 
-        var logtext = $(document.createElement("div"))
-                        .addClass("logtext")
-                        .html("Send logs to repost");
-
-        helpdiv = $('<div>').addClass('helpbox')
-            .append($(helptext))
-            .append($(logtext));
-        helpdiv.repostDialog({'modal': true,
-                           'centred': true,
-                           'draggable': false,
-                           'closefunc': function() {
-                               helpdiv.remove();
-                          }});
-        $('#repost').append(helpdiv);
-        helpdiv.repostDialog('show');
+        var log = { cname: "postText", caption: "LOGS", 
+                     content: "logs" };
+        var jsp = $('<div>');
+        jsp.textpost({json: log, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
     };
 };
 
