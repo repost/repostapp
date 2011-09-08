@@ -129,7 +129,30 @@ this.repostNotification = function(){
 
 // help stuff
 this.helpVisual = function() {
-    alert("hello world");
+    this.show = function() {
+        var helptext = $(document.createElement("div"))
+                            .addClass("helptext")
+                            .html(
+            "<p>HELP</p>" +
+            "web: <a href=\"www.getrepost.com\">www.getrepost.com</a><br/>" +
+            "irc: #repost on irc.freenode.net<br/>");
+
+        var logtext = $(document.createElement("div"))
+                        .addClass("logtext")
+                        .html("Send logs to repost");
+
+        helpdiv = $('<div>').addClass('helpbox')
+            .append($(helptext))
+            .append($(logtext));
+        helpdiv.repostDialog({'modal': true,
+                           'centred': true,
+                           'draggable': false,
+                           'closefunc': function() {
+                               helpdiv.remove();
+                          }});
+        $('#repost').append(helpdiv);
+        helpdiv.repostDialog('show');
+    };
 };
 
 
@@ -164,7 +187,7 @@ function addShortCuts(){
             });
     $('#helplink').click(function(){
         helpdisplay.show();
-    }
+    });
 };
 
 function checkStatus() {
@@ -187,11 +210,11 @@ var repostNotify;
 var wel;
 var statusBar;
 
-var help;
+var helpdisplay;
 
 function main() {
     $('document').ready(function(){
-        help = new helpVisual();
+        helpdisplay = new helpVisual();
         linksdisplay = new linkVisual();
         // Create instance of plugin
         plugin = document.getElementById("plugin");
@@ -225,8 +248,8 @@ function main() {
 		
         // Get repost rolling
         hw.getInitialPosts();
-        setTimeout("checkStatus()",10000);
-    })
+        setInterval("checkStatus()",10000);
+    });
 };
 
 
