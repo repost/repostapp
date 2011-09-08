@@ -132,7 +132,7 @@ this.helpVisual = function() {
     this.show = function() {
         var help = { cname: "postText", caption: "HELP", 
                      content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
-                     link: "www.getrepost.com" };
+                     link: "http://www.getrepost.com" };
         var jsp = $(document.createElement("div"));
         jsp.textpost({json: help, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
@@ -180,6 +180,44 @@ function addShortCuts(){
             });
     $('#helplink').click(function(){
         helpdisplay.show();
+    });
+};
+
+function createRemoteText(clickdata, tab) {
+    // Create request
+    var request = {"type": "textPost"};
+    chrome.tabs.sendRequest(tab.id, JSON.stringify(request), 
+            function(response) {
+            });
+};
+
+function createRemoteImage(clickdata, tab) {
+    // Create request
+    var request = {"type": "imagePost",
+                    "target": {"baseURI": clickdata.pageUrl, 
+                                "src": clickdata.srcUrl}
+    };
+    chrome.tabs.sendRequest(tab.id, JSON.stringify(request), 
+            function(response) {
+            });
+};
+
+// Context Menus
+function createContextMenus(){
+    // Remove all before we start
+    chrome.contextMenus.removeAll();
+    // Text post
+    chrome.contextMenus.create({type: "normal",
+                                title: "Create Text Post",
+                                contexts: ["page"],
+                                onclick: createRemoteText
+    });
+
+    // Image post
+    chrome.contextMenus.create({type: "normal",
+                                title: "Create Image Post",
+                                contexts: ["image"],
+                                onclick: createRemoteImage
     });
 };
 
@@ -238,6 +276,8 @@ function main() {
         var linkarr = hw.getLinks();
         var acctarr = hw.getAccounts();
         linksdisplay.init(acctarr, linkarr);
+        // Add context menus
+        createContextMenus();
 		
         // Get repost rolling
         hw.getInitialPosts();
