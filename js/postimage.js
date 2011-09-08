@@ -146,6 +146,8 @@ $.fn.textWidth = function(){
        
         upvote : function(){
             hw.upboat(this.uuid);
+            this.metric += 1;
+            this.metricfn(this.metric);
         },
 
         downvote : function() {
@@ -168,6 +170,8 @@ $.fn.textWidth = function(){
         metricfn : function(value) {
             if(value){
                 this.metric = value;
+                // Update the text
+                this.element.find('.metric').text(value);
             } else {
                 return this.metric;
             }
@@ -186,8 +190,7 @@ $.fn.textWidth = function(){
         if ( typeof options === 'string' ) {
             // call method
             var args = Array.prototype.slice.call( arguments, 1 );
-            this.each(function(){
-                var instance = $.data( this, 'postclass' );
+                var instance = $.data( this[0], 'postclass' );
                 if ( !instance ) {
                   logError( "cannot call methods on repostDialog prior to initialization; " +
                     "attempted to call method '" + options + "'" );
@@ -198,8 +201,7 @@ $.fn.textWidth = function(){
                   return;
                 }
                 // apply method
-                instance[ options ].apply( instance, args );
-            });
+                return instance[ options ].apply( instance, args );
         } else {
             this.each(function(){
                 var instance = $.data( this, 'postclass' );
