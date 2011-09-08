@@ -1,73 +1,100 @@
 /**
- * Generic floating box
+ * Floating Boxes
  */
-div.repostdialog.floater{
-  opacity:0.95;
-  visibility: hidden;
-  position: absolute;
-  background:#388EA6;
-  box-shadow:2px 2px 5px #000;
-  padding: 7px 10px 7px 10px;
-  z-index:99999999;
+#repost div#rpdialog{
+    opacity:0.95;
+    position: fixed;
+    margin: auto;
+    background:#ececec;
+    box-shadow:2px 2px 5px #000;
+    padding: 7px 10px 7px 10px;
+    z-index: 8999;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
 }
-
-label.repostdialog{
-    font-family:"Lucida Console", Courier New, monospace;
+#repost #rpdialog label{
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
     margin: 0 5px 0 0 ;
 }
-
-span.repostdialog.floatclose {
-    font-size: 150%;
-    color:#000;
-    cursor:pointer;
-    font-weight:bold;
-    font-family:"Lucida Console", Courier New, monospace;
+#repost #rpdialog img.floatclose {
+    cursor: pointer;
     position: absolute;
     top: 5px;
     right: 7px;
-    z-index:99999999;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
 }
-
-/**
- * Post input styles
- */
-.repostdialog.textpostbox{
-  top:50px;
-  left: 300px;
-  width: 300px;
-  height: 150px;
- }
-.repostdialog.caption{
-    font-family:"Lucida Console", Courier New, monospace;
+/* Confirmation Popup */
+#repost .confirmation#rpdialog{
+    width: 250px;
+    height: 70px;
+}
+#repost .confirmation#rpdialog .ok{
     position: absolute;
-    left:10px;
-    top:20px;
-    margin: 15px 5px 15px 0px;
+    top: 50px;
+    left: 30px;
+    width: 90px;
 }
-.repostdialog.captioninput{
+#repost .confirmation#rpdialog .cancel{
     position: absolute;
-    left:100px;
-    top:20px;
-    margin: 15px 5px 15px 0px;
+    top: 50px;
+    left: 140px;
+    width: 90px;
 }
-.repostdialog.content{
-    font-family:"Lucida Console", Courier New, monospace;
-    position:absolute;
-    left:10px;
-    top:50px;
-    margin: 15px 5px 15px 0px;
+/* ItemPostBox */
+#repost .confirmation.itempostbox#rpdialog {
+    width: 320px;
+    height: 70px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
 }
-.repostdialog.contentinput{
-    position:absolute;
-    left:100px;
-    top:50px;
-    margin: 15px 5px 15px 0px;
+#repost .confirmation.itempostbox#rpdialog div.label {
 }
-.repostdialog.sendtext{
-    font-family:"Lucida Console", Courier New, monospace;
-    position:absolute;
-    left:150px;
-    top:110px;
-    width:130px;
+#repost .confirmation.itempostbox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    top: 35px;
+    position: absolute;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.itempostbox#rpdialog button.ok {
+    top: 35px;
+    left: 280px;
+    height: 30px;
+    width: 50px;
+}
+#repost .confirmation.itempostbox#rpdialog button.cancel {
+    display: none;
+}
+/* TextPostBox */
+#repost .confirmation.textpostbox#rpdialog {
+    width: 250px;
+    height: 150px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.textpostbox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    top: 35px;
+    position: absolute;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.textpostbox#rpdialog input.captioninput {
+    width: 200px;
+}
+#repost .confirmation.textpostbox#rpdialog textarea.commentinput {
+    width: 200px;
+}
+#repost .confirmation.textpostbox#rpdialog button.ok {
+    top: 120px;
+    left: 15px;
+    height: 30px;
+    width: 60px;
+}
+#repost .confirmation.textpostbox#rpdialog button.cancel {
+    display: none;
 }
 

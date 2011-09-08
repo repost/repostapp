@@ -13,8 +13,13 @@ function buildFromJSON(content){
 // Sends and inserts jsPosts
 function sendPost(p){
     var post = plugin.Post();
-    p.setUuid(post.uuid);
-    ptable.insertPost(p,0);
+    var jsp = $('<div>');
+    if(p["cname"] == "postText") {
+       jsp.textpost({json: p, metric: 0, uuid: post.uuid});
+    } else if(p["cname"] == "postImage") {
+       jsp.imagepost({json: p, metric: 0, uuid: post.uuid});
+    }
+    ptable.insertPost(jsp,0);
     post.content = JSON.stringify(p);
     hw.sendPost(post);
 };
@@ -23,8 +28,9 @@ function sendPost(p){
 // repost something.
 chrome.extension.onRequest.addListener(
      function(request, sender, sendResponse) {
-        var post = buildFromJSON(request);
+        var post = JSON.parse(request);
         sendPost(post);
+        repostNotify.notification('Post Sent:', post.caption);
         sendResponse({}); // snub them.
      }
 );
@@ -42,12 +48,16 @@ function xmlPost(uuid, metric){
 // Callback called when the rpeost plugin has a new post
 function checkForPost(post,rank) {
     if( post.content ) {
-        var con = buildFromJSON(post.content);
-        con.setUuid(post.uuid);
-        con.setMetric(post.metric);
-        ptable.insertPost(con,rank);
-        repostNotify.queueNotification(con.getCaption());
-   }
+        var json = JSON.parse(post.content);
+        if(json.cname == 'postImage') {
+            var test = $('<div>').imagepost({metric: post.metric, uuid: post.uuid, json:JSON.parse(post.content)});
+		}
+		else if(json.cname == 'postText') {
+            var test = $('<div>').textpost({metric: post.metric, uuid: post.uuid, json:JSON.parse(post.content)});
+        }
+        ptable.insertPost(test,0);
+        repostNotify.queueNotification(json["caption"]);
+    }
 };
 
 this.repostNotification = function(){
@@ -71,6 +81,18 @@ this.repostNotification = function(){
     notification.show();
   };
   
+  this.notification = function(title, msg){
+    // Create a simple text notification:
+    var notification = webkitNotifications.createNotification(
+        'images/icon-16.jpeg',  // icon url - can be relative
+        title,
+        msg
+        );
+    notification.onclick = function(){ window.focus(); this.cancel(); };
+    setTimeout(function(){ notification.cancel();}, '5000');
+    notification.show();
+  };
+
   // On the timeout if there is only 1 post send out the caption
   // more than one send out the number
   this.onTimeOut = function(){
@@ -129,35 +151,30 @@ function addShortCuts(){
             if(c == "l"){ // Text Post Box Popup
                 var linkarr = hw.getLinks();
                 var acctarr = hw.getAccounts();
-                links.show(linkarr, acctarr);       
+                linksdisplay.show(linkarr, acctarr);       
             }
         }
     };
     document.addEventListener("keydown",shortFunc);
+    $('#connlink').click(function(){ // Text Post Box Popup
+                linksdisplay.show();       
+            });
 };
 
 function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
 
-function statuschanged(){
-    console.log("STATUS CHANGED");
-};
-
-function postmetricupdate(){
-	console.log("Metric update");
+function postmetricupdate(post){
+	ptable.updateMetric(post);
 }
-
-function AccountDisconnected(acct, reason){
-    console.log(reason)
-};
 
 var ptable; // Mainpage table display
 var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
-var links;
+var linksdisplay;
 
 var repostNotify;
 
@@ -165,49 +182,42 @@ var wel;
 var statusBar;
 
 function main() {
-    // Check we have an account to log into
-    var accounts = loadAccounts();
-    // start repost
-    ptable = new posttable();
-    // Create input windows
-    textbox = new textPostBox(sendPost);
-    repostNotify = new repostNotification();
-    wel = document.getElementById("welcome");
-    // attach repost shortcuts
-    addShortCuts();
-    // init the posttable
-    plugin = document.getElementById("plugin");
-    hw = plugin.rePoster();
-    // Set UI callbacks
-    var postuiops = plugin.PostUiOps();
-    postuiops.newpostcb = checkForPost;
-    postuiops.postmetriccb = postmetricupdate;
-    hw.setPostUiOps(postuiops);
-    var networkuiops = plugin.NetworkUiOps();
-    networkuiops.statuschangedcb = statuschanged;
-    networkuiops.accountdisconnectcb = AccountDisconnected;
-    hw.setNetworkUiOps(networkuiops);
-    hw.init();
-
-    // setup status bar
-    statusBar = new statusBar();
-
-    // Create link management window
-    links = new linkVisual();
-    links.init();
-    if(accounts){
-        var acc = plugin.Account();
-        // add saved accounts
-        for(var i=0; i<accounts.length; i++){
-            acc.user = accounts[i].username;
-            acc.pass = accounts[i].password;
-            acc.type = accounts[i].type;
-            hw.addAccount(acc);
-        }
-    }
-    hw.startRepost();
-    hw.getInitialPosts();
-    setTimeout("checkStatus()",10000);
+    $('document').ready(function(){
+        linksdisplay = new linkVisual();
+        // Create instance of plugin
+        plugin = document.getElementById("plugin");
+        hw = plugin.rePoster();
+        // Set UI callbacks
+        var postuiops = plugin.PostUiOps();
+        postuiops.newpostcb = checkForPost;
+        postuiops.postmetriccb = postmetricupdate;
+        hw.setPostUiOps(postuiops);
+        var networkuiops = plugin.NetworkUiOps();
+        networkuiops.statuschangedcb = $.proxy(linksdisplay.statusChanged, linksdisplay);
+        networkuiops.linkstatuschangedcb = $.proxy(linksdisplay.linkStatusChanged, linksdisplay);
+        networkuiops.accountdisconnectcb = $.proxy(linksdisplay.accountDisconnected, linksdisplay);
+        hw.setNetworkUiOps(networkuiops);
+        hw.init();
+        hw.startRepost();
+        // Initialise UI
+        ptable = new posttable();
+        // Create input windows
+        textbox = new textPostBox(sendPost);
+        repostNotify = new repostNotification();
+        wel = document.getElementById("welcome");
+        // attach repost shortcuts
+        addShortCuts();
+        // setup status bar
+        statusBar = new statusBar();
+        // Create link management window
+        var linkarr = hw.getLinks();
+        var acctarr = hw.getAccounts();
+        linksdisplay.init(acctarr, linkarr);
+		
+        // Get repost rolling
+        hw.getInitialPosts();
+        setTimeout("checkStatus()",10000);
+    })
 };
 
 

@@ -9,209 +9,113 @@
  */
 
 /**
- * Post Table
+ * Fonts 
  */
-table{
-    border-collapse:collapse;
-    margin:1em 0;
-    table-layout: fixed;
+@font-face { 
+    font-family: "Abel"; 
+    src: url('chrome-extension://__MSG_@@extension_id__/css/Abel-Regular.ttf');
 }
-
-.postcell {
-    background:#B4C3FF;
-    border:1px solid #fff;
-	width:20%;
-}
-.fuckoff {
-    background:#9D98E8;
-}
-.rockon {
-    background:#A7E7FF;
-}
-.votehand{
-    width:27px;
-    position: relative; 
-}
-.downhand{
-    position: absolute;
-    bottom:0%;
-    left:80%;
-    z-index:1;
-}
-.uphand{
-    position: absolute;
-    top:0%;
-    left:80%;
-    z-index:1;
-}
-div.metric{
-    top:30px;
-    left:240px;
-    position: relative; 
-    font-family:"Lucida Console", Courier New, monospace;
-}
-
-/**
- * Post styles 
- */
- .postspace{
-    position:relative;
-    height: 100%;
-    width: 100%;
-	/*
-    height: 180px;
-    width: 280px;
-	*/
-	text-align:center;
- }
-.post{
-    position:absolute;
-    left:0px;
-    top:0px;
-    height: 100%;
-    width: 100%;
-	text-align:center;
- }
-
-div.imagepost {
-	text-align:center;
-	float:left;
-	top: 0px;
-    width:100%;
-    height:100%;    
-}
-
-.imagepreview{
-    /*position:absolute;
-    left:0px;*/
-    top: 0px;
-    max-width:100%;
-    max-height:100%;    
-	vertical-align:middle;
-	/*
-	display: block;
-	margin: auto;
-	*/
-}
-/*
-.imagepreview:hover{
-    background:#388EA6;
-    box-shadow:2px 2px 5px #000;
-    padding: 7px 10px 7px 10px;
-    max-width:600px;
-    max-height:400px;    
-    z-index:9999;
-	left:0%;
-	top:0%;
-}
-*/
-div.posttextbody{
-    position: absolute;
-    font-size: 75%;
-    top: 30px;
-    left: 10px;
-    max-width:180px;
-    font-family:"Lucida Console", Courier New, monospace;
-    word-wrap: break-word;
-}
-.textpostcaption{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-div.postcaption{
-    font-family:"Lucida Console", Courier New, monospace;
-}
-.imagepostcaption{
-    position:absolute;
-    top: 140px;
-    left: 12px;
-    height: 35px;
-    overflow: hidden;
-}
-.imagepostcaption:hover{
-    overflow: visible;
-    z-index:9999;
-}
-
 /**
  * Repost commons
  */
-/* Confirmation Popup */
-.confirmationPopup{
-  width: 250px;
-  height: 70px;
+#repost span.name {
+    cursor: pointer;
 }
-.message{
-    font-family:"Lucida Console", Courier New, monospace;
-    position:absolute;
-    left:10px;
-    top:10px;
+/**
+ * Floating Boxes
+ */
+/* Add Account Dialog */
+#repost .confirmation.accountaddbox#rpdialog {
+    width: 210px;
+    height: 205px;
 }
-.ok{
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    width: 90px;
+#repost .confirmation.accountaddbox#rpdialog .title{
+    font-size: x-large;
 }
-.cancel{
-    position: absolute;
-    top: 50px;
-    left: 140px;
-    width: 90px;
+#repost .confirmation.accountaddbox#rpdialog .ok{
+    top: 180px;
+    left: 10px;
 }
-span.name {
-      cursor: pointer;
+#repost .confirmation.accountaddbox#rpdialog .cancel{
+    top: 180px;
+    left: 110px;
 }
-/* Single Field Popup */
-.singleFieldPopup{
-  width: 280px;
-  height: 90px;
+#repost .confirmation.accountaddbox#rpdialog input.username{
+    width: 200px;
 }
-.singleFieldPopup > .ok{
-    position: absolute;
+#repost .confirmation.accountaddbox#rpdialog input.password{
+    width: 200px;
+}
+/* Add Link Dialog */
+#repost .confirmation.linkaddbox#rpdialog {
+    width: 210px;
+    height: 110px;
+}
+#repost .confirmation.linkaddbox#rpdialog .title{
+    font-size: x-large;
+}
+#repost .confirmation.linkaddbox#rpdialog .ok{
+    top: 90px;
+    left: 10px;
+}
+#repost .confirmation.linkaddbox#rpdialog .cancel{
+    top: 90px;
+    left: 110px;
+}
+#repost .confirmation.linkaddbox#rpdialog input.linkinput{
+    width: 200px;
+}
+/* Remove Link Dialog */
+#repost .confirmation.linkremover#rpdialog {
+    width: 210px;
+    height: 90px;
+}
+#repost .confirmation.linkremover#rpdialog .title{
+    font-size: x-large;
+}
+#repost .confirmation.linkremover#rpdialog .ok{
     top: 70px;
-    left: 120px;
-    width: 70px;
+    left: 10px;
 }
-.singleFieldPopup > .cancel{
-    position: absolute;
+#repost .confirmation.linkremover#rpdialog .cancel{
     top: 70px;
-    left: 200px;
-    width: 70px;
+    left: 110px;
 }
-.singleFieldPopup > .inputbox{
-    position:absolute;
-    top: 25px;
-    left: 15px;
-    width: 250px;
-    margin: 15px 5px 15px 0px;
+#repost .confirmation.linkremover#rpdialog input.linkinput{
+    width: 200px;
 }
-
+/* rpdialog submenu */
+#repost #rpdialog div.menuopt{
+    cursor: pointer;
+}
+#repost #rpdialog div.menuopt:hover{
+    background:#777777;
+}
 /**
  * Links
  */
 /*TOOLTIPS*/
-.tip {
+#repost .tip {
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
     text-align: left;
     width:auto;
     max-width:500px;
+    z-index:1000;
 }
-
-.tip-title {
+#repost .tip-title {
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: 11px;
     text-align:center;
     margin-bottom:2px;
+    z-index:1000;
 }
-
-.linkbox{
+#repost .linkbox{
   top: 10%;
   height: 80%;
   left: 10%;
   width: 80%;
  }
-
-.infovis{
+#repost #infovis{
     opacity:1;
     margin: auto;
     top: 1%;
@@ -219,135 +123,175 @@ span.name {
     left: 1%;
     width: 98%;
 }
-
-.caption{
+#repost caption{
     position: absolute;
     left:10px;
     top:20px;
     margin: 15px 5px 15px 0px;
 }
-.captioninput{
-    position: absolute;
-    left:100px;
-    top:20px;
-    margin: 15px 5px 15px 0px;
-}
-.content{
+#repost .content{
     position:absolute;
     left:10px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.contentinput{
+#repost .contentinput{
     position:absolute;
     left:100px;
     top:50px;
     margin: 15px 5px 15px 0px;
 }
-.sendtext{
+#repost .sendtext{
     position:absolute;
     left:150px;
     top:110px;
     width:130px;
 }
-.contenttext{
+#repost .contenttext{
 }
-
-div.divrow {
-	position:absolute;
-	width:100%;
-}
-
-div.divcol {
-	position:absolute;
-    /*background:#B4C3FF;*/
-    height:100%;
-	text-align:center;
-}
-
-#divRow0 {
-    top:3%;
-    height:20%;
-    margin: 0px;
-    left:0px;
-}
-#divRow1 {
-    top:27%;
-    height:20%;
-    margin: 0px;
-    left:0px;
-}
-#divRow2 {
-    top:51%;
-    height:20%;
-    margin: 0px;
-    left:0px;
-}
-#divRow3 {
-    top:75%;
-    height:20%;
-    margin: 0px;
-    left:0px;
-}
-
-.divCol0 {
-    left:10%;
-	width:20%;
-}
-.divCol1 {
-    left:30%;
-	width:20%;
-}
-.divCol2 {
-    left:50%;
-	width:20%;
-}
-.divCol3 {
-    left:70%;
-	width:20%;
-}
-
 /**
- * MENU BAR CRAP
+ * Post table
  */
-
-#repostMenu {
-    position:fixed;
+#repost div.divtable {
+    top:65px;
+    left:5%;
+    width:90%;
+}
+/**
+ * Post styles 
+ */
+#repost div.divtable .post{
+    float:left;
+    min-height: 50px;
+    text-align:center;
+    margin: 10px;
+}  
+/* Post mask */
+#repost div.divtable .post .postmask{
+    background-color:#000;
+    opacity:0.8;
+    z-index:9000;
+    pointer-events: none;
+    position: absolute;
     top: 0px;
     left: 0px;
+    height: 100%;
     width: 100%;
-    height: 20px;
 }
-
-#repostMenu .statusCircle {
-    display:inline;
-    width: 20px;
+#repost div.divtable .post .postmask img.downvote {
+    cursor: pointer;
+    position: absolute;
+    pointer-events: auto;
+    bottom: 5px;
+    right: 7px;
+    z-index: 999;
     height: 20px;
+    width: 20px;
+}
+#repost div.divtable .post .postmask img.upvote {
+    cursor: pointer;
+    position: absolute;
+    pointer-events: auto;
+    bottom: 5px;
+    right: 30px;
+    z-index: 999;
+    height: 20px;
+    width: 20px;
+}
+#repost div.divtable .post .postmask div.metric {
+    position: absolute;
+    bottom: 5px;
+    right: 55px;
+    z-index: 999;
+    color: white;
+    line-height: normal;
+}
+#repost div.divtable .post .postmask .postmaskcaption{
+    color: white;
+    line-height: normal;
+}
+/* Image post */
+#repost div.divtable .post.imagepost {
+   max-height: 300px;
+   max-width: 300px;
+   overflow: hidden;
+}
+/* Text post */
+#repost div.divtable .post.textpost {
+    width: 200px;
+    color: #757575;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: x-large;
+    font-weight: 800;
+    word-wrap: break-word;
+}
+#repost div.divtable div.post.textpost.size1 {
+    width: 160px;
+    height: 100px;
+}
+#repost div.divtable div.post.textpost.size2 {
+    height: 200px;
+    width: 160px;
+}
+#repost div.divtable div.post.textpost.size3 {
+    width: 320px;
+    height: 200px;
+}
+/**
+ * Menu Bar
+ */
+#repost #repostMenu {
+    position: fixed;
+    top: 0px;
+    left: 10%;
+    width: 80%;
+    height: 50px;
+}
+#repost #repostMenu .statusCircle {
+    width: 10px;
+    height: 10px;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
     background: #FC4023;
 }
-
-#repostLogo {
+#repost #repostMenu #repostLogo {
     float: left;
     margin: 0px;
 }
-
-.toolbar {
+#repost #repostMenu .toolbar {
     margin: 0px;
 }
-
-.toolbar li {
+#repost #repostMenu .toolbar li {
     display: inline;
     padding: 0.5em;
     padding: 0.5em;
     float: right;
 }
-
-.toolbar li a {
-    text-decoration:none;
+#repost #repostMenu .toolbar li a {
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #757575;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: 20px;
 }
 
+/**
+ * General Settings
+ */
 #repost {
-    top: 20px;
+}
+body {
+     -khtml-user-select: none; /* webkit browsers */
+    background: #ececec;
+}
+#repost #mask {
+    position: fixed;
+    display: none;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color:#000;
+    opacity:0.8;
+    z-index:9000;
 }

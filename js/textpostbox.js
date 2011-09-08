@@ -11,92 +11,49 @@ this.textPostBox = function(sendPostCB) {
     // Send Post callback
     var spCB = sendPostCB;
 
-    this.init = function(){
+    this.init = function() {
+    };
 
-        var close; /* close button */
-        var label; /* temp label */
-        var postbutton; /* send that text */
-
+    this.create = function() {
+        var tpb = this;
+        // Caption input
+        caption = $('<input>').addClass('captioninput')
+                                .attr('type', 'text');
+        // Comment input
+        comment = $('<textarea>').addClass('commentinput');
+                                //.attr('type', 'text');
         // Create dialog
-        textPostBox = document.createElement('div');
-        textPostBox.className = "repostdialog floater textpostbox";
-        // Caption
-        label = document.createElement("label");
-        label.innerHTML = "Caption:";
-        label.className = "repostdialog caption";
-        caption = document.createElement("input");
-        caption.className = "repostdialog captioninput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(caption);
-        // Content
-        label = document.createElement("label");
-        label.innerHTML = "Content:";
-        label.className = "repostdialog content";
-        content = document.createElement("textarea");
-        content.className = "repostdialog contentinput";
-        textPostBox.appendChild(label);
-        textPostBox.appendChild(content);
-        // Post button
-        postbutton = document.createElement("button");
-        postbutton.innerText = "Ahoy Buttercup";
-        postbutton.onclick = this.submitPost(this);
-        postbutton.className = "repostdialog sendtext";
-        textPostBox.appendChild(postbutton);
-        // 'X'
-        close = document.createElement("span");
-        close.innerHTML = "x";
-        close.className = "repostdialog floatclose";
-        close.onclick = this.onclickclose(this);
-        textPostBox.appendChild(close);
-        textPostBox.style.visibility = "hidden";
-        document.body.appendChild(textPostBox);
-    };
-
-    this.onclickclose = function(popup){
-        return function(){
-            popup.close();
-        };
-    };
-
-    this.con = function(){
-        return content.value;
-    };
-
-    this.cap = function(){
-        return caption.value;
+        textPostBox = $('<div>').addClass('textpostbox')
+                            .append($('<div>Caption:</div>')
+                                        .addClass('caption'))
+                            .append(caption)
+                            .append($('<div>Comment:</div>')
+                                        .addClass('comment'))
+                            .append(comment)
+                            .confirmDialog({response: $.proxy(tpb.submitPost, tpb)});
+        caption.focus();
+        caption.val('');
     };
 
     this.sendPost = function(post){
         spCB(post);
     };
 
-    this.submitPost = function(postbox){
-        return function(event){
-            // Lets send this post
-            var t = new postText();
-            t.setCaption(postbox.cap());
-            t.setContent(postbox.con());
+    this.submitPost = function(response){
+        if(response){
+            var link;
             // See if we are posting from repost page
             var rpurl = new RegExp("chrome-extension://.*");
             if(rpurl.test(event.currentTarget.baseURI)){
-                t.setLink("");
+                link = "";
             }else{
-                t.setLink(event.currentTarget.baseURI);
+                link = event.currentTarget.baseURI;
             }
-            t.setUuid("");
-            t.setMetric("");
-            postbox.sendPost(t);
-            postbox.close();
-        };
-    };
-
-    this.close = function(){
-        this.clear();
-        textPostBox.style.visibility = "hidden";
-    };
-
-    this.focus = function(){
-        caption.focus();
+            // Lets send this post
+            var t = { cname: "postText", caption: caption.val(), content: comment.val(),
+                               link: link};
+            this.sendPost(t);
+        }
     };
 
     this.clear = function(){
@@ -105,10 +62,7 @@ this.textPostBox = function(sendPostCB) {
     };
 
     this.display = function(x, y){
-        textPostBox.style.visibility = "visible";
-        textPostBox.style.top = y + "px";
-        textPostBox.style.left = x + "px";
-        this.focus();
+        this.create();
     };
     this.init(); // Start this shit
 };
