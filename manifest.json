@@ -1,7 +1,7 @@
 {
   "name": "Repost",
-  "version": "0.4",
-  "description": "Hank Moody",
+  "version": "0.5",
+  "description": "Ferris Bueller",
   "app": {
     "launch": {
       "local_path": "bootstrap.html"
@@ -30,6 +30,7 @@
   ],
   "permissions": [
     "tabs",
+    "contextMenus",
     "unlimitedStorage",
     "notifications",
     "http://*/",
