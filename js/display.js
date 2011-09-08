@@ -133,15 +133,18 @@ this.helpVisual = function() {
         var help = { cname: "postText", caption: "HELP", 
                      content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
                      link: "www.getrepost.com" };
-        var jsp = $('<div>');
+        var jsp = $(document.createElement("div"));
         jsp.textpost({json: help, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
 
+        /* for later until i work out how to get path to logs */
+        /*
         var log = { cname: "postText", caption: "LOGS", 
                      content: "logs" };
-        var jsp = $('<div>');
+        var jsp = $(document.createElement("div"));
         jsp.textpost({json: log, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
+        */
     };
 };
 
