@@ -130,6 +130,35 @@ this.repostNotification = function(){
 // help stuff
 this.helpVisual = function() {
     this.show = function() {
+        /* works now but spams the page */
+        /*
+        var logs = hw.getUserLogs();
+        var paths = '';
+        for ( i = 0; i < logs.length; i++ )
+        {
+            var log = { cname: "postText", caption: "LOGS", 
+                content: logs[i] };
+            var jsp = $(document.createElement("div"));
+            jsp.textpost({json: log, metric: 0, uuid: 0});
+            ptable.insertPost(jsp,0);
+        }
+        */
+
+        var help = { cname: "postText", 
+                     caption: "alt+click on an image", 
+                     content: "to repost an image!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+        var help = { cname: "postText", 
+                     caption: "alt+t on a page", 
+                     content: "to repost the page you are looking at!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
         var help = { cname: "postText", caption: "HELP", 
                      content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
                      link: "http://www.getrepost.com" };
@@ -137,14 +166,6 @@ this.helpVisual = function() {
         jsp.textpost({json: help, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
 
-        /* for later until i work out how to get path to logs */
-        /*
-        var log = { cname: "postText", caption: "LOGS", 
-                     content: "logs" };
-        var jsp = $(document.createElement("div"));
-        jsp.textpost({json: log, metric: 0, uuid: 0});
-        ptable.insertPost(jsp,0);
-        */
     };
 };
 
