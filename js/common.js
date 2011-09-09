@@ -113,12 +113,15 @@
         },
 
         mdown : function(e){
-            var dialog = this;
-            this.offsetx = dialog.element.offset().left;
-            this.offsety = dialog.element.offset().top;
-            this.startx = e.clientX;
-            this.starty = e.clientY;
-            $(document).mousemove(function(e){dialog.mmove(e)});
+            var target = $(e.target);
+            if( target.is('#rpdialog')) {
+                var dialog = this;
+                this.offsetx = dialog.element.offset().left;
+                this.offsety = dialog.element.offset().top;
+                this.startx = e.clientX;
+                this.starty = e.clientY;
+                $(document).mousemove(function(e){dialog.mmove(e)});
+            }
         },
 
         mmove : function(e){
