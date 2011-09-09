@@ -202,6 +202,14 @@ function addShortCuts(){
     $('#helplink').click(function(){
         helpdisplay.show();
     });
+
+    // Repost app menu dialog
+    $('#createimagepost').click(function(){
+        imagebox.display();
+    });
+    $('#createtextpost').click(function(){
+        textbox.display();
+    });
 };
 
 function createRemoteText(clickdata, tab) {
@@ -242,6 +250,13 @@ function createContextMenus(){
     });
 };
 
+// Repost app menu animation
+$(document).ready(function(){
+    $('li.headlink').hover(
+        function() { $('ul', this).css('display', 'block'); },
+        function() { $('ul', this).css('display', 'none'); });
+});
+
 function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
 }
@@ -255,6 +270,7 @@ var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
+var imagebox; // Text post input box
 var linksdisplay;
 
 var repostNotify;
@@ -287,6 +303,7 @@ function main() {
         ptable = new posttable();
         // Create input windows
         textbox = new textPostBox(sendPost);
+        imagebox = new fullImagePost(sendPost);
         repostNotify = new repostNotification();
         wel = document.getElementById("welcome");
         // attach repost shortcuts

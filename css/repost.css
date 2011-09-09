@@ -266,8 +266,12 @@
 #repost #repostMenu .toolbar li {
     display: inline;
     padding: 0.5em;
-    padding: 0.5em;
     float: right;
+}
+#repost #repostMenu .toolbar li ul {
+    position: absolute;
+    display: none;
+    padding: 0px;
 }
 #repost #repostMenu .toolbar li a {
     text-decoration: none;
@@ -276,7 +280,15 @@
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: 20px;
 }
-
+#repost #repostMenu li:hover > a,
+#repost #repostMenu ul ul :hover > a,
+#repost #repostMenu a:focus {
+	 background: #efefef; 
+}
+#repost #repostMenu li:hover > a,
+#repost #repostMenu a:focus {
+	color: #373737;
+}
 /**
  * General Settings
  */

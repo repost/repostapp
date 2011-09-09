@@ -70,7 +70,7 @@
 /* TextPostBox */
 #repost .confirmation.textpostbox#rpdialog {
     width: 250px;
-    height: 150px;
+    height: 200px;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: large;
 }
@@ -84,17 +84,60 @@
 }
 #repost .confirmation.textpostbox#rpdialog input.captioninput {
     width: 200px;
+    height: 25px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+
 }
 #repost .confirmation.textpostbox#rpdialog textarea.commentinput {
     width: 200px;
+    height: 70px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
 }
 #repost .confirmation.textpostbox#rpdialog button.ok {
-    top: 120px;
+    top: 170px;
     left: 15px;
     height: 30px;
     width: 60px;
 }
 #repost .confirmation.textpostbox#rpdialog button.cancel {
+    display: none;
+}
+/* FullPostBox */
+#repost .confirmation.fullimagebox#rpdialog {
+    width: 300px;
+    height: 220px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.fullimagebox#rpdialog div.label {
+}
+#repost .confirmation.fullimagebox#rpdialog input.caption {
+    width: 250px;
+    height: 25px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.fullimagebox#rpdialog input.image {
+    width: 250px;
+    height: 25px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.fullimagebox#rpdialog input.context {
+    width: 250px;
+    height: 25px;
+    font-family: 'Abel', Helvetica, Arial, sans-serif;
+    font-size: large;
+}
+#repost .confirmation.fullimagebox#rpdialog button.ok {
+    top: 180px;
+    left: 15px;
+    height: 30px;
+    width: 60px;
+}
+#repost .confirmation.fullimagebox#rpdialog button.cancel {
     display: none;
 }
 
