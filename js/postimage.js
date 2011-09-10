@@ -221,8 +221,9 @@ $.fn.textWidth = function(){
         },
 
         downvote : function() {
-            hw.downboat(this.uuid);
             ptable.deletePost(this.element);
+            if(this.uuid == 0){return;}
+            hw.downboat(this.uuid);
         },
 
         mover : function() {
