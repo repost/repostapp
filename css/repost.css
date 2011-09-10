@@ -173,7 +173,7 @@
     z-index:9000;
     pointer-events: none;
     position: absolute;
-    top: 0px;
+    bottom: 0px;
     left: 0px;
     height: 100%;
     width: 100%;
@@ -246,6 +246,8 @@
     left: 10%;
     width: 80%;
     height: 50px;
+    background: #ececec;
+    z-index: 1;
 }
 #repost #repostMenu .statusCircle {
     width: 10px;
@@ -264,8 +266,13 @@
 #repost #repostMenu .toolbar li {
     display: inline;
     padding: 0.5em;
-    padding: 0.5em;
     float: right;
+}
+#repost #repostMenu .toolbar li ul {
+    position: absolute;
+    display: none;
+    padding: 0px;
+    background: #ececec;
 }
 #repost #repostMenu .toolbar li a {
     text-decoration: none;
@@ -273,6 +280,15 @@
     color: #757575;
     font-family: 'Abel', Helvetica, Arial, sans-serif;
     font-size: 20px;
+}
+#repost #repostMenu li:hover > a,
+#repost #repostMenu ul ul :hover > a,
+#repost #repostMenu a:focus {
+	 background: #efefef; 
+}
+#repost #repostMenu li:hover > a,
+#repost #repostMenu a:focus {
+	color: #373737;
 }
 
 /**
@@ -294,4 +310,14 @@ body {
     background-color:#000;
     opacity:0.8;
     z-index:9000;
+}
+
+#repost .helpbox {
+    width: 400px;
+    height: 400px;
+}
+
+#repost .helpbox .logtext {
+    bottom: 10px;
+    position: absolute;
 }

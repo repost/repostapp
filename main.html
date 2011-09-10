@@ -27,16 +27,21 @@
             <img id="repostLogo" src='images/repost_logo.jpg'>
             <ul class="toolbar">
                 <!-- inverted because of the float:right css-->
-                <li><div class="statusCircle">&nbsp;</div></li>
-                <li><a id="connlink" href="#">CONNECTIONS</a></li>
-                <li><a href="#">SETTINGS</a></li>
-                <li><a href="#">POSTS</a></li>
+                <li class="headlink"><div class="statusCircle">&nbsp;</div></li>
+                <li class="headlink"><a id="helplink" href="#">HELP</a></li>
+                <li class="headlink"><a id="connlink" href="#">CONNECTIONS</a></li>
+                <li class="headlink"><a href="#">POSTS</a>
+                    <ul>
+                        <li><a id="createtextpost" href="#">Text Post</a></li>
+                        <li><a id="createimagepost" href="#">Image Post</a></li>
+                    </ul>
+                </li>
                 <li><a href="#">HOME</a></li>
             </ul>
         </div>
         <div id="repostContacts"></div>
         <div id="log" align=center></div>
-        </div>
+    </div>
 </body>
 </html>
 

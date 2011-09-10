@@ -51,6 +51,12 @@ this.itemPostBox = function(sendPostCB){
         }
         displayed = false;
     };
+    
+    this.contextMenu = function(target) {
+        ipb.image = target["src"];
+        ipb.context = target["baseURI"];
+        ipb.createDialog();
+    };
 
     this.imgClickListener = function(e) {
         if(e.altKey && !displayed) {
@@ -75,6 +81,18 @@ this.contentClicker = function() {
         textbox = new textPostBox(this.sendPost());
         $('body').append($('<div>').attr('id','repost'));
         $(document).keydown(this.shortcuts());
+        // Create listener for context menus
+        chrome.extension.onRequest.addListener(
+            function(rq, sender, sendResponse) {
+                var request = JSON.parse(rq);
+                if(request["type"] == "textPost") {
+                    textbox.display();
+                } else if( request["type"] == "imagePost") {
+                    imagebox.contextMenu(request["target"]);
+                }
+                sendResponse({}); // snub them.
+             }
+        );
     };
 
     this.shortcuts = function(contentclicker){

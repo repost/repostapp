@@ -1,3 +1,73 @@
+this.fullImagePost = function(sendPostCB){
+
+    // Dialog
+    var itemPostBox;
+    var displayed = false;
+
+    // Content
+    var ipb = this;
+    var image;
+    var caption;
+    var curpost; /* captured over two events. Cleanest way */
+
+    // Send Post callback
+    var spCB = sendPostCB;
+
+    this.init = function(){
+        // add event listener to each image on the page
+        var images = $('img');
+        for( var i = 0; i < images.length; i++ ){
+            $(images[i]).click(ipb.imgClickListener);
+        }
+    };
+
+    this.createDialog = function() {
+
+        // Create Dialog
+
+        image = $('<input>').addClass('image');
+        context = $('<input>').addClass('context');
+        caption = $('<input>').addClass('caption')
+                            .keypress(function(e) {
+                                        if(e.which == 13) {
+                                            ipb.submitPost(true);
+                                            itemPostBox.confirmDialog('remove');
+                                        }
+                            });
+        itemPostBox = $('<div>').addClass('fullimagebox')
+                                .append($('<div>Image:</div>')
+                                            .addClass('label'))
+                                .append(image)
+                                .append($('<div>Context:</div>')
+                                            .addClass('label'))
+                                .append(context)
+                                .append($('<div>Comment:</div>')
+                                            .addClass('label'))
+                                .append(caption)
+                                .confirmDialog({response: $.proxy(ipb.submitPost, ipb)});
+        caption.focus();
+    };
+
+    this.clear = function() {
+        caption.val('');
+    };
+
+    this.submitPost = function(response) {
+        if(response) {
+            curpost = {cname: "postImage", image: image.val(),
+                            context: context.val(), caption: caption.val()};
+            spCB(curpost);
+        }
+        displayed = false;
+    };
+
+    this.display = function(){
+        this.createDialog();
+    };
+    
+    this.init();
+};
+
 (function(window, $, undefined){
 
     $.ImagePost = function( options, element ){
@@ -146,11 +216,14 @@ $.fn.textWidth = function(){
        
         upvote : function(){
             hw.upboat(this.uuid);
+            this.metric += 1;
+            this.metricfn(this.metric);
         },
 
         downvote : function() {
-            hw.downboat(this.uuid);
             ptable.deletePost(this.element);
+            if(this.uuid == 0){return;}
+            hw.downboat(this.uuid);
         },
 
         mover : function() {
@@ -168,6 +241,8 @@ $.fn.textWidth = function(){
         metricfn : function(value) {
             if(value){
                 this.metric = value;
+                // Update the text
+                this.element.find('.metric').text(value);
             } else {
                 return this.metric;
             }
@@ -186,8 +261,7 @@ $.fn.textWidth = function(){
         if ( typeof options === 'string' ) {
             // call method
             var args = Array.prototype.slice.call( arguments, 1 );
-            this.each(function(){
-                var instance = $.data( this, 'postclass' );
+                var instance = $.data( this[0], 'postclass' );
                 if ( !instance ) {
                   logError( "cannot call methods on repostDialog prior to initialization; " +
                     "attempted to call method '" + options + "'" );
@@ -198,8 +272,7 @@ $.fn.textWidth = function(){
                   return;
                 }
                 // apply method
-                instance[ options ].apply( instance, args );
-            });
+                return instance[ options ].apply( instance, args );
         } else {
             this.each(function(){
                 var instance = $.data( this, 'postclass' );

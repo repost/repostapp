@@ -61,72 +61,112 @@ function checkForPost(post,rank) {
 };
 
 this.repostNotification = function(){
+    var msgQueue;
+    var timeout;
 
-  var msgQueue;
-  var timeout;
-
-  this.init = function(){
-    this.msgQueue = new Array();
-  };
-  
-  this.sendMsg = function(msg){
-    // Create a simple text notification:
-    var notification = webkitNotifications.createNotification(
-        'images/icon-16.jpeg',  // icon url - can be relative
-        'New Repost:',
-        msg
-        );
-    notification.onclick = function(){ window.focus(); this.cancel(); };
-    setTimeout(function(){ notification.cancel();}, '5000');
-    notification.show();
-  };
-  
-  this.notification = function(title, msg){
-    // Create a simple text notification:
-    var notification = webkitNotifications.createNotification(
-        'images/icon-16.jpeg',  // icon url - can be relative
-        title,
-        msg
-        );
-    notification.onclick = function(){ window.focus(); this.cancel(); };
-    setTimeout(function(){ notification.cancel();}, '5000');
-    notification.show();
-  };
-
-  // On the timeout if there is only 1 post send out the caption
-  // more than one send out the number
-  this.onTimeOut = function(){
-    this.timeout = null;
-    if(this.msgQueue.length == 1){
-      this.sendMsg(this.msgQueue.pop());
-    }else if( this.msgQueue.length > 1){
-      this.sendMsg(this.msgQueue.length + " New Posts");
-      while(this.msgQueue.length > 0){
-        this.msgQueue.pop();
-      }
-    }
-  };
-  
-  // Need to make timeout a closure so we can access our object
-  this.closedOnTimeOut = function(){
-    var _this = this;
-    return function(){
-      _this.onTimeOut();
+    this.init = function(){
+        this.msgQueue = new Array();
     };
-  };
 
-  // Queue up notifications so we don't get an explosition across the screen
-  this.queueNotification = function(message){
-    if(message){
-      this.msgQueue.push(message);
-      if(this.timeout == null){
-        this.timeout = setTimeout(this.closedOnTimeOut(), '1000'); // Time to queue em up before flushing
-      }
-    }
-  };
+    this.sendMsg = function(msg){
+        // Create a simple text notification:
+        var notification = webkitNotifications.createNotification(
+                'images/icon-16.jpeg',  // icon url - can be relative
+                'New Repost:',
+                msg
+                );
+        notification.onclick = function(){ window.focus(); this.cancel(); };
+        setTimeout(function(){ notification.cancel();}, '5000');
+        notification.show();
+    };
 
-  this.init();
+    this.notification = function(title, msg){
+        // Create a simple text notification:
+        var notification = webkitNotifications.createNotification(
+                'images/icon-16.jpeg',  // icon url - can be relative
+                title,
+                msg
+                );
+        notification.onclick = function(){ window.focus(); this.cancel(); };
+        setTimeout(function(){ notification.cancel();}, '5000');
+        notification.show();
+    };
 
+    // On the timeout if there is only 1 post send out the caption
+    // more than one send out the number
+    this.onTimeOut = function(){
+        this.timeout = null;
+        if(this.msgQueue.length == 1){
+            this.sendMsg(this.msgQueue.pop());
+        }else if( this.msgQueue.length > 1){
+            this.sendMsg(this.msgQueue.length + " New Posts");
+            while(this.msgQueue.length > 0){
+                this.msgQueue.pop();
+            }
+        }
+    };
+
+    // Need to make timeout a closure so we can access our object
+    this.closedOnTimeOut = function(){
+        var _this = this;
+        return function(){
+            _this.onTimeOut();
+        };
+    };
+
+    // Queue up notifications so we don't get an explosition across the screen
+    this.queueNotification = function(message){
+        if(message){
+            this.msgQueue.push(message);
+            if(this.timeout == null){
+                this.timeout = setTimeout(this.closedOnTimeOut(), '1000'); // Time to queue em up before flushing
+            }
+        }
+    };
+
+    this.init();
+};
+
+// help stuff
+this.helpVisual = function() {
+    this.show = function() {
+        /* works now but spams the page */
+        /*
+        var logs = hw.getUserLogs();
+        var paths = '';
+        for ( i = 0; i < logs.length; i++ )
+        {
+            var log = { cname: "postText", caption: "LOGS", 
+                content: logs[i] };
+            var jsp = $(document.createElement("div"));
+            jsp.textpost({json: log, metric: 0, uuid: 0});
+            ptable.insertPost(jsp,0);
+        }
+        */
+
+        var help = { cname: "postText", 
+                     caption: "alt+click on an image", 
+                     content: "to repost an image!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+        var help = { cname: "postText", 
+                     caption: "alt+t on a page", 
+                     content: "to repost the page you are looking at!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
+        var help = { cname: "postText", caption: "HELP", 
+                     content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
+                     link: "http://www.getrepost.com" };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
+    };
 };
 
 
@@ -159,7 +199,63 @@ function addShortCuts(){
     $('#connlink').click(function(){ // Text Post Box Popup
                 linksdisplay.show();       
             });
+    $('#helplink').click(function(){
+        helpdisplay.show();
+    });
+
+    // Repost app menu dialog
+    $('#createimagepost').click(function(){
+        imagebox.display();
+    });
+    $('#createtextpost').click(function(){
+        textbox.display();
+    });
 };
+
+function createRemoteText(clickdata, tab) {
+    // Create request
+    var request = {"type": "textPost"};
+    chrome.tabs.sendRequest(tab.id, JSON.stringify(request), 
+            function(response) {
+            });
+};
+
+function createRemoteImage(clickdata, tab) {
+    // Create request
+    var request = {"type": "imagePost",
+                    "target": {"baseURI": clickdata.pageUrl, 
+                                "src": clickdata.srcUrl}
+    };
+    chrome.tabs.sendRequest(tab.id, JSON.stringify(request), 
+            function(response) {
+            });
+};
+
+// Context Menus
+function createContextMenus(){
+    // Remove all before we start
+    chrome.contextMenus.removeAll();
+    // Text post
+    chrome.contextMenus.create({type: "normal",
+                                title: "Create Text Post",
+                                contexts: ["page"],
+                                onclick: createRemoteText
+    });
+
+    // Image post
+    chrome.contextMenus.create({type: "normal",
+                                title: "Create Image Post",
+                                contexts: ["image"],
+                                onclick: createRemoteImage
+    });
+};
+
+// Repost app menu animation
+$(document).ready(function(){
+    $('li.headlink').hover(
+        function() { $('ul', this).css('display', 'block'); },
+        function() { $('ul', this).css('display', 'none'); });
+});
 
 function checkStatus() {
     statusBar.checkStatus(hw.getLinks(), hw.getAccounts());
@@ -174,6 +270,7 @@ var plugin; // the repost plugin instance
 var hw; // a repost object
 
 var textbox; // Text post input box
+var imagebox; // Text post input box
 var linksdisplay;
 
 var repostNotify;
@@ -181,8 +278,11 @@ var repostNotify;
 var wel;
 var statusBar;
 
+var helpdisplay;
+
 function main() {
     $('document').ready(function(){
+        helpdisplay = new helpVisual();
         linksdisplay = new linkVisual();
         // Create instance of plugin
         plugin = document.getElementById("plugin");
@@ -203,6 +303,7 @@ function main() {
         ptable = new posttable();
         // Create input windows
         textbox = new textPostBox(sendPost);
+        imagebox = new fullImagePost(sendPost);
         repostNotify = new repostNotification();
         wel = document.getElementById("welcome");
         // attach repost shortcuts
@@ -213,11 +314,13 @@ function main() {
         var linkarr = hw.getLinks();
         var acctarr = hw.getAccounts();
         linksdisplay.init(acctarr, linkarr);
+        // Add context menus
+        createContextMenus();
 		
         // Get repost rolling
         hw.getInitialPosts();
-        setTimeout("checkStatus()",10000);
-    })
+        setInterval("checkStatus()",10000);
+    });
 };
 
 

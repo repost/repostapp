@@ -1,7 +1,7 @@
 {
   "name": "Repost",
-  "version": "0.5",
-  "description": "Ferris Bueller",
+  "version": "0.6",
+  "description": "Jake and Elwood",
   "app": {
     "launch": {
       "local_path": "bootstrap.html"
