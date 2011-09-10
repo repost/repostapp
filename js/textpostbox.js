@@ -1,6 +1,5 @@
 // Creating Text post from main page
 this.textPostBox = function(sendPostCB) {
-
     // Dialog
     var textPostBox;
 

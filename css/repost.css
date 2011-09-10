@@ -272,6 +272,7 @@
     position: absolute;
     display: none;
     padding: 0px;
+    background: #ececec;
 }
 #repost #repostMenu .toolbar li a {
     text-decoration: none;
@@ -289,6 +290,7 @@
 #repost #repostMenu a:focus {
 	color: #373737;
 }
+
 /**
  * General Settings
  */
