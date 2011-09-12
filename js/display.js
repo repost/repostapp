@@ -155,9 +155,31 @@ this.helpVisual = function() {
                      caption: "alt+t on a page", 
                      content: "to repost the page you are looking at!"
                    };
+
+        var help = { cname: "postText", 
+                     caption: "alt+t on a page", 
+                     content: "to repost the page you are looking at!"
+                   };
         var jsp = $(document.createElement("div"));
         jsp.textpost({json: help, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
+
+        var help = { cname: "postText", 
+                     caption: "to add links...", 
+                     content: "click on \"Connections\" and click on the account you want to link from!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
+        var help = { cname: "postText", 
+                     caption: "to add accounts...", 
+                     content: "click on \"Connections\" and click on \"You\" to add an account!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
 
         var help = { cname: "postText", caption: "HELP", 
                      content: "web: www.getrepost.com<br/>irc: #repost on irc.freenode.net",
