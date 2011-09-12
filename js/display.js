@@ -144,6 +144,21 @@ this.helpVisual = function() {
         }
         */
 
+        /* nicer way to do this? */
+        if ( helpDisplayed == true )
+        {
+            this.hide();
+            return;
+        }
+
+        var help = { cname: "postText", 
+                     caption: "click help again to remove these posts", 
+                     content: "go away help!"
+                   };
+        var jsp = $(document.createElement("div"));
+        jsp.textpost({json: help, metric: 0, uuid: 0});
+        ptable.insertPost(jsp,0);
+
         var help = { cname: "postText", 
                      caption: "alt+click on an image", 
                      content: "to repost an image!"
@@ -188,6 +203,13 @@ this.helpVisual = function() {
         jsp.textpost({json: help, metric: 0, uuid: 0});
         ptable.insertPost(jsp,0);
 
+        helpDisplayed = true;
+    };
+
+    this.hide = function() {
+        /* delete all the posts with uuid = 0 */
+        helpDisplayed = false;
+        ptable.deleteUuid( 0 );
     };
 };
 
@@ -222,7 +244,7 @@ function addShortCuts(){
                 linksdisplay.show();       
             });
     $('#helplink').click(function(){
-        helpdisplay.show();
+        helpDisplay.show();
     });
 
     // Repost app menu dialog
@@ -300,11 +322,12 @@ var repostNotify;
 var wel;
 var statusBar;
 
-var helpdisplay;
+var helpDisplay;
+var helpDisplayed = false;
 
 function main() {
     $('document').ready(function(){
-        helpdisplay = new helpVisual();
+        helpDisplay = new helpVisual();
         linksdisplay = new linkVisual();
         // Create instance of plugin
         plugin = document.getElementById("plugin");

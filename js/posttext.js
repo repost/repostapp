@@ -31,6 +31,7 @@
                 this.element.addClass('size3');
             }
             this.element.addClass('textpost');
+            this.element.data("uuid", this.uuid);
             this.tpost = $('<span>'+this.caption+'</span>')
 						            .click(function(){ if(tp.link.length > 0) {
 																							window.open(tp.link);

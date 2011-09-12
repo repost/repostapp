@@ -76,6 +76,17 @@ this.posttable = function(){
         }
     };
 
+    // Deletes all posts with a given uuid
+    this.deleteUuid = function(uuid){
+        // get the children
+        posts = divtable.children();
+        $(posts).each( function(i) {
+            if ( $(this).data("uuid") == uuid ) {
+                $(this).remove();
+            }
+        });
+    };
+
     // Deletes a post from the table given rank
     this.deletePost = function(post){
         // get the children
@@ -137,7 +148,6 @@ this.posttable = function(){
         }
         post.textfill();
         divtable.masonry('reload');       
-
     };
     
     this.updateMetric = function(uppost) {
