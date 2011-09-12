@@ -55,7 +55,6 @@ this.postHolder = function(){
 this.posttable = function(){
  
     var rows = 0;       // dependent upon how much stuff you add
-    var numentries = 0; // number of items in table
     var divtable;
     var MAX_ROWS = 4;       // dependent upon how much stuff you add
     var MAX_COLS = 4;       // Standard 4 cols wide   
@@ -66,6 +65,13 @@ this.posttable = function(){
         $('#repost').append(divtable); 
         divtable.masonry({itemSelector: '.post', isAnimated: true});
     }; 
+
+    this.count = function() {
+        return $(divtable).length;
+    };
+    this.min = function() {
+        return MAX_POSTS;
+    };
 
     // Deletes a post from the table given rank
     this.deleteRank = function(rank){
@@ -85,6 +91,7 @@ this.posttable = function(){
                 $(this).remove();
             }
         });
+        divtable.masonry('reload');
     };
 
     // Deletes a post from the table given rank

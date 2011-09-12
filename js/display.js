@@ -210,6 +210,7 @@ this.helpVisual = function() {
         /* delete all the posts with uuid = 0 */
         helpDisplayed = false;
         ptable.deleteUuid( 0 );
+        fillTable();
     };
 };
 
@@ -274,6 +275,15 @@ function createRemoteImage(clickdata, tab) {
             function(response) {
             });
 };
+
+function fillTable () {
+    var count = ptable.count();
+    var min = ptable.min();
+    var needed = min-count;
+
+    hw.getPosts( count, count+needed );
+};
+
 
 // Context Menus
 function createContextMenus(){
@@ -363,7 +373,7 @@ function main() {
         createContextMenus();
 		
         // Get repost rolling
-        hw.getInitialPosts();
+        hw.getPosts(0, 16);
         setInterval("checkStatus()",10000);
     });
 };
